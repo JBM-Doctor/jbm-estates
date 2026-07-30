@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JBM Estates App</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #18bc9c;
+            --dark: #34495e;
+            --light: #ecf0f1;
+            --danger: #e74c3c;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            background-color: #f5f7fa;
+            color: var(--dark);
+        }
+        header {
+            background-color: var(--primary);
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 2rem;
+        }
+        @media (max-width: 768px) {
+            .grid { grid-template-columns: 1fr; }
+        }
+        .card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            margin-bottom: 2rem;
+        }
+        h2, h3 { margin-top: 0; color: var(--primary); border-bottom: 2px solid var(--light); padding-bottom: 0.5rem;}
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        label {
+            display: block;
+            margin-bottom: 0.3rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        input, select {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: var(--secondary);
+            color: white;
+            border: none;
+            padding: 0.7rem 1.2rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            width: 100%;
+        }
+        button:hover { opacity: 0.9; }
+        .tenant-list {
+            list-style: none;
+            padding: 0;
+        }
+        .tenant-item {
+            background: var(--light);
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 6px;
+            border-left: 5px solid var(--primary);
+        }
+        .tenant-header {
+            display: flex;
+            justify-content: space-between;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        .badge {
+            background: var(--secondary);
+            color: white;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+        }
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            background: white;
+            padding: 0.5rem;
+            border-radius: 4px;
+            margin-top: 0.5rem;
+        }
+        .btn-danger { background-color: var(--danger); width: auto; padding: 0.3rem 0.6rem; font-size: 0.8rem; margin-top: 0.5rem;}
+        .billing-box {
+            background: #e8f4f8;
+            padding: 0.8rem;
+            border-radius: 4px;
+            margin-top: 0.5rem;
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>JBM Estates App</h1>
+    <div>Status: <strong>Active Storage</strong></div>
+</header>
+
+<div class="container">
+    <div class="grid">
+        <!-- Left Column: Forms -->
+        <div>
+            <div class="card">
+                <h3>Add New Tenant & Unit</h3>
+                <form id="tenantForm">
+                    <div class="form-group">
+                        <label>Unit Name / Number</label>
+                        <input type="text" id="unitName" placeholder="e.g., Apt 4A" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Tenant Name</label>
+                        <input type="text" id="tenantName" placeholder="e.g., John Doe" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Lease Start Date</label>
+                        <input type="date" id="startDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Monthly Rent Amount ($)</label>
+                        <input type="number" id="monthlyRent" placeholder="1200" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Rent Due Day (of the month)</label>
+                        <input type="number" id="dueDay" min="1" max="31" placeholder="1" required>
+                    </div>
+                    <button type="submit">Register Unit</button>
+                </form>
+            </div>
+
+            <div class="card">
+                <h3>Log Submeter Water Reading</h3>
+                <form id="waterForm">
+                    <div class="form-group">
+                        <label>Select Unit</label>
+                        <select id="waterUnitSelect" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label>Reading Period</label>
+                        <input type="text" id="waterPeriod" placeholder="e.g., July 1 - July 30" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Previous Reading (m³)</label>
+                        <input type="number" id="prevReading" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Current Reading (m³)</label>
+                        <input type="number" id="currReading" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Rate per Unit ($)</label>
+                        <input type="number" id="waterRate" step="0.01" value="5.00" required>
+                    </div>
+                    <button type="submit" style="background-color: var(--primary);">Calculate & Save Bill</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Right Column: Dashboard & Tenant List -->
+        <div>
+            <div class="card">
+                <h2>Property Portfolio Overview</h2>
+                <ul class="tenant-list" id="tenantList">
+                    <!-- Dynamic content loads here -->
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // App State Management using LocalStorage
+    let tenants = JSON.parse(localStorage.getItem('jbm_tenants')) || [];
+
+    const tenantForm = document.getElementById('tenantForm');
+    const waterForm = document.getElementById('waterForm');
+    const tenantList = document.getElementById('tenantList');
+    const waterUnitSelect = document.getElementById('waterUnitSelect');
+
+    // Save data to localStorage
+    function saveData() {
+        localStorage.setItem('jbm_tenants', JSON.stringify(tenants));
+        renderApp();
+    }
+
+    // Add New Tenant
+    tenantForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const newTenant = {
+            id: Date.now(),
+            unit: document.getElementById('unitName').value,
+            name: document.getElementById('tenantName').value,
+            startDate: document.getElementById('startDate').value,
+            rent: parseFloat(document.getElementById('monthlyRent').value),
+            dueDay: parseInt(document.getElementById('dueDay').value),
+            waterBill: null
+        };
+        tenants.push(newTenant);
+        tenantForm.reset();
+        saveData();
+    });
+
+    // Add Water Reading
+    waterForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const id = parseInt(document.getElementById('waterUnitSelect').value);
+        const prev = parseFloat(document.getElementById('prevReading').value);
+        const curr = parseFloat(document.getElementById('currReading').value);
+        const rate = parseFloat(document.getElementById('waterRate').value);
+        const period = document.getElementById('waterPeriod').value;
+
+        if (curr < prev) {
+            alert("Current reading cannot be less than previous reading!");
+            return;
+        }
+
+        const consumption = curr - prev;
+        const totalCost = consumption * rate;
+
+        const tenantIndex = tenants.findIndex(t => t.id === id);
+        if (tenantIndex !== -1) {
+            tenants[tenantIndex].waterBill = {
+                period, prev, curr, consumption, totalCost
+            };
+            waterForm.reset();
+            saveData();
+        }
+    });
+
+    // Delete a unit
+    function deleteTenant(id) {
+        if(confirm("Are you sure you want to remove this unit/tenant?")) {
+            tenants = tenants.filter(t => t.id !== id);
+            saveData();
+        }
+    }
+
+    // Render App Interface
+    function renderApp() {
+        tenantList.innerHTML = '';
+        waterUnitSelect.innerHTML = '<option value="" disabled selected>Choose Unit</option>';
+
+        if(tenants.length === 0) {
+            tenantList.innerHTML = '<li>No units registered yet. Use the form to add properties.</li>';
+            return;
+        }
+
+        tenants.forEach(tenant => {
+            // Populate Water Form Dropdown
+            const option = document.createElement('option');
+            option.value = tenant.id;
+            option.textContent = `${tenant.unit} - ${tenant.name}`;
+            waterUnitSelect.appendChild(option);
+
+            // Populate Tenant Dashboard Cards
+            const li = document.createElement('li');
+            li.className = 'tenant-item';
+            
+            let waterHTML = `<div class="billing-box" style="color: #7f8c8d;">No water readings logged for current cycle.</div>`;
+            if(tenant.waterBill) {
+                waterHTML = `
+                    <div class="billing-box">
+                        <strong>Water submeter info (${tenant.waterBill.period}):</strong><br>
+                        Readings: ${tenant.waterBill.prev}m³ to ${tenant.waterBill.curr}m³ | Consumed: ${tenant.waterBill.consumption.toFixed(2)}m³<br>
+                        <strong>Water Bill Owed: $${tenant.waterBill.totalCost.toFixed(2)}</strong>
+                    </div>
+                `;
+            }
+
+            li.innerHTML = `
+                <div class="tenant-header">
+                    <span>Unit: ${tenant.unit}</span>
+                    <span class="badge">Active Tenant</span>
+                </div>
+                <div><strong>Tenant:</strong> ${tenant.name}</div>
+                <div class="details-grid">
+                    <div><strong>Lease Start:</strong> ${tenant.startDate}</div>
+                    <div><strong>Rent Due Day:</strong> Day ${tenant.dueDay} of month</div>
+                    <div><strong>Monthly Rent:</strong> $${tenant.rent}</div>
+                    <div><strong>Total Current Dues:</strong> $${(tenant.rent + (tenant.waterBill ? tenant.waterBill.totalCost : 0)).toFixed(2)}</div>
+                </div>
+                ${waterHTML}
+                <button class="btn-danger" onclick="deleteTenant(${tenant.id})">Remove Unit</button>
+            `;
+            tenantList.appendChild(themeFix(li));
+        });
+    }
+
+    // Tiny helper to prevent execution issues
+    function themeFix(el) { return el; }
+
+    // Initial render
+    renderApp();
+</script>
+
+</body>
+</html>
