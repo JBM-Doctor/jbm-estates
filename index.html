@@ -3,7 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>JBM Estates App</title>
+  <title>JBM Estates - Portal</title>
+
+  <!-- Google Fonts & Font Awesome Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
   <!-- Firebase Compatibility Libraries -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -11,165 +17,280 @@
 
   <style>
     :root {
-      --primary: #2c3e50;
-      --secondary: #18bc9c;
-      --dark: #34495e;
-      --light: #ecf0f1;
-      --danger: #e74c3c;
+      --primary: #1e293b;
+      --accent: #0f766e;
+      --accent-hover: #115e59;
+      --bg-gradient: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+      --card-bg: rgba(255, 255, 255, 0.95);
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --danger: #ef4444;
       --whatsapp: #25d366;
+      --radius: 12px;
+      --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
     }
+
+    * {
+      box-sizing: border-box;
+      transition: all 0.2s ease;
+    }
+
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: 'Plus Jakarta Sans', sans-serif;
       margin: 0;
-      background-color: #f5f7fa;
-      color: var(--dark);
+      background: #f1f5f9;
+      color: var(--text-main);
+      min-height: 100vh;
     }
+
     header {
-      background-color: var(--primary);
+      background: var(--primary);
       color: white;
-      padding: 1rem 2rem;
+      padding: 1.2rem 2rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     }
+
+    header h1 {
+      margin: 0;
+      font-size: 1.4rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .badge-status {
+      background: rgba(16, 185, 129, 0.2);
+      color: #10b981;
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
     .container {
       max-width: 1200px;
       margin: 2rem auto;
-      padding: 0 1rem;
+      padding: 0 1.5rem;
     }
+
     .grid {
       display: grid;
-      grid-template-columns: 1fr 2fr;
+      grid-template-columns: 1fr 1.5fr;
       gap: 2rem;
     }
+
+    @media (max-width: 868px) {
+      .grid { grid-template-columns: 1fr; }
+    }
+
     .card {
-      background: white;
-      padding: 1.5rem;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      background: var(--card-bg);
+      backdrop-filter: blur(8px);
+      padding: 1.8rem;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      border: 1px solid #e2e8f0;
       margin-bottom: 1.5rem;
     }
-    h2, h3 { margin-top: 0; }
-    .form-group {
-      margin-bottom: 1rem;
+
+    h2, h3 {
+      margin-top: 0;
+      color: var(--primary);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
     }
+
+    .form-group {
+      margin-bottom: 1.2rem;
+    }
+
     label {
       display: block;
-      margin-bottom: 0.5rem;
-      font-weight: bold;
+      margin-bottom: 0.4rem;
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: var(--text-muted);
     }
+
     input, select {
       width: 100%;
-      padding: 0.5rem;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      box-sizing: border-box;
+      padding: 0.75rem 1rem;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      outline: none;
+      background: #f8fafc;
     }
-    button {
-      background-color: var(--secondary);
+
+    input:focus, select:focus {
+      border-color: var(--accent);
+      background: #ffffff;
+      box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.15);
+    }
+
+    button, .btn {
+      background-color: var(--accent);
       color: white;
       border: none;
       padding: 0.75rem 1.5rem;
-      border-radius: 4px;
+      border-radius: 8px;
       cursor: pointer;
-      font-weight: bold;
+      font-weight: 600;
+      font-size: 0.95rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
     }
-    button:hover { opacity: 0.9; }
-    .tenant-card {
-      border-left: 4px solid var(--secondary);
-      margin-bottom: 1rem;
-      padding: 1rem;
-      background: #fff;
-      border-radius: 4px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+
+    button:hover, .btn:hover {
+      background-color: var(--accent-hover);
+      transform: translateY(-1px);
     }
-    .bill-box {
-      background-color: #fff8e1;
-      border: 1px solid #ffe082;
-      padding: 0.75rem;
-      border-radius: 4px;
-      margin-top: 0.5rem;
-    }
+
     .btn-danger {
       background-color: var(--danger);
-      padding: 0.4rem 0.8rem;
-      font-size: 0.85rem;
     }
+    .btn-danger:hover {
+      background-color: #dc2626;
+    }
+
     .btn-whatsapp {
       background-color: var(--whatsapp);
       color: white;
       text-decoration: none;
-      display: inline-block;
-      padding: 0.5rem 1rem;
-      border-radius: 4px;
-      font-weight: bold;
-      font-size: 0.85rem;
-      margin-top: 0.5rem;
+      margin-top: 0.8rem;
     }
+    .btn-whatsapp:hover {
+      background-color: #20ba5a;
+    }
+
     .btn-doc {
-      background-color: #007bff;
+      background-color: #2563eb;
       color: white;
       text-decoration: none;
-      display: inline-block;
-      padding: 0.75rem 1.2rem;
-      border-radius: 4px;
-      font-weight: bold;
+      width: 100%;
       margin-top: 0.5rem;
     }
     .btn-doc:hover {
-      background-color: #0056b3;
+      background-color: #1d4ed8;
     }
+
+    /* Hero Login Styling */
+    #login-screen {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(rgba(15, 23, 42, 0.75), rgba(15, 23, 42, 0.85)), 
+                  url('https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=1600&q=80') center/cover no-repeat;
+      padding: 1rem;
+    }
+
+    .login-box {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(12px);
+      width: 100%;
+      max-width: 420px;
+      padding: 2.5rem;
+      border-radius: 16px;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+      text-align: center;
+    }
+
+    .tenant-card {
+      border-left: 4px solid var(--accent);
+      margin-bottom: 1.2rem;
+      padding: 1.2rem;
+      background: #ffffff;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    }
+
+    .bill-box {
+      background-color: #fefce8;
+      border: 1px solid #fef08a;
+      color: #713f12;
+      padding: 0.8rem;
+      border-radius: 8px;
+      margin-top: 0.6rem;
+      font-size: 0.9rem;
+    }
+
     .notice-badge {
-      background-color: #fff3cd;
-      color: #856404;
-      border: 1px solid #ffeeba;
-      padding: 0.5rem;
-      border-radius: 4px;
-      margin-bottom: 0.5rem;
-      font-weight: bold;
+      background-color: #fff7ed;
+      color: #c2410c;
+      border: 1px solid #ffedd5;
+      padding: 0.6rem 0.8rem;
+      border-radius: 8px;
+      margin-bottom: 0.8rem;
+      font-weight: 600;
+      font-size: 0.88rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
     }
   </style>
 </head>
 <body>
 
 <header>
-  <h1>JBM Estates App</h1>
-  <div>Status: <strong style="color: #18bc9c;">Cloud Synced (UGX)</strong></div>
+  <h1><i class="fa-solid fa-building-user"></i> JBM Estates App</h1>
+  <div class="badge-status"><i class="fa-solid fa-cloud"></i> Cloud Synced (UGX)</div>
 </header>
 
 <!-- LOGIN SCREEN -->
-<div id="login-screen" style="max-width: 400px; margin: 2rem auto; padding: 1.5rem; background: white; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); text-align: center;">
-  <h2 style="margin-bottom: 1rem;">JBM ESTATES LTD UG Portal</h2>
-  
-  <div style="display: flex; gap: 10px; justify-content: center; margin-bottom: 1rem;">
-    <button type="button" onclick="showLandlordLogin()">Landlord Login</button>
-    <button type="button" onclick="showTenantLogin()" style="background-color: #28a745;">Tenant Portal Login</button>
-  </div>
+<div id="login-screen">
+  <div class="login-box">
+    <div style="font-size: 2.5rem; color: var(--accent); margin-bottom: 0.5rem;">
+      <i class="fa-solid fa-house-circle-check"></i>
+    </div>
+    <h2 style="justify-content: center; margin-bottom: 0.2rem;">JBM ESTATES LTD</h2>
+    <p style="color: var(--text-muted); margin-bottom: 1.5rem; font-size: 0.9rem;">Residential & Commercial Portal</p>
+    
+    <div style="display: flex; gap: 10px; justify-content: center; margin-bottom: 1rem;">
+      <button type="button" onclick="showLandlordLogin()" style="flex: 1;"><i class="fa-solid fa-user-shield"></i> Landlord</button>
+      <button type="button" onclick="showTenantLogin()" style="flex: 1; background-color: #0284c7;"><i class="fa-solid fa-user"></i> Tenant</button>
+    </div>
 
-  <div id="tenant-login-form" style="display: none; margin-top: 15px; text-align: left;">
-    <div class="form-group">
-      <label>Unit Name / Number</label>
-      <input type="text" id="loginUnit" placeholder="e.g., Apt 1A" />
+    <div id="tenant-login-form" style="display: none; margin-top: 15px; text-align: left;">
+      <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 1.2rem 0;">
+      <div class="form-group">
+        <label><i class="fa-solid fa-door-closed"></i> Unit Name / Number</label>
+        <input type="text" id="loginUnit" placeholder="e.g., Apt 1A" />
+      </div>
+      <div class="form-group">
+        <label><i class="fa-solid fa-key"></i> 4-Digit PIN</label>
+        <input type="password" id="loginPin" maxlength="4" placeholder="e.g., 1234" />
+      </div>
+      <button type="button" onclick="processTenantLogin()" style="width: 100%; background-color: #0284c7; margin-top: 0.5rem;">
+        Access My Portal <i class="fa-solid fa-arrow-right"></i>
+      </button>
     </div>
-    <div class="form-group" style="margin-top: 1rem;">
-      <label>Enter 4-Digit PIN</label>
-      <input type="password" id="loginPin" maxlength="4" placeholder="e.g., 1234" />
-    </div>
-    <button type="button" onclick="processTenantLogin()" style="width: 100%; margin-top: 1rem; background-color: #007bff;">
-      Access My Portal
-    </button>
   </div>
 </div>
 
 <!-- LANDLORD CONTROLS -->
 <div class="container" id="landlord-controls" style="display: none;">
-  <div style="margin-bottom: 1rem; text-align: right;">
-    <button onclick="location.reload()" class="btn-danger">Log Out Landlord</button>
+  <div style="margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center;">
+    <h2 style="margin:0;"><i class="fa-solid fa-gauge"></i> Landlord Dashboard</h2>
+    <button onclick="location.reload()" class="btn-danger"><i class="fa-solid fa-right-from-bracket"></i> Log Out</button>
   </div>
+
   <div class="grid">
     <div>
       <div class="card">
-        <h2>Add New Tenant & Unit</h2>
+        <h2><i class="fa-solid fa-user-plus"></i> Add New Tenant</h2>
         <form id="tenantForm">
           <div class="form-group">
             <label>Unit Name/Number</label>
@@ -180,7 +301,7 @@
             <input type="text" id="tenantName" placeholder="e.g., Mukasa Ivan" required>
           </div>
           <div class="form-group">
-            <label>WhatsApp Contact (e.g., 256700000000)</label>
+            <label>WhatsApp Contact</label>
             <input type="text" id="tenantPhone" placeholder="256700000000" required>
           </div>
           <div class="form-group">
@@ -192,15 +313,15 @@
             <input type="date" id="nextDueDate" required>
           </div>
           <div class="form-group">
-            <label for="tenantPin">Tenant Access PIN (4 Digits)</label>
+            <label>Tenant Access PIN (4 Digits)</label>
             <input type="text" id="tenantPin" maxlength="4" placeholder="e.g., 1234" required />
           </div>
-          <button type="submit">Register Unit</button>
+          <button type="submit" style="width: 100%;"><i class="fa-solid fa-plus"></i> Register Unit</button>
         </form>
       </div>
 
       <div class="card">
-        <h2>Record Rent Payment</h2>
+        <h2><i class="fa-solid fa-money-bill-wave"></i> Record Payment</h2>
         <form id="paymentForm">
           <div class="form-group">
             <label>Select Unit</label>
@@ -218,12 +339,12 @@
             <label>Set Next Rent Due Date</label>
             <input type="date" id="updatedNextDueDate" required>
           </div>
-          <button type="submit" style="background-color: #007bff;">Record Rent & Update Due Date</button>
+          <button type="submit" style="width: 100%; background-color: #0284c7;"><i class="fa-solid fa-check"></i> Save Payment</button>
         </form>
       </div>
 
       <div class="card">
-        <h2>Log Submeter Water Reading</h2>
+        <h2><i class="fa-solid fa-faucet-drip"></i> Log Submeter Water</h2>
         <form id="waterForm">
           <div class="form-group">
             <label>Select Unit</label>
@@ -241,14 +362,14 @@
             <label>Rate per Unit (UGX)</label>
             <input type="number" id="waterRate" step="1" value="6000" required>
           </div>
-          <button type="submit">Calculate & Add Bill</button>
+          <button type="submit" style="width: 100%;"><i class="fa-solid fa-calculator"></i> Calculate Bill</button>
         </form>
       </div>
     </div>
 
     <div>
       <div class="card">
-        <h2>Property Overview</h2>
+        <h2><i class="fa-solid fa-city"></i> Property Overview</h2>
         <div id="tenantList"></div>
       </div>
     </div>
@@ -256,7 +377,7 @@
 </div>
 
 <script>
-  // YOUR FIREBASE CONFIGURATION
+  // FIREBASE CONFIGURATION
   const firebaseConfig = {
     apiKey: "AIzaSyCP-J_XEn49y6_fjWjsHBa3sPF8HXudDeM",
     authDomain: "jbm-estates.firebaseapp.com",
@@ -272,7 +393,6 @@
 
   let tenants = [];
 
-  // Listen for Cloud Database Realtime Updates across all online devices
   db.ref('tenants').on('value', (snapshot) => {
     const data = snapshot.val();
     tenants = data ? Object.values(data) : [];
@@ -328,44 +448,50 @@
 
     const waterBillInfo = tenant.waterBill ? `
       <div class="bill-box">
-        <strong>Water Bill Owed: UGX ${Math.round(tenant.waterBill.totalCost).toLocaleString()}</strong><br>
+        <strong><i class="fa-solid fa-droplet"></i> Water Bill Owed: UGX ${Math.round(tenant.waterBill.totalCost).toLocaleString()}</strong><br>
         Consumption: ${tenant.waterBill.unitsUsed.toFixed(1)} m³ (${tenant.waterBill.prev} to ${tenant.waterBill.curr})
       </div>
-    ` : '<p>No current water bill.</p>';
+    ` : '<p style="color: var(--text-muted);">No active water bill recorded.</p>';
 
     const paymentHistoryHTML = (tenant.payments && tenant.payments.length > 0) ? `
-      <ul style="padding-left: 1.2rem;">
+      <ul style="padding-left: 1.2rem; color: var(--text-main);">
         ${tenant.payments.map(p => `
-          <li>
+          <li style="margin-bottom: 0.4rem;">
             <strong>UGX ${Number(p.amount).toLocaleString()}</strong> paid on ${p.date}
           </li>
         `).join('')}
       </ul>
-    ` : '<p>No payments recorded yet.</p>';
+    ` : '<p style="color: var(--text-muted);">No payments recorded yet.</p>';
 
     portal.innerHTML = `
       <div class="card" style="max-width: 600px; margin: 2rem auto;">
-        <h2>Welcome, ${tenant.name} (${tenant.unit})</h2>
-        <div style="font-size: 1.1rem; margin-bottom: 0.5rem;">
+        <h2><i class="fa-solid fa-circle-user"></i> Welcome, ${tenant.name}</h2>
+        <p style="color: var(--text-muted); margin-top:-0.5rem; margin-bottom:1.5rem;">Unit: ${tenant.unit}</p>
+
+        <div style="font-size: 1rem; margin-bottom: 0.5rem;">
           <strong>Monthly Rent:</strong> UGX ${Number(tenant.rent).toLocaleString()}
         </div>
-        <div style="font-size: 1.2rem; margin-bottom: 1rem; padding: 0.75rem; background-color: #e8f4f8; border-radius: 6px; border-left: 4px solid #007bff;">
-          <strong>Next Rent Due Date:</strong> <span style="color: #d9534f;">${tenant.nextDueDate || 'Not set'}</span>
+        <div style="font-size: 1.1rem; margin-bottom: 1.5rem; padding: 0.8rem; background-color: #f1f5f9; border-radius: 8px; border-left: 4px solid #0284c7;">
+          <strong>Next Rent Due Date:</strong> <span style="color: var(--danger); font-weight:bold;">${tenant.nextDueDate || 'Not set'}</span>
         </div>
-        <hr style="margin: 1rem 0;">
-        <h3>Water Bill Dues</h3>
+
+        <h3><i class="fa-solid fa-faucet"></i> Water Utilities</h3>
         ${waterBillInfo}
-        <hr style="margin: 1rem 0;">
-        <h3>Recent Payment Receipts</h3>
+
+        <hr style="border:none; border-top:1px solid #e2e8f0; margin: 1.5rem 0;">
+
+        <h3><i class="fa-solid fa-receipt"></i> Recent Payment Receipts</h3>
         ${paymentHistoryHTML}
-        <hr style="margin: 1rem 0;">
-        <h3>📜 Tenancy Agreement Document</h3>
-        <p>You can read or download your official residential tenancy agreement at any time:</p>
-        <a href="https://drive.google.com/file/d/1NMxRtoEkgpmq3QPcf-WsmscepoploKbH/view?usp=sharing" target="_blank" class="btn-doc">
-          📄 Read Tenancy Agreement
+
+        <hr style="border:none; border-top:1px solid #e2e8f0; margin: 1.5rem 0;">
+
+        <h3><i class="fa-solid fa-file-contract"></i> Tenancy Agreement</h3>
+        <p style="font-size:0.9rem; color: var(--text-muted);">You can access your tenancy agreement document anytime online:</p>
+        <a href="https://drive.google.com/file/d/1NMxRtoEkgpmq3QPcf-WsmscepoploKbH/view?usp=sharing" target="_blank" class="btn btn-doc">
+          <i class="fa-solid fa-arrow-up-right-from-square"></i> Open Tenancy Agreement PDF
         </a>
-        <br>
-        <button onclick="location.reload()" style="margin-top: 1.5rem;" class="btn-danger">Log Out</button>
+
+        <button onclick="location.reload()" style="margin-top: 2rem; width:100%;" class="btn-danger"><i class="fa-solid fa-right-from-bracket"></i> Log Out</button>
       </div>
     `;
   }
@@ -481,7 +607,7 @@
     list.innerHTML = '';
 
     if (tenants.length === 0) {
-      list.innerHTML = '<p>No units/tenants added yet.</p>';
+      list.innerHTML = '<p style="color: var(--text-muted);">No units or tenants added yet.</p>';
       return;
     }
 
@@ -489,11 +615,11 @@
       const card = document.createElement('div');
       card.className = 'tenant-card';
       
-      let waterHTML = '<p><em>No water reading logged.</em></p>';
+      let waterHTML = '<p style="font-size:0.85rem; color: var(--text-muted); margin:0.4rem 0;"><em>No water reading logged.</em></p>';
       if (t.waterBill) {
         waterHTML = `
           <div class="bill-box">
-            <strong>Water Bill Owed: UGX ${Math.round(t.waterBill.totalCost).toLocaleString()}</strong><br>
+            <strong>Water Owed: UGX ${Math.round(t.waterBill.totalCost).toLocaleString()}</strong><br>
             Reading: ${t.waterBill.prev} → ${t.waterBill.curr} (${t.waterBill.unitsUsed.toFixed(1)} m³)
           </div>
         `;
@@ -504,31 +630,31 @@
       let whatsappButton = '';
 
       if (daysLeft !== null && daysLeft <= 6) {
-        const statusText = daysLeft < 0 ? `Rent Overdue by ${Math.abs(daysLeft)} days` : (daysLeft === 0 ? `Rent Due Today` : `Rent Due in ${daysLeft} days`);
-        alertBadge = `<div class="notice-badge">⚠️ Notice: ${statusText}</div>`;
+        const statusText = daysLeft < 0 ? `Overdue by ${Math.abs(daysLeft)} days` : (daysLeft === 0 ? `Due Today` : `Due in ${daysLeft} days`);
+        alertBadge = `<div class="notice-badge"><i class="fa-solid fa-triangle-exclamation"></i> Notice: Rent ${statusText}</div>`;
         
         const message = `Hello ${t.name}, this is a friendly reminder from JBM Estates LTD. Your rent for ${t.unit} (UGX ${Number(t.rent).toLocaleString()}) is due on ${t.nextDueDate}. Thank you!`;
         const encodedMessage = encodeURIComponent(message);
         
         if (t.phone) {
-          whatsappButton = `<a href="https://wa.me/${t.phone}?text=${encodedMessage}" target="_blank" class="btn-whatsapp">📲 Send WhatsApp Reminder</a>`;
+          whatsappButton = `<a href="https://wa.me/${t.phone}?text=${encodedMessage}" target="_blank" class="btn btn-whatsapp"><i class="fa-brands fa-whatsapp"></i> Send Rent Reminder</a>`;
         }
       } else if (t.phone) {
         const message = `Hello ${t.name}, this is JBM Estates LTD. Your rent is due on ${t.nextDueDate}. Thank you!`;
         const encodedMessage = encodeURIComponent(message);
-        whatsappButton = `<a href="https://wa.me/${t.phone}?text=${encodedMessage}" target="_blank" class="btn-whatsapp">📲 Open WhatsApp Chat</a>`;
+        whatsappButton = `<a href="https://wa.me/${t.phone}?text=${encodedMessage}" target="_blank" class="btn btn-whatsapp"><i class="fa-brands fa-whatsapp"></i> Open Chat</a>`;
       }
 
       card.innerHTML = `
         ${alertBadge}
         <div style="display:flex; justify-content:space-between; align-items:center;">
-          <h3>${t.unit} - ${t.name} (PIN: ${t.pin || 'None'})</h3>
-          <button onclick="deleteTenant('${t.id}')" class="btn-danger">Delete</button>
+          <h3 style="margin:0;"><i class="fa-solid fa-house"></i> ${t.unit} - ${t.name}</h3>
+          <button onclick="deleteTenant('${t.id}')" class="btn-danger" style="padding:0.3rem 0.6rem; font-size:0.8rem;"><i class="fa-solid fa-trash"></i></button>
         </div>
-        <div><strong>WhatsApp:</strong> ${t.phone || 'Not set'}</div>
-        <div><strong>Monthly Rent:</strong> UGX ${Number(t.rent).toLocaleString()}</div>
-        <div style="color: #d9534f;"><strong>Next Rent Due Date:</strong> ${t.nextDueDate || 'Not set'}</div>
-        <div><strong>Total Water Dues:</strong> UGX ${Math.round(t.waterBill ? t.waterBill.totalCost : 0).toLocaleString()}</div>
+        <div style="margin-top:0.5rem; font-size:0.9rem;"><strong>PIN:</strong> ${t.pin || 'None'}</div>
+        <div style="font-size:0.9rem;"><strong>WhatsApp:</strong> ${t.phone || 'Not set'}</div>
+        <div style="font-size:0.9rem;"><strong>Rent:</strong> UGX ${Number(t.rent).toLocaleString()}</div>
+        <div style="color: var(--danger); font-size:0.9rem;"><strong>Next Due:</strong> ${t.nextDueDate || 'Not set'}</div>
         ${waterHTML}
         <div>${whatsappButton}</div>
       `;
