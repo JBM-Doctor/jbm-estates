@@ -125,7 +125,21 @@
     <div>Status: <strong>Active Storage</strong></div>
 </header>
 
-<div class="container">
+<div id="login-screen" style="max-width: 400px; margin: 50px auto; padding: 20px; border: 1px solid #ccc; borderRadius: 8px;">
+  <h2>JBM ESTATES LTD UG Portal</h2>
+  
+  <!-- Role Selector -->
+  <button onclick="showLandlordLogin()">Landlord Login</button>
+  <button onclick="showTenantLogin()">Tenant Portal Login</button>
+
+  <!-- Tenant Login Form -->
+  <div id="tenant-login-form" style="display: none; margin-top: 15px;">
+    <input type="text" id="loginUnit" placeholder="Unit Name (e.g., Apt 1A)" /><br/><br/>
+    <input type="password" id="loginPin" maxlength="4" placeholder="Enter 4-Digit PIN" /><br/><br/>
+    <button onclick="processTenantLogin()">Access My Portal</button>
+  </div>
+</div>
+    <div class="container">
     <div class="grid">
         <!-- Left Column: Forms -->
         <div>
