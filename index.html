@@ -16,6 +16,7 @@
       --dark: #34495e;
       --light: #ecf0f1;
       --danger: #e74c3c;
+      --whatsapp: #25d366;
     }
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -94,6 +95,26 @@
       padding: 0.4rem 0.8rem;
       font-size: 0.85rem;
     }
+    .btn-whatsapp {
+      background-color: var(--whatsapp);
+      color: white;
+      text-decoration: none;
+      display: inline-block;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      font-weight: bold;
+      font-size: 0.85rem;
+      margin-top: 0.5rem;
+    }
+    .notice-badge {
+      background-color: #fff3cd;
+      color: #856404;
+      border: 1px solid #ffeeba;
+      padding: 0.5rem;
+      border-radius: 4px;
+      margin-bottom: 0.5rem;
+      font-weight: bold;
+    }
   </style>
 </head>
 <body>
@@ -144,6 +165,10 @@
           <div class="form-group">
             <label>Tenant Full Name</label>
             <input type="text" id="tenantName" placeholder="e.g., Mukasa Ivan" required>
+          </div>
+          <div class="form-group">
+            <label>WhatsApp Contact (e.g., 256700000000)</label>
+            <input type="text" id="tenantPhone" placeholder="256700000000" required>
           </div>
           <div class="form-group">
             <label>Monthly Rent Amount (UGX)</label>
@@ -327,10 +352,12 @@
 
   document.getElementById('tenantForm').addEventListener('submit', (e) => {
     e.preventDefault();
+    const cleanPhone = document.getElementById('tenantPhone').value.replace(/[^0-9]/g, '');
     const newTenant = {
       id: Date.now().toString(),
       unit: document.getElementById('unitName').value,
       name: document.getElementById('tenantName').value,
+      phone: cleanPhone,
       rent: parseFloat(document.getElementById('rentAmount').value),
       nextDueDate: document.getElementById('nextDueDate').value,
       pin: document.getElementById('tenantPin').value,
@@ -417,6 +444,16 @@
     });
   }
 
+  function getDaysUntilDue(dueDateString) {
+    if (!dueDateString) return null;
+    const today = new Date();
+    today.setHours(0,0,0,0);
+    const due = new Date(dueDateString);
+    due.setHours(0,0,0,0);
+    const diffTime = due - today;
+    return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  }
+
   function renderTenants() {
     const list = document.getElementById('tenantList');
     if (!list) return;
@@ -442,15 +479,38 @@
         `;
       }
 
+      const daysLeft = getDaysUntilDue(t.nextDueDate);
+      let alertBadge = '';
+      let whatsappButton = '';
+
+      if (daysLeft !== null && daysLeft <= 6) {
+        const statusText = daysLeft < 0 ? `Rent Overdue by ${Math.abs(daysLeft)} days` : (daysLeft === 0 ? `Rent Due Today` : `Rent Due in ${daysLeft} days`);
+        alertBadge = `<div class="notice-badge">⚠️ Notice: ${statusText}</div>`;
+        
+        const message = `Hello ${t.name}, this is a friendly reminder from JBM Estates LTD. Your rent for ${t.unit} (UGX ${Number(t.rent).toLocaleString()}) is due on ${t.nextDueDate}. Thank you!`;
+        const encodedMessage = encodeURIComponent(message);
+        
+        if (t.phone) {
+          whatsappButton = `<a href="https://wa.me/${t.phone}?text=${encodedMessage}" target="_blank" class="btn-whatsapp">📲 Send WhatsApp Reminder</a>`;
+        }
+      } else if (t.phone) {
+        const message = `Hello ${t.name}, this is JBM Estates LTD. Your rent is due on ${t.nextDueDate}. Thank you!`;
+        const encodedMessage = encodeURIComponent(message);
+        whatsappButton = `<a href="https://wa.me/${t.phone}?text=${encodedMessage}" target="_blank" class="btn-whatsapp">📲 Open WhatsApp Chat</a>`;
+      }
+
       card.innerHTML = `
+        ${alertBadge}
         <div style="display:flex; justify-content:space-between; align-items:center;">
           <h3>${t.unit} - ${t.name} (PIN: ${t.pin || 'None'})</h3>
           <button onclick="deleteTenant('${t.id}')" class="btn-danger">Delete</button>
         </div>
+        <div><strong>WhatsApp:</strong> ${t.phone || 'Not set'}</div>
         <div><strong>Monthly Rent:</strong> UGX ${Number(t.rent).toLocaleString()}</div>
         <div style="color: #d9534f;"><strong>Next Rent Due Date:</strong> ${t.nextDueDate || 'Not set'}</div>
         <div><strong>Total Water Dues:</strong> UGX ${Math.round(t.waterBill ? t.waterBill.totalCost : 0).toLocaleString()}</div>
         ${waterHTML}
+        <div>${whatsappButton}</div>
       `;
       list.appendChild(card);
     });
