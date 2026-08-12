@@ -84,6 +84,15 @@
       border-radius: 4px;
       margin-top: 0.5rem;
     }
+    .status-badge {
+      display: inline-block;
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      font-weight: bold;
+      font-size: 0.85rem;
+    }
+    .badge-paid { background-color: #d4edda; color: #155724; }
+    .badge-due { background-color: #f8d7da; color: #721c24; }
     .btn-danger {
       background-color: var(--danger);
       padding: 0.4rem 0.8rem;
@@ -145,14 +154,38 @@
             <input type="number" id="rentAmount" placeholder="850000" required>
           </div>
           <div class="form-group">
-            <label>Rent Due Day (of the month)</label>
-            <input type="number" id="dueDay" min="1" max="31" placeholder="1" required>
+            <label>Initial Next Rent Due Date</label>
+            <input type="date" id="nextDueDate" required>
           </div>
           <div class="form-group">
             <label for="tenantPin">Tenant Access PIN (4 Digits)</label>
             <input type="text" id="tenantPin" maxlength="4" placeholder="e.g., 1234" required />
           </div>
           <button type="submit">Register Unit</button>
+        </form>
+      </div>
+
+      <!-- NEW: RECORD RENT PAYMENT FORM -->
+      <div class="card">
+        <h2>Record Rent Payment</h2>
+        <form id="paymentForm">
+          <div class="form-group">
+            <label>Select Unit</label>
+            <select id="paymentTenantSelect" required></select>
+          </div>
+          <div class="form-group">
+            <label>Amount Paid (UGX)</label>
+            <input type="number" id="paidAmount" placeholder="850000" required>
+          </div>
+          <div class="form-group">
+            <label>Payment Date</label>
+            <input type="date" id="paymentDate" required>
+          </div>
+          <div class="form-group">
+            <label>Set Next Rent Due Date</label>
+            <input type="date" id="updatedNextDueDate" required>
+          </div>
+          <button type="submit" style="background-color: #007bff;">Record Rent & Update Due Date</button>
         </form>
       </div>
 
@@ -196,10 +229,9 @@
   function saveTenants() {
     localStorage.setItem('jbm_tenants', JSON.stringify(tenants));
     renderTenants();
-    populateSelect();
+    populateSelects();
   }
 
-  // SECURE LANDLORD LOGIN FUNCTION
   function showLandlordLogin() {
     const landlordPassword = "Baboons6#";
     const enteredPassword = prompt("Enter Landlord / Co-Landlord Access Password:");
@@ -249,14 +281,31 @@
       </div>
     ` : '<p>No current water bill.</p>';
 
+    const paymentHistoryHTML = (tenant.payments && tenant.payments.length > 0) ? `
+      <ul style="padding-left: 1.2rem;">
+        ${tenant.payments.map(p => `
+          <li>
+            <strong>UGX ${Number(p.amount).toLocaleString()}</strong> paid on ${p.date}
+          </li>
+        `).join('')}
+      </ul>
+    ` : '<p>No payments recorded yet.</p>';
+
     portal.innerHTML = `
       <div class="card" style="max-width: 600px; margin: 2rem auto;">
         <h2>Welcome, ${tenant.name} (${tenant.unit})</h2>
-        <p><strong>Monthly Rent:</strong> UGX ${Number(tenant.rent).toLocaleString()}</p>
-        <p><strong>Rent Due Day:</strong> ${tenant.dueDay}st / nd / rd / th of every month</p>
+        <div style="font-size: 1.1rem; margin-bottom: 0.5rem;">
+          <strong>Monthly Rent:</strong> UGX ${Number(tenant.rent).toLocaleString()}
+        </div>
+        <div style="font-size: 1.2rem; margin-bottom: 1rem; padding: 0.75rem; background-color: #e8f4f8; border-radius: 6px; border-left: 4px solid #007bff;">
+          <strong>Next Rent Due Date:</strong> <span style="color: #d9534f;">${tenant.nextDueDate || 'Not set'}</span>
+        </div>
         <hr style="margin: 1rem 0;">
-        <h3>Your Current Dues</h3>
+        <h3>Water Bill Dues</h3>
         ${waterBillInfo}
+        <hr style="margin: 1rem 0;">
+        <h3>Recent Payment Receipts</h3>
+        ${paymentHistoryHTML}
         <button onclick="location.reload()" style="margin-top: 1.5rem;" class="btn-danger">Log Out</button>
       </div>
     `;
@@ -269,13 +318,37 @@
       unit: document.getElementById('unitName').value,
       name: document.getElementById('tenantName').value,
       rent: parseFloat(document.getElementById('rentAmount').value),
-      dueDay: parseInt(document.getElementById('dueDay').value),
+      nextDueDate: document.getElementById('nextDueDate').value,
       pin: document.getElementById('tenantPin').value,
-      waterBill: null
+      waterBill: null,
+      payments: []
     };
     tenants.push(newTenant);
     saveTenants();
     e.target.reset();
+  });
+
+  document.getElementById('paymentForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const tenantId = document.getElementById('paymentTenantSelect').value;
+    const paidAmount = parseFloat(document.getElementById('paidAmount').value);
+    const paymentDate = document.getElementById('paymentDate').value;
+    const nextDueDate = document.getElementById('updatedNextDueDate').value;
+
+    const tenantIndex = tenants.findIndex(t => t.id === tenantId);
+    if (tenantIndex !== -1) {
+      if (!tenants[tenantIndex].payments) tenants[tenantIndex].payments = [];
+      
+      tenants[tenantIndex].payments.push({
+        amount: paidAmount,
+        date: paymentDate
+      });
+      tenants[tenantIndex].nextDueDate = nextDueDate;
+
+      saveTenants();
+      alert("Payment recorded and next rent due date updated!");
+      e.target.reset();
+    }
   });
 
   document.getElementById('waterForm').addEventListener('submit', (e) => {
@@ -308,14 +381,23 @@
     }
   }
 
-  function populateSelect() {
-    const select = document.getElementById('waterTenantSelect');
-    select.innerHTML = '';
+  function populateSelects() {
+    const waterSelect = document.getElementById('waterTenantSelect');
+    const paymentSelect = document.getElementById('paymentTenantSelect');
+    
+    waterSelect.innerHTML = '';
+    paymentSelect.innerHTML = '';
+
     tenants.forEach(t => {
-      const option = document.createElement('option');
-      option.value = t.id;
-      option.textContent = `${t.unit} - ${t.name}`;
-      select.appendChild(option);
+      const option1 = document.createElement('option');
+      option1.value = t.id;
+      option1.textContent = `${t.unit} - ${t.name}`;
+      waterSelect.appendChild(option1);
+
+      const option2 = document.createElement('option');
+      option2.value = t.id;
+      option2.textContent = `${t.unit} - ${t.name}`;
+      paymentSelect.appendChild(option2);
     });
   }
 
@@ -347,8 +429,9 @@
           <h3>${t.unit} - ${t.name} (PIN: ${t.pin || 'None'})</h3>
           <button onclick="deleteTenant('${t.id}')" class="btn-danger">Delete</button>
         </div>
-        <div><strong>Monthly Rent:</strong> UGX ${Number(t.rent).toLocaleString()} (Due Day: ${t.dueDay})</div>
-        <div><strong>Total Current Dues:</strong> UGX ${Math.round(t.rent + (t.waterBill ? t.waterBill.totalCost : 0)).toLocaleString()}</div>
+        <div><strong>Monthly Rent:</strong> UGX ${Number(t.rent).toLocaleString()}</div>
+        <div style="color: #d9534f;"><strong>Next Rent Due Date:</strong> ${t.nextDueDate || 'Not set'}</div>
+        <div><strong>Total Water Dues:</strong> UGX ${Math.round(t.waterBill ? t.waterBill.totalCost : 0).toLocaleString()}</div>
         ${waterHTML}
       `;
       list.appendChild(card);
@@ -357,7 +440,7 @@
 
   // Initialize view
   renderTenants();
-  populateSelect();
+  populateSelects();
 </script>
 
 </body>
