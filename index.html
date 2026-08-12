@@ -98,7 +98,7 @@
   <div>Status: <strong>Active Storage (UGX)</strong></div>
 </header>
 
-<!-- STEP 3: LOGIN SCREEN -->
+<!-- LOGIN SCREEN -->
 <div id="login-screen" style="max-width: 400px; margin: 2rem auto; padding: 1.5rem; background: white; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); text-align: center;">
   <h2 style="margin-bottom: 1rem;">JBM ESTATES LTD UG Portal</h2>
   
@@ -148,7 +148,6 @@
             <label>Rent Due Day (of the month)</label>
             <input type="number" id="dueDay" min="1" max="31" placeholder="1" required>
           </div>
-          <!-- STEP 2: TENANT ACCESS PIN -->
           <div class="form-group">
             <label for="tenantPin">Tenant Access PIN (4 Digits)</label>
             <input type="text" id="tenantPin" maxlength="4" placeholder="e.g., 1234" required />
@@ -190,7 +189,7 @@
   </div>
 </div>
 
-<!-- STEP 4: JAVASCRIPT LOGIC -->
+<!-- JAVASCRIPT LOGIC -->
 <script>
   let tenants = JSON.parse(localStorage.getItem('jbm_tenants')) || [];
 
@@ -200,9 +199,17 @@
     populateSelect();
   }
 
+  // SECURE LANDLORD LOGIN FUNCTION
   function showLandlordLogin() {
-    document.getElementById('login-screen').style.display = 'none';
-    document.getElementById('landlord-controls').style.display = 'block';
+    const landlordPassword = "Baboons6#";
+    const enteredPassword = prompt("Enter Landlord / Co-Landlord Access Password:");
+
+    if (enteredPassword === landlordPassword) {
+      document.getElementById('login-screen').style.display = 'none';
+      document.getElementById('landlord-controls').style.display = 'block';
+    } else if (enteredPassword !== null) {
+      alert("Incorrect Landlord Password! Access Denied.");
+    }
   }
 
   function showTenantLogin() {
