@@ -4,6 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>JBM Estates App</title>
+
+  <!-- Firebase Compatibility Libraries -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
   <style>
     :root {
       --primary: #2c3e50;
@@ -84,15 +89,6 @@
       border-radius: 4px;
       margin-top: 0.5rem;
     }
-    .status-badge {
-      display: inline-block;
-      padding: 0.25rem 0.5rem;
-      border-radius: 4px;
-      font-weight: bold;
-      font-size: 0.85rem;
-    }
-    .badge-paid { background-color: #d4edda; color: #155724; }
-    .badge-due { background-color: #f8d7da; color: #721c24; }
     .btn-danger {
       background-color: var(--danger);
       padding: 0.4rem 0.8rem;
@@ -104,7 +100,7 @@
 
 <header>
   <h1>JBM Estates App</h1>
-  <div>Status: <strong>Active Storage (UGX)</strong></div>
+  <div>Status: <strong style="color: #18bc9c;">Cloud Synced (UGX)</strong></div>
 </header>
 
 <!-- LOGIN SCREEN -->
@@ -165,7 +161,6 @@
         </form>
       </div>
 
-      <!-- NEW: RECORD RENT PAYMENT FORM -->
       <div class="card">
         <h2>Record Rent Payment</h2>
         <form id="paymentForm">
@@ -222,14 +217,33 @@
   </div>
 </div>
 
-<!-- JAVASCRIPT LOGIC -->
 <script>
-  let tenants = JSON.parse(localStorage.getItem('jbm_tenants')) || [];
+  // YOUR FIREBASE CONFIGURATION
+  const firebaseConfig = {
+    apiKey: "AIzaSyCP-J_XEn49y6_fjWjsHBa3sPF8HXudDeM",
+    authDomain: "jbm-estates.firebaseapp.com",
+    databaseURL: "https://jbm-estates-default-rtdb.firebaseio.com",
+    projectId: "jbm-estates",
+    storageBucket: "jbm-estates.firebasestorage.app",
+    messagingSenderId: "457323987874",
+    appId: "1:457323987874:web:355516c8fed175619728fb"
+  };
 
-  function saveTenants() {
-    localStorage.setItem('jbm_tenants', JSON.stringify(tenants));
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+
+  let tenants = [];
+
+  // Listen for Cloud Database Realtime Updates across all online devices
+  db.ref('tenants').on('value', (snapshot) => {
+    const data = snapshot.val();
+    tenants = data ? Object.values(data) : [];
     renderTenants();
     populateSelects();
+  });
+
+  function saveTenants() {
+    db.ref('tenants').set(tenants);
   }
 
   function showLandlordLogin() {
@@ -385,6 +399,8 @@
     const waterSelect = document.getElementById('waterTenantSelect');
     const paymentSelect = document.getElementById('paymentTenantSelect');
     
+    if (!waterSelect || !paymentSelect) return;
+    
     waterSelect.innerHTML = '';
     paymentSelect.innerHTML = '';
 
@@ -403,6 +419,8 @@
 
   function renderTenants() {
     const list = document.getElementById('tenantList');
+    if (!list) return;
+
     list.innerHTML = '';
 
     if (tenants.length === 0) {
@@ -437,10 +455,6 @@
       list.appendChild(card);
     });
   }
-
-  // Initialize view
-  renderTenants();
-  populateSelects();
 </script>
 
 </body>
