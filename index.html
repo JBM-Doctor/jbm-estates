@@ -338,6 +338,80 @@
 
     // Initial render
     renderApp();
+// Toggle login forms
+function showLandlordLogin() {
+  document.getElementById('tenant-login-form').style.display = 'none';
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('landlord-controls').style.display = 'block';
+}
+
+function showTenantLogin() {
+  document.getElementById('tenant-login-form').style.display = 'block';
+}
+
+// Process Tenant PIN Login
+function processTenantLogin() {
+  const unitName = document.getElementById('loginUnit').value.trim();
+  const enteredPin = document.getElementById('loginPin').value.trim();
+
+  // Retrieve saved units from storage
+  const storedUnits = JSON.parse(localStorage.getItem('jbm_units')) || [];
+  
+  // Find matching unit and PIN
+  const matchedUnit = storedUnits.find(u => u.unitName === unitName && u.pin === enteredPin);
+
+  if (matchedUnit) {
+    // Hide login screen and landlord dashboard
+    document.getElementById('login-screen').style.display = 'none';
+    const landlordBox = document.getElementById('landlord-controls');
+    if (landlordBox) landlordBox.style.display = 'none';
+
+    // Show single tenant view
+    renderSingleTenantView(matchedUnit);
+  } else {
+    alert("Incorrect Unit Name or PIN. Please check and try again.");
+  }
+}
+
+// Render private view for logged-in tenant
+function renderSingleTenantView(unit) {
+  let portal = document.getElementById('tenant-portal-view');
+  
+  // Create container if it doesn't exist
+  if (!portal) {
+    portal = document.createElement('div');
+    portal.id = 'tenant-portal-view';
+    portal.className = 'container';
+    document.body.appendChild(portal);
+  }
+  
+  portal.style.display = 'block';
+
+  // Load water bills for ONLY this unit
+  const allWaterBills = JSON.parse(localStorage.getItem('jbm_water_bills')) || [];
+  const myBills = allWaterBills.filter(b => b.unitName === unit.unitName);
+
+  portal.innerHTML = `
+    <div class="card" style="max-width: 600px; margin: 2rem auto; padding: 1.5rem; background: white; border-radius: 8px;">
+      <h2>Welcome, ${unit.tenantName} (${unit.unitName})</h2>
+      <p><strong>Monthly Rent:</strong> UGX ${Number(unit.rentAmount).toLocaleString()}</p>
+      <p><strong>Rent Due Day:</strong> ${unit.dueDay}st / nd / rd / th of every month</p>
+      <hr style="margin: 1rem 0;">
+      <h3>Your Water Bills</h3>
+      ${myBills.length === 0 ? '<p>No water bills recorded yet.</p>' : ''}
+      <ul style="list-style: none; padding: 0;">
+        ${myBills.map(b => `
+          <li style="padding: 0.5rem 0; border-bottom: 1px solid #eee;">
+            <strong>Period:</strong> ${b.period} | 
+            <strong>Consumption:</strong> ${b.consumption} m³ | 
+            <strong>Amount Due:</strong> UGX ${Number(b.totalUGX).toLocaleString()}
+          </li>
+        `).join('')}
+      </ul>
+      <button onclick="location.reload()" style="margin-top: 1rem; padding: 0.5rem 1rem;">Log Out</button>
+    </div>
+  `;
+}
 </script>
 
 </body>
