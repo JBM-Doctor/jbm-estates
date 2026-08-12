@@ -106,6 +106,19 @@
       font-size: 0.85rem;
       margin-top: 0.5rem;
     }
+    .btn-doc {
+      background-color: #007bff;
+      color: white;
+      text-decoration: none;
+      display: inline-block;
+      padding: 0.75rem 1.2rem;
+      border-radius: 4px;
+      font-weight: bold;
+      margin-top: 0.5rem;
+    }
+    .btn-doc:hover {
+      background-color: #0056b3;
+    }
     .notice-badge {
       background-color: #fff3cd;
       color: #856404;
@@ -345,6 +358,13 @@
         <hr style="margin: 1rem 0;">
         <h3>Recent Payment Receipts</h3>
         ${paymentHistoryHTML}
+        <hr style="margin: 1rem 0;">
+        <h3>📜 Tenancy Agreement Document</h3>
+        <p>You can read or download your official residential tenancy agreement at any time:</p>
+        <a href="https://drive.google.com/file/d/1NMxRtoEkgpmq3QPcf-WsmscepoploKbH/view?usp=sharing" target="_blank" class="btn-doc">
+          📄 Read Tenancy Agreement
+        </a>
+        <br>
         <button onclick="location.reload()" style="margin-top: 1.5rem;" class="btn-danger">Log Out</button>
       </div>
     `;
