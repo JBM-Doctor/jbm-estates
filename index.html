@@ -189,6 +189,16 @@
       background-color: #1d4ed8;
     }
 
+    .btn-receipt {
+      background-color: #0f766e;
+      color: white;
+      text-decoration: none;
+      padding: 0.3rem 0.6rem;
+      font-size: 0.8rem;
+      border-radius: 6px;
+      margin-left: 0.5rem;
+    }
+
     /* Hero Login Styling */
     #login-screen {
       min-height: 100vh;
@@ -343,6 +353,10 @@
             <label>Set Next Rent Due Date</label>
             <input type="date" id="updatedNextDueDate" required>
           </div>
+          <div class="form-group">
+            <label><i class="fa-solid fa-camera"></i> Receipt Image (Optional)</label>
+            <input type="file" id="receiptImage" accept="image/*">
+          </div>
           <button type="submit" style="width: 100%; background-color: #0284c7;"><i class="fa-solid fa-check"></i> Save Payment</button>
         </form>
       </div>
@@ -476,8 +490,9 @@
     const paymentHistoryHTML = (tenant.payments && tenant.payments.length > 0) ? `
       <ul style="padding-left: 1.2rem; color: var(--text-main);">
         ${tenant.payments.map(p => `
-          <li style="margin-bottom: 0.4rem;">
+          <li style="margin-bottom: 0.6rem;">
             <strong>UGX ${Number(p.amount).toLocaleString()}</strong> paid on ${formatDateWithDay(p.date)}
+            ${p.receiptImage ? `<a href="${p.receiptImage}" download="Receipt_${tenant.unit}_${p.date}.jpg" target="_blank" class="btn-receipt"><i class="fa-solid fa-receipt"></i> View / Download Receipt</a>` : ''}
           </li>
         `).join('')}
       </ul>
@@ -541,20 +556,34 @@
     const paidAmount = parseFloat(document.getElementById('paidAmount').value);
     const paymentDate = document.getElementById('paymentDate').value;
     const nextDueDate = document.getElementById('updatedNextDueDate').value;
+    const receiptFileInput = document.getElementById('receiptImage');
 
     const tenantIndex = tenants.findIndex(t => t.id === tenantId);
     if (tenantIndex !== -1) {
       if (!tenants[tenantIndex].payments) tenants[tenantIndex].payments = [];
-      
-      tenants[tenantIndex].payments.push({
-        amount: paidAmount,
-        date: paymentDate
-      });
-      tenants[tenantIndex].nextDueDate = nextDueDate;
 
-      saveTenants();
-      alert("Payment recorded and next rent due date updated!");
-      e.target.reset();
+      const recordAndSavePayment = (receiptBase64 = null) => {
+        tenants[tenantIndex].payments.push({
+          amount: paidAmount,
+          date: paymentDate,
+          receiptImage: receiptBase64
+        });
+        tenants[tenantIndex].nextDueDate = nextDueDate;
+
+        saveTenants();
+        alert("Payment recorded and next rent due date updated!");
+        e.target.reset();
+      };
+
+      if (receiptFileInput.files && receiptFileInput.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          recordAndSavePayment(evt.target.result);
+        };
+        reader.readAsDataURL(receiptFileInput.files[0]);
+      } else {
+        recordAndSavePayment(null);
+      }
     }
   });
 
