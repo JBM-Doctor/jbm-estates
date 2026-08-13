@@ -393,6 +393,20 @@
 
   let tenants = [];
 
+  // Helper function to format YYYY-MM-DD into "Day, Month DD, YYYY"
+  function formatDateWithDay(dateString) {
+    if (!dateString) return 'Not set';
+    const [year, month, day] = dateString.split('-');
+    const dateObj = new Date(year, month - 1, day);
+    
+    return dateObj.toLocaleDateString('en-US', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  }
+
   db.ref('tenants').on('value', (snapshot) => {
     const data = snapshot.val();
     tenants = data ? Object.values(data) : [];
@@ -446,6 +460,8 @@
     
     portal.style.display = 'block';
 
+    const formattedDueDate = formatDateWithDay(tenant.nextDueDate);
+
     const waterBillInfo = tenant.waterBill ? `
       <div class="bill-box">
         <strong><i class="fa-solid fa-droplet"></i> Water Bill Owed: UGX ${Math.round(tenant.waterBill.totalCost).toLocaleString()}</strong><br>
@@ -457,7 +473,7 @@
       <ul style="padding-left: 1.2rem; color: var(--text-main);">
         ${tenant.payments.map(p => `
           <li style="margin-bottom: 0.4rem;">
-            <strong>UGX ${Number(p.amount).toLocaleString()}</strong> paid on ${p.date}
+            <strong>UGX ${Number(p.amount).toLocaleString()}</strong> paid on ${formatDateWithDay(p.date)}
           </li>
         `).join('')}
       </ul>
@@ -472,7 +488,7 @@
           <strong>Monthly Rent:</strong> UGX ${Number(tenant.rent).toLocaleString()}
         </div>
         <div style="font-size: 1.1rem; margin-bottom: 1.5rem; padding: 0.8rem; background-color: #f1f5f9; border-radius: 8px; border-left: 4px solid #0284c7;">
-          <strong>Next Rent Due Date:</strong> <span style="color: var(--danger); font-weight:bold;">${tenant.nextDueDate || 'Not set'}</span>
+          <strong>Next Rent Due Date:</strong> <br><span style="color: var(--danger); font-weight:bold;">${formattedDueDate}</span>
         </div>
 
         <h3><i class="fa-solid fa-faucet"></i> Water Utilities</h3>
@@ -594,7 +610,8 @@
     if (!dueDateString) return null;
     const today = new Date();
     today.setHours(0,0,0,0);
-    const due = new Date(dueDateString);
+    const [year, month, day] = dueDateString.split('-');
+    const due = new Date(year, month - 1, day);
     due.setHours(0,0,0,0);
     const diffTime = due - today;
     return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
@@ -626,6 +643,7 @@
       }
 
       const daysLeft = getDaysUntilDue(t.nextDueDate);
+      const formattedDueDate = formatDateWithDay(t.nextDueDate);
       let alertBadge = '';
       let whatsappButton = '';
 
@@ -633,14 +651,14 @@
         const statusText = daysLeft < 0 ? `Overdue by ${Math.abs(daysLeft)} days` : (daysLeft === 0 ? `Due Today` : `Due in ${daysLeft} days`);
         alertBadge = `<div class="notice-badge"><i class="fa-solid fa-triangle-exclamation"></i> Notice: Rent ${statusText}</div>`;
         
-        const message = `Hello ${t.name}, this is a friendly reminder from JBM Estates LTD. Your rent for ${t.unit} (UGX ${Number(t.rent).toLocaleString()}) is due on ${t.nextDueDate}. Thank you!`;
+        const message = `Hello ${t.name}, this is a friendly reminder from JBM Estates LTD. Your rent for ${t.unit} (UGX ${Number(t.rent).toLocaleString()}) is due on ${formattedDueDate}. Thank you!`;
         const encodedMessage = encodeURIComponent(message);
         
         if (t.phone) {
           whatsappButton = `<a href="https://wa.me/${t.phone}?text=${encodedMessage}" target="_blank" class="btn btn-whatsapp"><i class="fa-brands fa-whatsapp"></i> Send Rent Reminder</a>`;
         }
       } else if (t.phone) {
-        const message = `Hello ${t.name}, this is JBM Estates LTD. Your rent is due on ${t.nextDueDate}. Thank you!`;
+        const message = `Hello ${t.name}, this is JBM Estates LTD. Your rent is due on ${formattedDueDate}. Thank you!`;
         const encodedMessage = encodeURIComponent(message);
         whatsappButton = `<a href="https://wa.me/${t.phone}?text=${encodedMessage}" target="_blank" class="btn btn-whatsapp"><i class="fa-brands fa-whatsapp"></i> Open Chat</a>`;
       }
@@ -654,7 +672,7 @@
         <div style="margin-top:0.5rem; font-size:0.9rem;"><strong>PIN:</strong> ${t.pin || 'None'}</div>
         <div style="font-size:0.9rem;"><strong>WhatsApp:</strong> ${t.phone || 'Not set'}</div>
         <div style="font-size:0.9rem;"><strong>Rent:</strong> UGX ${Number(t.rent).toLocaleString()}</div>
-        <div style="color: var(--danger); font-size:0.9rem;"><strong>Next Due:</strong> ${t.nextDueDate || 'Not set'}</div>
+        <div style="color: var(--danger); font-size:0.9rem;"><strong>Next Due:</strong> ${formattedDueDate}</div>
         ${waterHTML}
         <div>${whatsappButton}</div>
       `;
