@@ -5,10 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>JBM Estates - Portal</title>
 
-  <!-- Modern Real Estate Favicon (SVG & Emoji Fallback) -->
+  <!-- Modern Real Estate Favicon -->
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%230f766e'/><path d='M50 18 L18 45 L28 45 L28 78 L42 78 L42 60 L58 60 L58 78 L72 78 L72 45 L82 45 Z' fill='%23ffffff'/><circle cx='68' cy='32' r='4' fill='%2338bdf8'/></svg>">
-  <link rel="alternate icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏢</text></svg>">
-
+  
   <!-- Google Fonts & Font Awesome Icons -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -24,20 +23,16 @@
       --primary: #1e293b;
       --accent: #0f766e;
       --accent-hover: #115e59;
-      --bg-gradient: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
       --card-bg: rgba(255, 255, 255, 0.95);
       --text-main: #0f172a;
       --text-muted: #64748b;
       --danger: #ef4444;
       --whatsapp: #25d366;
       --radius: 12px;
-      --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+      --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
     }
 
-    * {
-      box-sizing: border-box;
-      transition: all 0.2s ease;
-    }
+    * { box-sizing: border-box; transition: all 0.2s ease; }
 
     body {
       font-family: 'Plus Jakarta Sans', sans-serif;
@@ -113,9 +108,7 @@
       gap: 0.5rem;
     }
 
-    .form-group {
-      margin-bottom: 1.2rem;
-    }
+    .form-group { margin-bottom: 1.2rem; }
 
     label {
       display: block;
@@ -161,21 +154,14 @@
       transform: translateY(-1px);
     }
 
-    .btn-danger {
-      background-color: var(--danger);
-    }
-    .btn-danger:hover {
-      background-color: #dc2626;
-    }
+    .btn-danger { background-color: var(--danger); }
+    .btn-danger:hover { background-color: #dc2626; }
 
     .btn-whatsapp {
       background-color: var(--whatsapp);
       color: white;
       text-decoration: none;
       margin-top: 0.8rem;
-    }
-    .btn-whatsapp:hover {
-      background-color: #20ba5a;
     }
 
     .btn-doc {
@@ -184,9 +170,6 @@
       text-decoration: none;
       width: 100%;
       margin-top: 0.5rem;
-    }
-    .btn-doc:hover {
-      background-color: #1d4ed8;
     }
 
     .btn-receipt {
@@ -199,7 +182,6 @@
       margin-left: 0.5rem;
     }
 
-    /* Hero Login Styling */
     #login-screen {
       min-height: 100vh;
       display: flex;
@@ -228,13 +210,22 @@
       background: #ffffff;
       border-radius: 8px;
       border: 1px solid #e2e8f0;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.02);
     }
 
     .bill-box {
       background-color: #fefce8;
       border: 1px solid #fef08a;
       color: #713f12;
+      padding: 0.8rem;
+      border-radius: 8px;
+      margin-top: 0.6rem;
+      font-size: 0.9rem;
+    }
+
+    .elec-box {
+      background-color: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      color: #166534;
       padding: 0.8rem;
       border-radius: 8px;
       margin-top: 0.6rem;
@@ -339,7 +330,7 @@
         <form id="paymentForm">
           <div class="form-group">
             <label>Select Unit</label>
-            <select id="paymentTenantSelect" required></select>
+            <select id="paymentTenantSelect" class="unitSelect" required></select>
           </div>
           <div class="form-group">
             <label>Amount Paid (UGX)</label>
@@ -366,7 +357,7 @@
         <form id="waterForm">
           <div class="form-group">
             <label>Select Unit</label>
-            <select id="waterTenantSelect" required></select>
+            <select id="waterTenantSelect" class="unitSelect" required></select>
           </div>
           <div class="form-group">
             <label>Previous Reading (m³)</label>
@@ -380,7 +371,27 @@
             <label>Rate per Unit (UGX)</label>
             <input type="number" id="waterRate" step="1" value="6000" required>
           </div>
-          <button type="submit" style="width: 100%;"><i class="fa-solid fa-calculator"></i> Calculate Bill</button>
+          <button type="submit" style="width: 100%;"><i class="fa-solid fa-calculator"></i> Calculate Water Bill</button>
+        </form>
+      </div>
+
+      <!-- ELECTRICITY FORM -->
+      <div class="card">
+        <h2><i class="fa-solid fa-bolt"></i> Log Electricity Submeter</h2>
+        <form id="elecForm">
+          <div class="form-group">
+            <label>Select Unit</label>
+            <select id="elecTenantSelect" class="unitSelect" required></select>
+          </div>
+          <div class="form-group">
+            <label>Previous Reading (kWh)</label>
+            <input type="number" id="prevElecReading" step="0.1" required>
+          </div>
+          <div class="form-group">
+            <label>Current Reading (kWh)</label>
+            <input type="number" id="currElecReading" step="0.1" required>
+          </div>
+          <button type="submit" style="width: 100%; background-color: #eab308; color: #000;"><i class="fa-solid fa-calculator"></i> Calculate Electricity Bill</button>
         </form>
       </div>
     </div>
@@ -411,18 +422,25 @@
 
   let tenants = [];
 
-  // Helper function to format YYYY-MM-DD into "Day, Month DD, YYYY"
   function formatDateWithDay(dateString) {
     if (!dateString) return 'Not set';
     const [year, month, day] = dateString.split('-');
     const dateObj = new Date(year, month - 1, day);
-    
     return dateObj.toLocaleDateString('en-US', {
       weekday: 'long',
       year: 'numeric',
       month: 'long',
       day: 'numeric'
     });
+  }
+
+  // Tiered Electricity Calculation
+  function calculateElectricityCost(units) {
+    if (units <= 0) return 0;
+    if (units <= 5) return 10000;
+    if (units <= 10) return 20000;
+    const extraUnits = units - 10;
+    return 20000 + (extraUnits * 2000);
   }
 
   db.ref('tenants').on('value', (snapshot) => {
@@ -487,6 +505,13 @@
       </div>
     ` : '<p style="color: var(--text-muted);">No active water bill recorded.</p>';
 
+    const elecBillInfo = tenant.elecBill ? `
+      <div class="elec-box">
+        <strong><i class="fa-solid fa-bolt"></i> Electricity Owed: UGX ${Math.round(tenant.elecBill.totalCost).toLocaleString()}</strong><br>
+        Consumption: ${tenant.elecBill.unitsUsed.toFixed(1)} kWh (${tenant.elecBill.prev} to ${tenant.elecBill.curr})
+      </div>
+    ` : '<p style="color: var(--text-muted);">No active electricity bill recorded.</p>';
+
     const paymentHistoryHTML = (tenant.payments && tenant.payments.length > 0) ? `
       <ul style="padding-left: 1.2rem; color: var(--text-main);">
         ${tenant.payments.map(p => `
@@ -512,6 +537,9 @@
 
         <h3><i class="fa-solid fa-faucet"></i> Water Utilities</h3>
         ${waterBillInfo}
+
+        <h3 style="margin-top: 1.2rem;"><i class="fa-solid fa-bolt"></i> Electricity Submeter</h3>
+        ${elecBillInfo}
 
         <hr style="border:none; border-top:1px solid #e2e8f0; margin: 1.5rem 0;">
 
@@ -543,6 +571,7 @@
       nextDueDate: document.getElementById('nextDueDate').value,
       pin: document.getElementById('tenantPin').value,
       waterBill: null,
+      elecBill: null,
       payments: []
     };
     tenants.push(newTenant);
@@ -610,6 +639,29 @@
     }
   });
 
+  document.getElementById('elecForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const tenantId = document.getElementById('elecTenantSelect').value;
+    const prev = parseFloat(document.getElementById('prevElecReading').value);
+    const curr = parseFloat(document.getElementById('currElecReading').value);
+
+    if (curr < prev) {
+      alert("Current electricity reading cannot be lower than previous reading.");
+      return;
+    }
+
+    const unitsUsed = curr - prev;
+    const totalCost = calculateElectricityCost(unitsUsed);
+
+    const tenantIndex = tenants.findIndex(t => t.id === tenantId);
+    if (tenantIndex !== -1) {
+      tenants[tenantIndex].elecBill = { prev, curr, unitsUsed, totalCost };
+      saveTenants();
+      e.target.reset();
+      alert(`Electricity Bill Saved! Total: UGX ${totalCost.toLocaleString()}`);
+    }
+  });
+
   function deleteTenant(id) {
     if (confirm("Are you sure you want to remove this unit/tenant?")) {
       tenants = tenants.filter(t => t.id !== id);
@@ -618,24 +670,15 @@
   }
 
   function populateSelects() {
-    const waterSelect = document.getElementById('waterTenantSelect');
-    const paymentSelect = document.getElementById('paymentTenantSelect');
-    
-    if (!waterSelect || !paymentSelect) return;
-    
-    waterSelect.innerHTML = '';
-    paymentSelect.innerHTML = '';
-
-    tenants.forEach(t => {
-      const option1 = document.createElement('option');
-      option1.value = t.id;
-      option1.textContent = `${t.unit} - ${t.name}`;
-      waterSelect.appendChild(option1);
-
-      const option2 = document.createElement('option');
-      option2.value = t.id;
-      option2.textContent = `${t.unit} - ${t.name}`;
-      paymentSelect.appendChild(option2);
+    const selects = document.querySelectorAll('.unitSelect');
+    selects.forEach(select => {
+      select.innerHTML = '';
+      tenants.forEach(t => {
+        const option = document.createElement('option');
+        option.value = t.id;
+        option.textContent = `${t.unit} - ${t.name}`;
+        select.appendChild(option);
+      });
     });
   }
 
@@ -675,6 +718,16 @@
         `;
       }
 
+      let elecHTML = '<p style="font-size:0.85rem; color: var(--text-muted); margin:0.4rem 0;"><em>No electricity reading logged.</em></p>';
+      if (t.elecBill) {
+        elecHTML = `
+          <div class="elec-box">
+            <strong>Electricity Owed: UGX ${Math.round(t.elecBill.totalCost).toLocaleString()}</strong><br>
+            Reading: ${t.elecBill.prev} → ${t.elecBill.curr} (${t.elecBill.unitsUsed.toFixed(1)} kWh)
+          </div>
+        `;
+      }
+
       const daysLeft = getDaysUntilDue(t.nextDueDate);
       const formattedDueDate = formatDateWithDay(t.nextDueDate);
       let alertBadge = '';
@@ -707,6 +760,7 @@
         <div style="font-size:0.9rem;"><strong>Rent:</strong> UGX ${Number(t.rent).toLocaleString()}</div>
         <div style="color: var(--danger); font-size:0.9rem;"><strong>Next Due:</strong> ${formattedDueDate}</div>
         ${waterHTML}
+        ${elecHTML}
         <div>${whatsappButton}</div>
       `;
       list.appendChild(card);
