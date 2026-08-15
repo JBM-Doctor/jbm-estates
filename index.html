@@ -27,7 +27,9 @@
       --text-main: #0f172a;
       --text-muted: #64748b;
       --danger: #ef4444;
+      --success: #10b981;
       --whatsapp: #25d366;
+      --mtn-yellow: #ffcc00;
       --radius: 12px;
       --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
     }
@@ -157,11 +159,14 @@
     .btn-danger { background-color: var(--danger); }
     .btn-danger:hover { background-color: #dc2626; }
 
+    .btn-success { background-color: var(--success); color: white; padding: 0.4rem 0.8rem; font-size: 0.8rem; border-radius: 6px; }
+
     .btn-whatsapp {
       background-color: var(--whatsapp);
       color: white;
       text-decoration: none;
-      margin-top: 0.8rem;
+      margin-top: 0.5rem;
+      width: 100%;
     }
 
     .btn-doc {
@@ -232,6 +237,15 @@
       font-size: 0.9rem;
     }
 
+    .mtn-box {
+      background-color: #fffbe3;
+      border: 2px dashed #eab308;
+      color: #713f12;
+      padding: 1.2rem;
+      border-radius: 10px;
+      margin-top: 1.2rem;
+    }
+
     .notice-badge {
       background-color: #fff7ed;
       color: #c2410c;
@@ -244,6 +258,15 @@
       display: flex;
       align-items: center;
       gap: 0.5rem;
+    }
+
+    .paid-badge {
+      background-color: #d1fae5;
+      color: #065f46;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: bold;
     }
   </style>
 </head>
@@ -375,7 +398,6 @@
         </form>
       </div>
 
-      <!-- ELECTRICITY FORM -->
       <div class="card">
         <h2><i class="fa-solid fa-bolt"></i> Log Electricity Submeter</h2>
         <form id="elecForm">
@@ -417,6 +439,14 @@
     appId: "1:457323987874:web:355516c8fed175619728fb"
   };
 
+  // REAL MTN MOBILE MONEY PAYMENT CONFIGURATION
+  const mtnMomoConfig = {
+    merchantName: "JBM ESTATES LTD",
+    momoNumber: "0774500872",
+    merchantCode: "99550946",
+    landlordWhatsApp: "256774500872"
+  };
+
   firebase.initializeApp(firebaseConfig);
   const db = firebase.database();
 
@@ -434,7 +464,6 @@
     });
   }
 
-  // Tiered Electricity Calculation
   function calculateElectricityCost(units) {
     if (units <= 0) return 0;
     if (units <= 5) return 10000;
@@ -485,6 +514,19 @@
     }
   }
 
+  function markBillPaid(tenantId, billType) {
+    const tenantIndex = tenants.findIndex(t => t.id === tenantId);
+    if (tenantIndex !== -1) {
+      if (billType === 'water' && tenants[tenantIndex].waterBill) {
+        tenants[tenantIndex].waterBill.status = 'paid';
+      } else if (billType === 'elec' && tenants[tenantIndex].elecBill) {
+        tenants[tenantIndex].elecBill.status = 'paid';
+      }
+      saveTenants();
+      alert("Bill status updated to PAID successfully!");
+    }
+  }
+
   function renderSingleTenantView(tenant) {
     let portal = document.getElementById('tenant-portal-view');
     if (!portal) {
@@ -498,19 +540,46 @@
 
     const formattedDueDate = formatDateWithDay(tenant.nextDueDate);
 
-    const waterBillInfo = tenant.waterBill ? `
-      <div class="bill-box">
-        <strong><i class="fa-solid fa-droplet"></i> Water Bill Owed: UGX ${Math.round(tenant.waterBill.totalCost).toLocaleString()}</strong><br>
-        Consumption: ${tenant.waterBill.unitsUsed.toFixed(1)} m³ (${tenant.waterBill.prev} to ${tenant.waterBill.curr})
-      </div>
-    ` : '<p style="color: var(--text-muted);">No active water bill recorded.</p>';
+    let waterBillInfo = '<p style="color: var(--text-muted);">No active water bill recorded.</p>';
+    let waterAmount = 0;
+    if (tenant.waterBill) {
+      const isPaid = tenant.waterBill.status === 'paid';
+      if (!isPaid) waterAmount = tenant.waterBill.totalCost;
+      waterBillInfo = `
+        <div class="bill-box" style="${isPaid ? 'background-color:#f0fdf4; border-color:#bbf7d0; color:#166534;' : ''}">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <strong><i class="fa-solid fa-droplet"></i> Water Bill: UGX ${Math.round(tenant.waterBill.totalCost).toLocaleString()}</strong>
+            <span class="${isPaid ? 'paid-badge' : 'notice-badge'}" style="margin:0;">${isPaid ? 'PAID' : 'UNPAID'}</span>
+          </div>
+          <div style="margin-top:0.4rem;">Consumption: ${tenant.waterBill.unitsUsed.toFixed(1)} m³ (${tenant.waterBill.prev} to ${tenant.waterBill.curr})</div>
+        </div>
+      `;
+    }
 
-    const elecBillInfo = tenant.elecBill ? `
-      <div class="elec-box">
-        <strong><i class="fa-solid fa-bolt"></i> Electricity Owed: UGX ${Math.round(tenant.elecBill.totalCost).toLocaleString()}</strong><br>
-        Consumption: ${tenant.elecBill.unitsUsed.toFixed(1)} kWh (${tenant.elecBill.prev} to ${tenant.elecBill.curr})
-      </div>
-    ` : '<p style="color: var(--text-muted);">No active electricity bill recorded.</p>';
+    let elecBillInfo = '<p style="color: var(--text-muted);">No active electricity bill recorded.</p>';
+    let elecAmount = 0;
+    if (tenant.elecBill) {
+      const isPaid = tenant.elecBill.status === 'paid';
+      if (!isPaid) elecAmount = tenant.elecBill.totalCost;
+      elecBillInfo = `
+        <div class="elec-box" style="${isPaid ? 'background-color:#f0fdf4; border-color:#bbf7d0; color:#166534;' : ''}">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <strong><i class="fa-solid fa-bolt"></i> Electricity Submeter: UGX ${Math.round(tenant.elecBill.totalCost).toLocaleString()}</strong>
+            <span class="${isPaid ? 'paid-badge' : 'notice-badge'}" style="margin:0;">${isPaid ? 'PAID' : 'UNPAID'}</span>
+          </div>
+          <div style="margin-top:0.4rem;">Consumption: ${tenant.elecBill.unitsUsed.toFixed(1)} kWh (${tenant.elecBill.prev} to ${tenant.elecBill.curr})</div>
+        </div>
+      `;
+    }
+
+    const proofMessage = `Hello Landlord,\n\nI have made a payment for Unit ${tenant.unit} (${tenant.name}):\n\n` +
+      `• Unit: ${tenant.unit}\n` +
+      `• Tenant Name: ${tenant.name}\n` +
+      `• Payment Description: Rent / Water / Electricity\n` +
+      `• Paid Amount: UGX [ENTER AMOUNT]\n\n` +
+      `Please find attached my payment screenshot / Mobile Money SMS confirmation. Kindly verify and update my portal status. Thank you!`;
+    
+    const encodedProofMsg = encodeURIComponent(proofMessage);
 
     const paymentHistoryHTML = (tenant.payments && tenant.payments.length > 0) ? `
       <ul style="padding-left: 1.2rem; color: var(--text-main);">
@@ -540,6 +609,28 @@
 
         <h3 style="margin-top: 1.2rem;"><i class="fa-solid fa-bolt"></i> Electricity Submeter</h3>
         ${elecBillInfo}
+
+        <div class="mtn-box">
+          <h3 style="margin:0 0 0.5rem 0; color:#000;"><i class="fa-solid fa-mobile-screen-button"></i> Pay via MTN Mobile Money</h3>
+          <p style="font-size:0.88rem; margin:0 0 0.5rem 0;">To clear your rent or pending utility bills, pay directly via MTN MoMo using options below:</p>
+          <div style="font-size:0.92rem; font-weight:bold; color:#000; line-height: 1.5;">
+            <strong>OPTION 1: MOMO PAY (Merchant Code)</strong><br>
+            • Dial <strong>*165*3*CODE#</strong><br>
+            • Merchant Code: <span style="background-color: var(--mtn-yellow); padding:2px 6px; border-radius:4px;">${mtnMomoConfig.merchantCode}</span> (${mtnMomoConfig.merchantName})<br><br>
+            <strong>OPTION 2: DIRECT MOBILE MONEY SEND</strong><br>
+            • Send directly to: <span style="background-color: var(--mtn-yellow); padding:2px 6px; border-radius:4px;">${mtnMomoConfig.momoNumber}</span><br>
+            • Account Name: <strong>${mtnMomoConfig.merchantName}</strong><br><br>
+            <strong>IMPORTANT PAYMENT REASON / REFERENCE:</strong><br>
+            • Enter Reason as: <strong>Unit Number & Bill Name</strong><br>
+            • Example: <em>"${tenant.unit} Water Bill"</em> or <em>"${tenant.unit} Rent"</em>
+          </div>
+          <div style="margin-top: 1rem;">
+            <a href="https://wa.me/${mtnMomoConfig.landlordWhatsApp}?text=${encodedProofMsg}" target="_blank" class="btn btn-whatsapp" style="font-size:0.9rem;">
+              <i class="fa-brands fa-whatsapp"></i> Notify Landlord / Send Payment Proof
+            </a>
+          </div>
+          <p style="font-size:0.8rem; color:var(--text-muted); margin:0.5rem 0 0 0;"><em>Note: Upon verification of payment proof, the landlord clears the bill on your portal.</em></p>
+        </div>
 
         <hr style="border:none; border-top:1px solid #e2e8f0; margin: 1.5rem 0;">
 
@@ -633,9 +724,10 @@
 
     const tenantIndex = tenants.findIndex(t => t.id === tenantId);
     if (tenantIndex !== -1) {
-      tenants[tenantIndex].waterBill = { prev, curr, unitsUsed, totalCost };
+      tenants[tenantIndex].waterBill = { prev, curr, unitsUsed, totalCost, status: 'unpaid' };
       saveTenants();
       e.target.reset();
+      alert(`Water Bill Saved! Total: UGX ${totalCost.toLocaleString()}`);
     }
   });
 
@@ -655,7 +747,7 @@
 
     const tenantIndex = tenants.findIndex(t => t.id === tenantId);
     if (tenantIndex !== -1) {
-      tenants[tenantIndex].elecBill = { prev, curr, unitsUsed, totalCost };
+      tenants[tenantIndex].elecBill = { prev, curr, unitsUsed, totalCost, status: 'unpaid' };
       saveTenants();
       e.target.reset();
       alert(`Electricity Bill Saved! Total: UGX ${totalCost.toLocaleString()}`);
@@ -709,21 +801,31 @@
       card.className = 'tenant-card';
       
       let waterHTML = '<p style="font-size:0.85rem; color: var(--text-muted); margin:0.4rem 0;"><em>No water reading logged.</em></p>';
+      let waterUnpaid = 0;
       if (t.waterBill) {
+        const isPaid = t.waterBill.status === 'paid';
+        if (!isPaid) waterUnpaid = t.waterBill.totalCost;
         waterHTML = `
-          <div class="bill-box">
-            <strong>Water Owed: UGX ${Math.round(t.waterBill.totalCost).toLocaleString()}</strong><br>
-            Reading: ${t.waterBill.prev} → ${t.waterBill.curr} (${t.waterBill.unitsUsed.toFixed(1)} m³)
+          <div class="bill-box" style="${isPaid ? 'background-color:#f0fdf4; border-color:#bbf7d0; color:#166534;' : ''}">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <strong>Water: UGX ${Math.round(t.waterBill.totalCost).toLocaleString()} (${t.waterBill.unitsUsed.toFixed(1)} m³)</strong>
+              ${isPaid ? '<span class="paid-badge">PAID</span>' : `<button onclick="markBillPaid('${t.id}', 'water')" class="btn-success"><i class="fa-solid fa-check"></i> Mark Paid</button>`}
+            </div>
           </div>
         `;
       }
 
       let elecHTML = '<p style="font-size:0.85rem; color: var(--text-muted); margin:0.4rem 0;"><em>No electricity reading logged.</em></p>';
+      let elecUnpaid = 0;
       if (t.elecBill) {
+        const isPaid = t.elecBill.status === 'paid';
+        if (!isPaid) elecUnpaid = t.elecBill.totalCost;
         elecHTML = `
-          <div class="elec-box">
-            <strong>Electricity Owed: UGX ${Math.round(t.elecBill.totalCost).toLocaleString()}</strong><br>
-            Reading: ${t.elecBill.prev} → ${t.elecBill.curr} (${t.elecBill.unitsUsed.toFixed(1)} kWh)
+          <div class="elec-box" style="${isPaid ? 'background-color:#f0fdf4; border-color:#bbf7d0; color:#166534;' : ''}">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <strong>Electricity: UGX ${Math.round(t.elecBill.totalCost).toLocaleString()} (${t.elecBill.unitsUsed.toFixed(1)} kWh)</strong>
+              ${isPaid ? '<span class="paid-badge">PAID</span>' : `<button onclick="markBillPaid('${t.id}', 'elec')" class="btn-success"><i class="fa-solid fa-check"></i> Mark Paid</button>`}
+            </div>
           </div>
         `;
       }
@@ -731,22 +833,25 @@
       const daysLeft = getDaysUntilDue(t.nextDueDate);
       const formattedDueDate = formatDateWithDay(t.nextDueDate);
       let alertBadge = '';
-      let whatsappButton = '';
+      
+      const totalUtilityUnpaid = waterUnpaid + elecUnpaid;
+
+      const utilityWhatsAppMsg = `Hello ${t.name},\n\nHere is your monthly bill breakdown for Unit ${t.unit} from JBM ESTATES LTD:\n` +
+        `• Monthly Rent: UGX ${Number(t.rent).toLocaleString()}\n` +
+        `• Water Bill: UGX ${t.waterBill ? Math.round(t.waterBill.totalCost).toLocaleString() : 0}\n` +
+        `• Electricity Bill: UGX ${t.elecBill ? Math.round(t.elecBill.totalCost).toLocaleString() : 0}\n\n` +
+        `TOTAL DUE: UGX ${Number(t.rent + totalUtilityUnpaid).toLocaleString()}\n\n` +
+        `Payment Options:\n` +
+        `1. MoMo Pay Code: *165*3*CODE# -> Merchant Code: ${mtnMomoConfig.merchantCode}\n` +
+        `2. Direct MoMo Number: ${mtnMomoConfig.momoNumber} (${mtnMomoConfig.merchantName})\n` +
+        `Reason/Ref: ${t.unit} [Bill Name]\n\nThank you!`;
+
+      const encodedMsg = encodeURIComponent(utilityWhatsAppMsg);
+      const whatsappButton = t.phone ? `<a href="https://wa.me/${t.phone}?text=${encodedMsg}" target="_blank" class="btn btn-whatsapp"><i class="fa-brands fa-whatsapp"></i> Send Detailed Bill via WhatsApp</a>` : '';
 
       if (daysLeft !== null && daysLeft <= 6) {
         const statusText = daysLeft < 0 ? `Overdue by ${Math.abs(daysLeft)} days` : (daysLeft === 0 ? `Due Today` : `Due in ${daysLeft} days`);
         alertBadge = `<div class="notice-badge"><i class="fa-solid fa-triangle-exclamation"></i> Notice: Rent ${statusText}</div>`;
-        
-        const message = `Hello ${t.name}, this is a friendly reminder from JBM Estates LTD. Your rent for ${t.unit} (UGX ${Number(t.rent).toLocaleString()}) is due on ${formattedDueDate}. Thank you!`;
-        const encodedMessage = encodeURIComponent(message);
-        
-        if (t.phone) {
-          whatsappButton = `<a href="https://wa.me/${t.phone}?text=${encodedMessage}" target="_blank" class="btn btn-whatsapp"><i class="fa-brands fa-whatsapp"></i> Send Rent Reminder</a>`;
-        }
-      } else if (t.phone) {
-        const message = `Hello ${t.name}, this is JBM Estates LTD. Your rent is due on ${formattedDueDate}. Thank you!`;
-        const encodedMessage = encodeURIComponent(message);
-        whatsappButton = `<a href="https://wa.me/${t.phone}?text=${encodedMessage}" target="_blank" class="btn btn-whatsapp"><i class="fa-brands fa-whatsapp"></i> Open Chat</a>`;
       }
 
       card.innerHTML = `
