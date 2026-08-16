@@ -274,7 +274,7 @@
 
 <header>
   <h1><i class="fa-solid fa-building-user"></i> JBM Estates App</h1>
-  <div class="badge-status"><i class="fa-solid fa-cloud"></i> Cloud Synced (UGX)</div>
+  <div class="badge-status" id="connection-status"><i class="fa-solid fa-cloud"></i> Synced</div>
 </header>
 
 <!-- LOGIN SCREEN -->
@@ -421,7 +421,7 @@
     <div>
       <div class="card">
         <h2><i class="fa-solid fa-city"></i> Property Overview</h2>
-        <div id="tenantList"></div>
+        <div id="tenantList">Loading property data...</div>
       </div>
     </div>
   </div>
@@ -450,7 +450,8 @@
   firebase.initializeApp(firebaseConfig);
   const db = firebase.database();
 
-  let tenants = [];
+  // LOCAL STORAGE FALLBACK LOAD
+  let tenants = JSON.parse(localStorage.getItem('jbm_tenants_cache') || '[]');
 
   function formatDateWithDay(dateString) {
     if (!dateString) return 'Not set';
@@ -472,15 +473,32 @@
     return 20000 + (extraUnits * 2000);
   }
 
+  // FIREBASE ONLINE SYNC WITH ERROR & FALLBACK HANDLING
   db.ref('tenants').on('value', (snapshot) => {
     const data = snapshot.val();
     tenants = data ? Object.values(data) : [];
+    localStorage.setItem('jbm_tenants_cache', JSON.stringify(tenants));
+    
+    document.getElementById('connection-status').innerHTML = '<i class="fa-solid fa-cloud"></i> Synced';
+    document.getElementById('connection-status').style.color = '#10b981';
+    
+    renderTenants();
+    populateSelects();
+  }, (error) => {
+    console.warn("Firebase offline or permission error. Using local cache.", error);
+    document.getElementById('connection-status').innerHTML = '<i class="fa-solid fa-wifi"></i> Offline Mode';
+    document.getElementById('connection-status').style.color = '#ef4444';
     renderTenants();
     populateSelects();
   });
 
   function saveTenants() {
-    db.ref('tenants').set(tenants);
+    localStorage.setItem('jbm_tenants_cache', JSON.stringify(tenants));
+    db.ref('tenants').set(tenants).catch(err => {
+      console.warn("Could not push to Firebase online, saved locally.", err);
+    });
+    renderTenants();
+    populateSelects();
   }
 
   function showLandlordLogin() {
@@ -490,6 +508,8 @@
     if (enteredPassword === landlordPassword) {
       document.getElementById('login-screen').style.display = 'none';
       document.getElementById('landlord-controls').style.display = 'block';
+      renderTenants();
+      populateSelects();
     } else if (enteredPassword !== null) {
       alert("Incorrect Landlord Password! Access Denied.");
     }
@@ -503,7 +523,12 @@
     const unitName = document.getElementById('loginUnit').value.trim();
     const enteredPin = document.getElementById('loginPin').value.trim();
 
-    const matchedTenant = tenants.find(t => t.unit === unitName && t.pin === enteredPin);
+    if (tenants.length === 0) {
+      alert("No property data loaded. Please check your internet connection or verify landlord registration.");
+      return;
+    }
+
+    const matchedTenant = tenants.find(t => t.unit.toLowerCase() === unitName.toLowerCase() && t.pin === enteredPin);
 
     if (matchedTenant) {
       document.getElementById('login-screen').style.display = 'none';
@@ -541,10 +566,8 @@
     const formattedDueDate = formatDateWithDay(tenant.nextDueDate);
 
     let waterBillInfo = '<p style="color: var(--text-muted);">No active water bill recorded.</p>';
-    let waterAmount = 0;
     if (tenant.waterBill) {
       const isPaid = tenant.waterBill.status === 'paid';
-      if (!isPaid) waterAmount = tenant.waterBill.totalCost;
       waterBillInfo = `
         <div class="bill-box" style="${isPaid ? 'background-color:#f0fdf4; border-color:#bbf7d0; color:#166534;' : ''}">
           <div style="display:flex; justify-content:space-between; align-items:center;">
@@ -557,10 +580,8 @@
     }
 
     let elecBillInfo = '<p style="color: var(--text-muted);">No active electricity bill recorded.</p>';
-    let elecAmount = 0;
     if (tenant.elecBill) {
       const isPaid = tenant.elecBill.status === 'paid';
-      if (!isPaid) elecAmount = tenant.elecBill.totalCost;
       elecBillInfo = `
         <div class="elec-box" style="${isPaid ? 'background-color:#f0fdf4; border-color:#bbf7d0; color:#166534;' : ''}">
           <div style="display:flex; justify-content:space-between; align-items:center;">
@@ -871,6 +892,10 @@
       list.appendChild(card);
     });
   }
+
+  // INITIAL TRIGGER FOR CACHED DATA
+  renderTenants();
+  populateSelects();
 </script>
 
 </body>
