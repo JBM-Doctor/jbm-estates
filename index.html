@@ -246,6 +246,43 @@
       margin-top: 1.2rem;
     }
 
+    .financial-card {
+      background: #ffffff;
+      border-radius: 10px;
+      border: 1px solid #cbd5e1;
+      padding: 1.2rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .metric-box {
+      background: #f8fafc;
+      padding: 0.8rem;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+      text-align: center;
+    }
+
+    .metric-title {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .metric-value {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-top: 0.2rem;
+      color: var(--primary);
+    }
+
     .notice-badge {
       background-color: #fff7ed;
       color: #c2410c;
@@ -313,6 +350,42 @@
   <div style="margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center;">
     <h2 style="margin:0;"><i class="fa-solid fa-gauge"></i> Landlord Dashboard</h2>
     <button onclick="location.reload()" class="btn-danger"><i class="fa-solid fa-right-from-bracket"></i> Log Out</button>
+  </div>
+
+  <!-- FINANCIAL & NET INCOME TRACKER CARD -->
+  <div class="card financial-card">
+    <h2><i class="fa-solid fa-chart-line"></i> Utility Expense & Net Income Tracker</h2>
+    
+    <div class="metric-grid">
+      <div class="metric-box">
+        <div class="metric-title">Total Collected Rent</div>
+        <div class="metric-value" id="display-collected-rent" style="color: var(--success);">UGX 0</div>
+      </div>
+      <div class="metric-box">
+        <div class="metric-title">Main Umeme Bill</div>
+        <div class="metric-value" id="display-umeme-bill" style="color: #eab308;">UGX 0</div>
+      </div>
+      <div class="metric-box">
+        <div class="metric-title">Main NWSC Bill</div>
+        <div class="metric-value" id="display-nwsc-bill" style="color: #0284c7;">UGX 0</div>
+      </div>
+      <div class="metric-box">
+        <div class="metric-title">Net Profit Margin</div>
+        <div class="metric-value" id="display-net-income" style="color: var(--accent);">UGX 0</div>
+      </div>
+    </div>
+
+    <form id="expensesForm" style="margin-top: 1.2rem; display: grid; grid-template-columns: 1fr 1fr auto; gap: 1rem; align-items: end;">
+      <div>
+        <label><i class="fa-solid fa-bolt"></i> Actual Umeme Main Bill (UGX)</label>
+        <input type="number" id="umemeMainBill" placeholder="e.g., 250000">
+      </div>
+      <div>
+        <label><i class="fa-solid fa-droplet"></i> Actual NWSC Main Bill (UGX)</label>
+        <input type="number" id="nwscMainBill" placeholder="e.g., 120000">
+      </div>
+      <button type="submit" style="height: 42px;"><i class="fa-solid fa-floppy-disk"></i> Save Bills</button>
+    </form>
   </div>
 
   <div class="grid">
@@ -452,6 +525,7 @@
 
   // LOCAL STORAGE FALLBACK LOAD
   let tenants = JSON.parse(localStorage.getItem('jbm_tenants_cache') || '[]');
+  let utilityExpenses = JSON.parse(localStorage.getItem('jbm_utility_expenses') || '{"umeme": 0, "nwsc": 0}');
 
   function formatDateWithDay(dateString) {
     if (!dateString) return 'Not set';
@@ -484,12 +558,23 @@
     
     renderTenants();
     populateSelects();
+    updateFinancialSummary();
   }, (error) => {
     console.warn("Firebase offline or permission error. Using local cache.", error);
     document.getElementById('connection-status').innerHTML = '<i class="fa-solid fa-wifi"></i> Offline Mode';
     document.getElementById('connection-status').style.color = '#ef4444';
     renderTenants();
     populateSelects();
+    updateFinancialSummary();
+  });
+
+  db.ref('utilityExpenses').on('value', (snapshot) => {
+    const data = snapshot.val();
+    if (data) {
+      utilityExpenses = data;
+      localStorage.setItem('jbm_utility_expenses', JSON.stringify(utilityExpenses));
+      updateFinancialSummary();
+    }
   });
 
   function saveTenants() {
@@ -499,7 +584,48 @@
     });
     renderTenants();
     populateSelects();
+    updateFinancialSummary();
   }
+
+  function saveExpenses(umeme, nwsc) {
+    utilityExpenses = { umeme, nwsc };
+    localStorage.setItem('jbm_utility_expenses', JSON.stringify(utilityExpenses));
+    db.ref('utilityExpenses').set(utilityExpenses).catch(err => {
+      console.warn("Could not push utility expenses to Firebase online, saved locally.", err);
+    });
+    updateFinancialSummary();
+  }
+
+  function updateFinancialSummary() {
+    let totalCollected = 0;
+    tenants.forEach(t => {
+      if (t.payments && t.payments.length > 0) {
+        t.payments.forEach(p => {
+          totalCollected += Number(p.amount || 0);
+        });
+      }
+    });
+
+    const umeme = Number(utilityExpenses.umeme || 0);
+    const nwsc = Number(utilityExpenses.nwsc || 0);
+    const netIncome = totalCollected - (umeme + nwsc);
+
+    document.getElementById('display-collected-rent').innerText = `UGX ${totalCollected.toLocaleString()}`;
+    document.getElementById('display-umeme-bill').innerText = `UGX ${umeme.toLocaleString()}`;
+    document.getElementById('display-nwsc-bill').innerText = `UGX ${nwsc.toLocaleString()}`;
+    document.getElementById('display-net-income').innerText = `UGX ${netIncome.toLocaleString()}`;
+
+    document.getElementById('umemeMainBill').value = umeme || '';
+    document.getElementById('nwscMainBill').value = nwsc || '';
+  }
+
+  document.getElementById('expensesForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const umeme = parseFloat(document.getElementById('umemeMainBill').value) || 0;
+    const nwsc = parseFloat(document.getElementById('nwscMainBill').value) || 0;
+    saveExpenses(umeme, nwsc);
+    alert("Main Utility Expenses Saved!");
+  });
 
   function showLandlordLogin() {
     const landlordPassword = "Baboons6#";
@@ -510,6 +636,7 @@
       document.getElementById('landlord-controls').style.display = 'block';
       renderTenants();
       populateSelects();
+      updateFinancialSummary();
     } else if (enteredPassword !== null) {
       alert("Incorrect Landlord Password! Access Denied.");
     }
@@ -896,6 +1023,7 @@
   // INITIAL TRIGGER FOR CACHED DATA
   renderTenants();
   populateSelects();
+  updateFinancialSummary();
 </script>
 
 </body>
