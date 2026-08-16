@@ -169,6 +169,14 @@
       width: 100%;
     }
 
+    .btn-whatsapp-reminder {
+      background-color: #0284c7;
+      color: white;
+      text-decoration: none;
+      margin-top: 0.5rem;
+      width: 100%;
+    }
+
     .btn-doc {
       background-color: #2563eb;
       color: white;
@@ -304,6 +312,17 @@
       border-radius: 4px;
       font-size: 0.75rem;
       font-weight: bold;
+    }
+
+    .action-btn-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem;
+      margin-top: 0.8rem;
+    }
+
+    @media (max-width: 500px) {
+      .action-btn-group { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -981,9 +1000,21 @@
       const daysLeft = getDaysUntilDue(t.nextDueDate);
       const formattedDueDate = formatDateWithDay(t.nextDueDate);
       let alertBadge = '';
+      let dueTimeFrameText = '';
       
       const totalUtilityUnpaid = waterUnpaid + elecUnpaid;
 
+      if (daysLeft !== null) {
+        if (daysLeft < 0) {
+          dueTimeFrameText = `is overdue by ${Math.abs(daysLeft)} day(s)`;
+        } else if (daysLeft === 0) {
+          dueTimeFrameText = `is due today (${formattedDueDate})`;
+        } else {
+          dueTimeFrameText = `is due in ${daysLeft} day(s) on ${formattedDueDate}`;
+        }
+      }
+
+      // 1. DETAILED BILL WHATSAPP MESSAGE
       const utilityWhatsAppMsg = `Hello ${t.name},\n\nHere is your monthly bill breakdown for Unit ${t.unit} from JBM ESTATES LTD:\n` +
         `• Monthly Rent: UGX ${Number(t.rent).toLocaleString()}\n` +
         `• Water Bill: UGX ${t.waterBill ? Math.round(t.waterBill.totalCost).toLocaleString() : 0}\n` +
@@ -994,8 +1025,32 @@
         `2. Direct MoMo Number: ${mtnMomoConfig.momoNumber} (${mtnMomoConfig.merchantName})\n` +
         `Reason/Ref: ${t.unit} [Bill Name]\n\nThank you!`;
 
-      const encodedMsg = encodeURIComponent(utilityWhatsAppMsg);
-      const whatsappButton = t.phone ? `<a href="https://wa.me/${t.phone}?text=${encodedMsg}" target="_blank" class="btn btn-whatsapp"><i class="fa-brands fa-whatsapp"></i> Send Detailed Bill via WhatsApp</a>` : '';
+      // 2. AUTOMATED RENT REMINDER WHATSAPP MESSAGE
+      const rentReminderMsg = `Dear ${t.name},\n\n` +
+        `This is a friendly rent reminder from JBM ESTATES LTD regarding Unit ${t.unit}.\n\n` +
+        `Your upcoming rent payment of UGX ${Number(t.rent).toLocaleString()} ${dueTimeFrameText}.\n\n` +
+        `Payment Details:\n` +
+        `• MoMo Pay Merchant Code: ${mtnMomoConfig.merchantCode} (*165*3*CODE#)\n` +
+        `• Direct Mobile Money: ${mtnMomoConfig.momoNumber} (${mtnMomoConfig.merchantName})\n` +
+        `• Reason/Ref: ${t.unit} Rent\n\n` +
+        `Thank you for your prompt payment!`;
+
+      const encodedBillMsg = encodeURIComponent(utilityWhatsAppMsg);
+      const encodedReminderMsg = encodeURIComponent(rentReminderMsg);
+
+      let actionButtons = '';
+      if (t.phone) {
+        actionButtons = `
+          <div class="action-btn-group">
+            <a href="https://wa.me/${t.phone}?text=${encodedReminderMsg}" target="_blank" class="btn btn-whatsapp-reminder">
+              <i class="fa-solid fa-bell"></i> Send Rent Reminder
+            </a>
+            <a href="https://wa.me/${t.phone}?text=${encodedBillMsg}" target="_blank" class="btn btn-whatsapp">
+              <i class="fa-brands fa-whatsapp"></i> Detailed Bill Breakdown
+            </a>
+          </div>
+        `;
+      }
 
       if (daysLeft !== null && daysLeft <= 6) {
         const statusText = daysLeft < 0 ? `Overdue by ${Math.abs(daysLeft)} days` : (daysLeft === 0 ? `Due Today` : `Due in ${daysLeft} days`);
@@ -1014,7 +1069,7 @@
         <div style="color: var(--danger); font-size:0.9rem;"><strong>Next Due:</strong> ${formattedDueDate}</div>
         ${waterHTML}
         ${elecHTML}
-        <div>${whatsappButton}</div>
+        ${actionButtons}
       `;
       list.appendChild(card);
     });
