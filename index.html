@@ -29,6 +29,7 @@
       --danger: #ef4444;
       --success: #10b981;
       --whatsapp: #25d366;
+      --nwsc-blue: #0284c7;
       --mtn-yellow: #ffcc00;
       --radius: 12px;
       --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
@@ -165,7 +166,6 @@
       background-color: var(--whatsapp);
       color: white;
       text-decoration: none;
-      margin-top: 0.5rem;
       width: 100%;
     }
 
@@ -173,7 +173,13 @@
       background-color: #0284c7;
       color: white;
       text-decoration: none;
-      margin-top: 0.5rem;
+      width: 100%;
+    }
+
+    .btn-whatsapp-water {
+      background-color: #0369a1;
+      color: white;
+      text-decoration: none;
       width: 100%;
     }
 
@@ -246,9 +252,9 @@
     }
 
     .mtn-box {
-      background-color: #fffbe3;
-      border: 2px dashed #eab308;
-      color: #713f12;
+      background-color: #f0f9ff;
+      border: 2px dashed #0284c7;
+      color: #0c4a6e;
       padding: 1.2rem;
       border-radius: 10px;
       margin-top: 1.2rem;
@@ -316,13 +322,9 @@
 
     .action-btn-group {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 1fr;
       gap: 0.5rem;
       margin-top: 0.8rem;
-    }
-
-    @media (max-width: 500px) {
-      .action-btn-group { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -423,6 +425,10 @@
           <div class="form-group">
             <label>WhatsApp Contact</label>
             <input type="text" id="tenantPhone" placeholder="256700000000" required>
+          </div>
+          <div class="form-group">
+            <label>NWSC Water Account / Meter No.</label>
+            <input type="text" id="nwscAccount" placeholder="e.g., NWSC-998822" required>
           </div>
           <div class="form-group">
             <label>Monthly Rent Amount (UGX)</label>
@@ -698,6 +704,18 @@
     }
   }
 
+  function updateNwscAccount(tenantId) {
+    const tenantIndex = tenants.findIndex(t => t.id === tenantId);
+    if (tenantIndex !== -1) {
+      const currentAcc = tenants[tenantIndex].nwscAccount || '';
+      const newAcc = prompt(`Update NWSC Meter Account Number for Unit ${tenants[tenantIndex].unit}:`, currentAcc);
+      if (newAcc !== null) {
+        tenants[tenantIndex].nwscAccount = newAcc.trim();
+        saveTenants();
+      }
+    }
+  }
+
   function renderSingleTenantView(tenant) {
     let portal = document.getElementById('tenant-portal-view');
     if (!portal) {
@@ -721,6 +739,7 @@
             <span class="${isPaid ? 'paid-badge' : 'notice-badge'}" style="margin:0;">${isPaid ? 'PAID' : 'UNPAID'}</span>
           </div>
           <div style="margin-top:0.4rem;">Consumption: ${tenant.waterBill.unitsUsed.toFixed(1)} m³ (${tenant.waterBill.prev} to ${tenant.waterBill.curr})</div>
+          <div style="font-weight:600; margin-top:0.2rem;">NWSC Meter Account: ${tenant.nwscAccount || 'Contact Landlord'}</div>
         </div>
       `;
     }
@@ -778,25 +797,22 @@
         ${elecBillInfo}
 
         <div class="mtn-box">
-          <h3 style="margin:0 0 0.5rem 0; color:#000;"><i class="fa-solid fa-mobile-screen-button"></i> Pay via MTN Mobile Money</h3>
-          <p style="font-size:0.88rem; margin:0 0 0.5rem 0;">To clear your rent or pending utility bills, pay directly via MTN MoMo using options below:</p>
-          <div style="font-size:0.92rem; font-weight:bold; color:#000; line-height: 1.5;">
-            <strong>OPTION 1: MOMO PAY (Merchant Code)</strong><br>
-            • Dial <strong>*165*3*CODE#</strong><br>
-            • Merchant Code: <span style="background-color: var(--mtn-yellow); padding:2px 6px; border-radius:4px;">${mtnMomoConfig.merchantCode}</span> (${mtnMomoConfig.merchantName})<br><br>
-            <strong>OPTION 2: DIRECT MOBILE MONEY SEND</strong><br>
-            • Send directly to: <span style="background-color: var(--mtn-yellow); padding:2px 6px; border-radius:4px;">${mtnMomoConfig.momoNumber}</span><br>
-            • Account Name: <strong>${mtnMomoConfig.merchantName}</strong><br><br>
-            <strong>IMPORTANT PAYMENT REASON / REFERENCE:</strong><br>
-            • Enter Reason as: <strong>Unit Number & Bill Name</strong><br>
-            • Example: <em>"${tenant.unit} Water Bill"</em> or <em>"${tenant.unit} Rent"</em>
+          <h3 style="margin:0 0 0.5rem 0; color:#0c4a6e;"><i class="fa-solid fa-mobile-screen-button"></i> Mobile Money Payment Guidelines</h3>
+          <p style="font-size:0.88rem; margin:0 0 0.5rem 0;">Clear rent or pending utility bills using options below:</p>
+          <div style="font-size:0.92rem; line-height: 1.5;">
+            <strong>1. NWSC WATER BILL PAYMENT:</strong><br>
+            • Dial <strong>*165*4*3*1#</strong> (MTN) or <strong>*185*4*3*1#</strong> (Airtel)<br>
+            • Enter NWSC Account No: <span style="background-color: #e0f2fe; font-weight:bold; padding:2px 6px; border-radius:4px;">${tenant.nwscAccount || 'Not Specified'}</span><br><br>
+            <strong>2. RENT / LANDLORD MOMO PAY:</strong><br>
+            • Dial <strong>*165*3*CODE#</strong> -> Code: <strong>${mtnMomoConfig.merchantCode}</strong> (${mtnMomoConfig.merchantName})<br>
+            • Direct MoMo: <strong>${mtnMomoConfig.momoNumber}</strong><br><br>
+            <strong>IMPORTANT:</strong> Send SMS/Screenshot payment proof to Landlord for status updates.
           </div>
           <div style="margin-top: 1rem;">
             <a href="https://wa.me/${mtnMomoConfig.landlordWhatsApp}?text=${encodedProofMsg}" target="_blank" class="btn btn-whatsapp" style="font-size:0.9rem;">
-              <i class="fa-brands fa-whatsapp"></i> Notify Landlord / Send Payment Proof
+              <i class="fa-brands fa-whatsapp"></i> Send Payment Proof to Landlord
             </a>
           </div>
-          <p style="font-size:0.8rem; color:var(--text-muted); margin:0.5rem 0 0 0;"><em>Note: Upon verification of payment proof, the landlord clears the bill on your portal.</em></p>
         </div>
 
         <hr style="border:none; border-top:1px solid #e2e8f0; margin: 1.5rem 0;">
@@ -825,6 +841,7 @@
       unit: document.getElementById('unitName').value,
       name: document.getElementById('tenantName').value,
       phone: cleanPhone,
+      nwscAccount: document.getElementById('nwscAccount').value.trim(),
       rent: parseFloat(document.getElementById('rentAmount').value),
       nextDueDate: document.getElementById('nextDueDate').value,
       pin: document.getElementById('tenantPin').value,
@@ -969,17 +986,43 @@
       
       let waterHTML = '<p style="font-size:0.85rem; color: var(--text-muted); margin:0.4rem 0;"><em>No water reading logged.</em></p>';
       let waterUnpaid = 0;
+      let waterReminderBtn = '';
+
       if (t.waterBill) {
         const isPaid = t.waterBill.status === 'paid';
         if (!isPaid) waterUnpaid = t.waterBill.totalCost;
+        
         waterHTML = `
           <div class="bill-box" style="${isPaid ? 'background-color:#f0fdf4; border-color:#bbf7d0; color:#166534;' : ''}">
             <div style="display:flex; justify-content:space-between; align-items:center;">
               <strong>Water: UGX ${Math.round(t.waterBill.totalCost).toLocaleString()} (${t.waterBill.unitsUsed.toFixed(1)} m³)</strong>
               ${isPaid ? '<span class="paid-badge">PAID</span>' : `<button onclick="markBillPaid('${t.id}', 'water')" class="btn-success"><i class="fa-solid fa-check"></i> Mark Paid</button>`}
             </div>
+            <div style="font-size:0.8rem; margin-top:0.3rem;">Meter Acc: <strong>${t.nwscAccount || 'Not set'}</strong></div>
           </div>
         `;
+
+        if (!isPaid && t.phone) {
+          const nwscMsg = `Dear ${t.name} (${t.unit}),\n\n` +
+            `Your NWSC Water Bill notice from JBM ESTATES LTD:\n` +
+            `• Previous Reading: ${t.waterBill.prev} m³\n` +
+            `• Current Reading: ${t.waterBill.curr} m³\n` +
+            `• Units Consumed: ${t.waterBill.unitsUsed.toFixed(1)} m³\n` +
+            `• AMOUNT DUE: UGX ${Math.round(t.waterBill.totalCost).toLocaleString()}\n\n` +
+            `HOW TO PAY VIA MOBILE MONEY:\n` +
+            `1. Dial *165*4*3*1# (MTN) or *185*4*3*1# (Airtel)\n` +
+            `2. Pay to NWSC Account: ${t.nwscAccount || '[CONTACT LANDLORD FOR ACC NO]'}\n\n` +
+            `IMPORTANT INSTRUCTIONS:\n` +
+            `Send payment screenshot/SMS proof to Landlord to update portal status to PAID.\n\n` +
+            `NOTICE: Unpaid bills within 15 days will result in NWSC disconnection to Unit ${t.unit} and the pending balance added to next month's rent. Thank you!`;
+          
+          const encodedNwscMsg = encodeURIComponent(nwscMsg);
+          waterReminderBtn = `
+            <a href="https://wa.me/${t.phone}?text=${encodedNwscMsg}" target="_blank" class="btn btn-whatsapp-water">
+              <i class="fa-solid fa-droplet"></i> Send NWSC Water Reminder
+            </a>
+          `;
+        }
       }
 
       let elecHTML = '<p style="font-size:0.85rem; color: var(--text-muted); margin:0.4rem 0;"><em>No electricity reading logged.</em></p>';
@@ -1001,8 +1044,6 @@
       const formattedDueDate = formatDateWithDay(t.nextDueDate);
       let alertBadge = '';
       let dueTimeFrameText = '';
-      
-      const totalUtilityUnpaid = waterUnpaid + elecUnpaid;
 
       if (daysLeft !== null) {
         if (daysLeft < 0) {
@@ -1014,28 +1055,15 @@
         }
       }
 
-      // 1. DETAILED BILL WHATSAPP MESSAGE
-      const utilityWhatsAppMsg = `Hello ${t.name},\n\nHere is your monthly bill breakdown for Unit ${t.unit} from JBM ESTATES LTD:\n` +
-        `• Monthly Rent: UGX ${Number(t.rent).toLocaleString()}\n` +
-        `• Water Bill: UGX ${t.waterBill ? Math.round(t.waterBill.totalCost).toLocaleString() : 0}\n` +
-        `• Electricity Bill: UGX ${t.elecBill ? Math.round(t.elecBill.totalCost).toLocaleString() : 0}\n\n` +
-        `TOTAL DUE: UGX ${Number(t.rent + totalUtilityUnpaid).toLocaleString()}\n\n` +
-        `Payment Options:\n` +
-        `1. MoMo Pay Code: *165*3*CODE# -> Merchant Code: ${mtnMomoConfig.merchantCode}\n` +
-        `2. Direct MoMo Number: ${mtnMomoConfig.momoNumber} (${mtnMomoConfig.merchantName})\n` +
-        `Reason/Ref: ${t.unit} [Bill Name]\n\nThank you!`;
-
-      // 2. AUTOMATED RENT REMINDER WHATSAPP MESSAGE
       const rentReminderMsg = `Dear ${t.name},\n\n` +
-        `This is a friendly rent reminder from JBM ESTATES LTD regarding Unit ${t.unit}.\n\n` +
-        `Your upcoming rent payment of UGX ${Number(t.rent).toLocaleString()} ${dueTimeFrameText}.\n\n` +
+        `Friendly rent reminder from JBM ESTATES LTD for Unit ${t.unit}.\n\n` +
+        `Rent Payment of UGX ${Number(t.rent).toLocaleString()} ${dueTimeFrameText}.\n\n` +
         `Payment Details:\n` +
-        `• MoMo Pay Merchant Code: ${mtnMomoConfig.merchantCode} (*165*3*CODE#)\n` +
+        `• MoMo Pay Code: ${mtnMomoConfig.merchantCode} (*165*3*CODE#)\n` +
         `• Direct Mobile Money: ${mtnMomoConfig.momoNumber} (${mtnMomoConfig.merchantName})\n` +
         `• Reason/Ref: ${t.unit} Rent\n\n` +
         `Thank you for your prompt payment!`;
 
-      const encodedBillMsg = encodeURIComponent(utilityWhatsAppMsg);
       const encodedReminderMsg = encodeURIComponent(rentReminderMsg);
 
       let actionButtons = '';
@@ -1045,9 +1073,7 @@
             <a href="https://wa.me/${t.phone}?text=${encodedReminderMsg}" target="_blank" class="btn btn-whatsapp-reminder">
               <i class="fa-solid fa-bell"></i> Send Rent Reminder
             </a>
-            <a href="https://wa.me/${t.phone}?text=${encodedBillMsg}" target="_blank" class="btn btn-whatsapp">
-              <i class="fa-brands fa-whatsapp"></i> Detailed Bill Breakdown
-            </a>
+            ${waterReminderBtn}
           </div>
         `;
       }
@@ -1061,10 +1087,14 @@
         ${alertBadge}
         <div style="display:flex; justify-content:space-between; align-items:center;">
           <h3 style="margin:0;"><i class="fa-solid fa-house"></i> ${t.unit} - ${t.name}</h3>
-          <button onclick="deleteTenant('${t.id}')" class="btn-danger" style="padding:0.3rem 0.6rem; font-size:0.8rem;"><i class="fa-solid fa-trash"></i></button>
+          <div>
+            <button onclick="updateNwscAccount('${t.id}')" style="padding:0.3rem 0.5rem; font-size:0.75rem; background-color:#0284c7; margin-right:4px;" title="Edit NWSC Account Number"><i class="fa-solid fa-pen"></i> NWSC Acc</button>
+            <button onclick="deleteTenant('${t.id}')" class="btn-danger" style="padding:0.3rem 0.6rem; font-size:0.8rem;"><i class="fa-solid fa-trash"></i></button>
+          </div>
         </div>
         <div style="margin-top:0.5rem; font-size:0.9rem;"><strong>PIN:</strong> ${t.pin || 'None'}</div>
         <div style="font-size:0.9rem;"><strong>WhatsApp:</strong> ${t.phone || 'Not set'}</div>
+        <div style="font-size:0.9rem;"><strong>NWSC Acc:</strong> ${t.nwscAccount || 'Not set'}</div>
         <div style="font-size:0.9rem;"><strong>Rent:</strong> UGX ${Number(t.rent).toLocaleString()}</div>
         <div style="color: var(--danger); font-size:0.9rem;"><strong>Next Due:</strong> ${formattedDueDate}</div>
         ${waterHTML}
