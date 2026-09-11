@@ -538,6 +538,9 @@
   firebase.initializeApp(firebaseConfig);
   const db = firebase.database();
 
+  // TRACK ACTIVE TENANT PORTAL SESSION FOR REALTIME RE-RENDERING
+  let activeTenantId = null;
+
   // LOCAL STORAGE FALLBACK LOAD
   let tenants = JSON.parse(localStorage.getItem('jbm_tenants_cache') || '[]');
   let utilityExpenses = JSON.parse(localStorage.getItem('jbm_utility_expenses') || '{"umeme": 0, "nwsc": 0}');
@@ -562,22 +565,39 @@
     return 20000 + (extraUnits * 2000);
   }
 
-  // FIREBASE ONLINE SYNC WITH ERROR & FALLBACK HANDLING
+  // FIREBASE ONLINE / OFFLINE STATUS MONITORING
+  db.ref('.info/connected').on('value', (snap) => {
+    const statusElem = document.getElementById('connection-status');
+    if (snap.val() === true) {
+      statusElem.innerHTML = '<i class="fa-solid fa-cloud"></i> Synced';
+      statusElem.style.color = '#10b981';
+      statusElem.style.borderColor = 'rgba(16, 185, 129, 0.3)';
+    } else {
+      statusElem.innerHTML = '<i class="fa-solid fa-wifi"></i> Offline Mode';
+      statusElem.style.color = '#ef4444';
+      statusElem.style.borderColor = 'rgba(239, 68, 68, 0.3)';
+    }
+  });
+
+  // FIREBASE REALTIME TENANT SYNCHRONIZATION
   db.ref('tenants').on('value', (snapshot) => {
     const data = snapshot.val();
     tenants = data ? Object.values(data) : [];
     localStorage.setItem('jbm_tenants_cache', JSON.stringify(tenants));
     
-    document.getElementById('connection-status').innerHTML = '<i class="fa-solid fa-cloud"></i> Synced';
-    document.getElementById('connection-status').style.color = '#10b981';
-    
     renderTenants();
     populateSelects();
     updateFinancialSummary();
+
+    // If a tenant is currently logged into their portal, update their view in real time
+    if (activeTenantId) {
+      const updatedTenant = tenants.find(t => t.id === activeTenantId);
+      if (updatedTenant) {
+        renderSingleTenantView(updatedTenant);
+      }
+    }
   }, (error) => {
     console.warn("Firebase offline or permission error. Using local cache.", error);
-    document.getElementById('connection-status').innerHTML = '<i class="fa-solid fa-wifi"></i> Offline Mode';
-    document.getElementById('connection-status').style.color = '#ef4444';
     renderTenants();
     populateSelects();
     updateFinancialSummary();
@@ -600,6 +620,13 @@
     renderTenants();
     populateSelects();
     updateFinancialSummary();
+
+    if (activeTenantId) {
+      const updatedTenant = tenants.find(t => t.id === activeTenantId);
+      if (updatedTenant) {
+        renderSingleTenantView(updatedTenant);
+      }
+    }
   }
 
   function saveExpenses(umeme, nwsc) {
@@ -647,6 +674,7 @@
     const enteredPassword = prompt("Enter Landlord / Co-Landlord Access Password:");
 
     if (enteredPassword === landlordPassword) {
+      activeTenantId = null;
       document.getElementById('login-screen').style.display = 'none';
       document.getElementById('landlord-controls').style.display = 'block';
       renderTenants();
@@ -673,6 +701,7 @@
     const matchedTenant = tenants.find(t => t.unit.toLowerCase() === unitName.toLowerCase() && t.pin === enteredPin);
 
     if (matchedTenant) {
+      activeTenantId = matchedTenant.id;
       document.getElementById('login-screen').style.display = 'none';
       document.getElementById('landlord-controls').style.display = 'none';
       renderSingleTenantView(matchedTenant);
@@ -927,6 +956,7 @@
   function populateSelects() {
     const selects = document.querySelectorAll('.unitSelect');
     selects.forEach(select => {
+      const currentValue = select.value;
       select.innerHTML = '';
       tenants.forEach(t => {
         const option = document.createElement('option');
@@ -934,6 +964,7 @@
         option.textContent = `${t.unit} - ${t.name}`;
         select.appendChild(option);
       });
+      if (currentValue) select.value = currentValue;
     });
   }
 
