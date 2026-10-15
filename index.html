@@ -118,7 +118,7 @@
       color: var(--text-muted);
     }
 
-    input, select {
+    input, select, textarea {
       width: 100%;
       padding: 0.75rem 1rem;
       border: 1px solid #cbd5e1;
@@ -126,9 +126,10 @@
       font-size: 0.95rem;
       outline: none;
       background: #f8fafc;
+      font-family: inherit;
     }
 
-    input:focus, select:focus {
+    input:focus, select:focus, textarea:focus {
       border-color: var(--accent);
       background: #ffffff;
       box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.15);
@@ -246,6 +247,15 @@
       border-radius: 8px;
       margin-top: 0.6rem;
       font-size: 0.9rem;
+    }
+
+    .announcement-box {
+      background-color: #eff6ff;
+      border-left: 4px solid #2563eb;
+      color: #1e3a8a;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1.5rem;
     }
 
     .mtn-box {
@@ -406,6 +416,27 @@
   <div class="grid">
     <div>
       <div class="card">
+        <h2><i class="fa-solid fa-bullhorn"></i> Post Tenant Announcement</h2>
+        <form id="announcementForm">
+          <div class="form-group">
+            <label>Target Audience</label>
+            <select id="announcementTargetSelect" required>
+              <option value="ALL"> Broadcast to ALL Units</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Announcement Title</label>
+            <input type="text" id="announcementTitle" placeholder="e.g., Scheduled Maintenance / Water Notice" required>
+          </div>
+          <div class="form-group">
+            <label>Announcement Message</label>
+            <textarea id="announcementMessage" rows="3" placeholder="Enter notice details here..." required></textarea>
+          </div>
+          <button type="submit" style="width: 100%; background-color: #2563eb;"><i class="fa-solid fa-paper-plane"></i> Publish Notice</button>
+        </form>
+      </div>
+
+      <div class="card">
         <h2><i class="fa-solid fa-user-plus"></i> Add New Tenant</h2>
         <form id="tenantForm">
           <div class="form-group">
@@ -508,6 +539,11 @@
 
     <div>
       <div class="card">
+        <h2><i class="fa-solid fa-scroll"></i> Active Announcements</h2>
+        <div id="activeAnnouncementsList">Loading announcements...</div>
+      </div>
+
+      <div class="card">
         <h2><i class="fa-solid fa-city"></i> Property Overview</h2>
         <div id="tenantList">Loading property data...</div>
       </div>
@@ -538,11 +574,11 @@
   firebase.initializeApp(firebaseConfig);
   const db = firebase.database();
 
-  // TRACK ACTIVE TENANT PORTAL SESSION FOR REALTIME RE-RENDERING
   let activeTenantId = null;
 
   // LOCAL STORAGE FALLBACK LOAD
   let tenants = JSON.parse(localStorage.getItem('jbm_tenants_cache') || '[]');
+  let announcements = JSON.parse(localStorage.getItem('jbm_announcements_cache') || '[]');
   let utilityExpenses = JSON.parse(localStorage.getItem('jbm_utility_expenses') || '{"umeme": 0, "nwsc": 0}');
 
   function formatDateWithDay(dateString) {
@@ -565,7 +601,7 @@
     return 20000 + (extraUnits * 2000);
   }
 
-  // FIREBASE ONLINE / OFFLINE STATUS MONITORING
+  // FIREBASE STATUS LISTENER
   db.ref('.info/connected').on('value', (snap) => {
     const statusElem = document.getElementById('connection-status');
     if (snap.val() === true) {
@@ -579,7 +615,7 @@
     }
   });
 
-  // FIREBASE REALTIME TENANT SYNCHRONIZATION
+  // FIREBASE TENANTS LISTENER
   db.ref('tenants').on('value', (snapshot) => {
     const data = snapshot.val();
     tenants = data ? Object.values(data) : [];
@@ -589,18 +625,30 @@
     populateSelects();
     updateFinancialSummary();
 
-    // If a tenant is currently logged into their portal, update their view in real time
     if (activeTenantId) {
       const updatedTenant = tenants.find(t => t.id === activeTenantId);
-      if (updatedTenant) {
-        renderSingleTenantView(updatedTenant);
-      }
+      if (updatedTenant) renderSingleTenantView(updatedTenant);
     }
   }, (error) => {
-    console.warn("Firebase offline or permission error. Using local cache.", error);
+    console.warn("Firebase offline. Using local tenant cache.", error);
     renderTenants();
     populateSelects();
     updateFinancialSummary();
+  });
+
+  // FIREBASE ANNOUNCEMENTS LISTENER
+  db.ref('announcements').on('value', (snapshot) => {
+    const data = snapshot.val();
+    announcements = data ? Object.values(data) : [];
+    localStorage.setItem('jbm_announcements_cache', JSON.stringify(announcements));
+    renderLandlordAnnouncements();
+    if (activeTenantId) {
+      const updatedTenant = tenants.find(t => t.id === activeTenantId);
+      if (updatedTenant) renderSingleTenantView(updatedTenant);
+    }
+  }, (error) => {
+    console.warn("Firebase offline. Using local announcements cache.", error);
+    renderLandlordAnnouncements();
   });
 
   db.ref('utilityExpenses').on('value', (snapshot) => {
@@ -614,27 +662,31 @@
 
   function saveTenants() {
     localStorage.setItem('jbm_tenants_cache', JSON.stringify(tenants));
-    db.ref('tenants').set(tenants).catch(err => {
-      console.warn("Could not push to Firebase online, saved locally.", err);
-    });
+    db.ref('tenants').set(tenants).catch(err => console.warn("Firebase sync error", err));
     renderTenants();
     populateSelects();
     updateFinancialSummary();
 
     if (activeTenantId) {
       const updatedTenant = tenants.find(t => t.id === activeTenantId);
-      if (updatedTenant) {
-        renderSingleTenantView(updatedTenant);
-      }
+      if (updatedTenant) renderSingleTenantView(updatedTenant);
+    }
+  }
+
+  function saveAnnouncements() {
+    localStorage.setItem('jbm_announcements_cache', JSON.stringify(announcements));
+    db.ref('announcements').set(announcements).catch(err => console.warn("Firebase sync error", err));
+    renderLandlordAnnouncements();
+    if (activeTenantId) {
+      const updatedTenant = tenants.find(t => t.id === activeTenantId);
+      if (updatedTenant) renderSingleTenantView(updatedTenant);
     }
   }
 
   function saveExpenses(umeme, nwsc) {
     utilityExpenses = { umeme, nwsc };
     localStorage.setItem('jbm_utility_expenses', JSON.stringify(utilityExpenses));
-    db.ref('utilityExpenses').set(utilityExpenses).catch(err => {
-      console.warn("Could not push utility expenses to Firebase online, saved locally.", err);
-    });
+    db.ref('utilityExpenses').set(utilityExpenses).catch(err => console.warn("Firebase sync error", err));
     updateFinancialSummary();
   }
 
@@ -669,6 +721,66 @@
     alert("Main Utility Expenses Saved!");
   });
 
+  // ANNOUNCEMENT FORM SUBMIT
+  document.getElementById('announcementForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const targetUnit = document.getElementById('announcementTargetSelect').value;
+    const title = document.getElementById('announcementTitle').value.trim();
+    const message = document.getElementById('announcementMessage').value.trim();
+
+    const newNotice = {
+      id: Date.now().toString(),
+      targetUnit: targetUnit,
+      title: title,
+      message: message,
+      date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+    };
+
+    announcements.unshift(newNotice);
+    saveAnnouncements();
+    e.target.reset();
+    alert("Announcement published successfully!");
+  });
+
+  function deleteAnnouncement(id) {
+    if (confirm("Are you sure you want to remove this announcement?")) {
+      announcements = announcements.filter(a => a.id !== id);
+      saveAnnouncements();
+    }
+  }
+
+  function renderLandlordAnnouncements() {
+    const list = document.getElementById('activeAnnouncementsList');
+    if (!list) return;
+
+    list.innerHTML = '';
+    if (announcements.length === 0) {
+      list.innerHTML = '<p style="color: var(--text-muted);">No active notices published.</p>';
+      return;
+    }
+
+    announcements.forEach(a => {
+      const targetText = a.targetUnit === 'ALL' ? 'Broadcast to ALL Units' : `Target: Unit ${a.targetUnit}`;
+      const card = document.createElement('div');
+      card.className = 'announcement-box';
+      card.style.position = 'relative';
+      card.style.marginBottom = '0.8rem';
+      card.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:start;">
+          <div>
+            <strong style="color: #1e3a8a; font-size: 1rem;"><i class="fa-solid fa-bullhorn"></i> ${a.title}</strong>
+            <div style="font-size:0.75rem; color: var(--text-muted); margin-top: 2px;">
+              <span style="background:#dbeafe; padding:2px 6px; border-radius:4px; font-weight:bold; color:#1e40af;">${targetText}</span> • Posted ${a.date}
+            </div>
+          </div>
+          <button onclick="deleteAnnouncement('${a.id}')" class="btn-danger" style="padding:0.2rem 0.5rem; font-size:0.75rem;"><i class="fa-solid fa-trash"></i></button>
+        </div>
+        <p style="margin: 0.6rem 0 0 0; font-size: 0.9rem; line-height: 1.4; color: #1e293b;">${a.message}</p>
+      `;
+      list.appendChild(card);
+    });
+  }
+
   function showLandlordLogin() {
     const landlordPassword = "Baboons6#";
     const enteredPassword = prompt("Enter Landlord / Co-Landlord Access Password:");
@@ -679,6 +791,7 @@
       document.getElementById('landlord-controls').style.display = 'block';
       renderTenants();
       populateSelects();
+      renderLandlordAnnouncements();
       updateFinancialSummary();
     } else if (enteredPassword !== null) {
       alert("Incorrect Landlord Password! Access Denied.");
@@ -694,7 +807,7 @@
     const enteredPin = document.getElementById('loginPin').value.trim();
 
     if (tenants.length === 0) {
-      alert("No property data loaded. Please check your internet connection or verify landlord registration.");
+      alert("No property data loaded. Please check internet connection.");
       return;
     }
 
@@ -735,6 +848,24 @@
     portal.style.display = 'block';
 
     const formattedDueDate = formatDateWithDay(tenant.nextDueDate);
+
+    // FILTER ANNOUNCEMENTS FOR THIS SPECIFIC TENANT (BROADCAST OR TARGETED UNIT)
+    const tenantNotices = announcements.filter(a => a.targetUnit === 'ALL' || a.targetUnit.toLowerCase() === tenant.unit.toLowerCase());
+
+    let noticesHTML = '';
+    if (tenantNotices.length > 0) {
+      noticesHTML = `
+        <h3><i class="fa-solid fa-bullhorn" style="color: #2563eb;"></i> Management Notices</h3>
+        ${tenantNotices.map(n => `
+          <div class="announcement-box">
+            <strong style="color: #1e3a8a; font-size: 0.95rem;">${n.title}</strong>
+            <span style="font-size: 0.75rem; color: var(--text-muted); float: right;">${n.date}</span>
+            <p style="margin: 0.4rem 0 0 0; font-size: 0.88rem; line-height: 1.4;">${n.message}</p>
+          </div>
+        `).join('')}
+        <hr style="border:none; border-top:1px solid #e2e8f0; margin: 1.5rem 0;">
+      `;
+    }
 
     let waterBillInfo = '<p style="color: var(--text-muted);">No active water bill recorded.</p>';
     if (tenant.waterBill) {
@@ -777,8 +908,7 @@
       <ul style="padding-left: 1.2rem; color: var(--text-main);">
         ${tenant.payments.map(p => `
           <li style="margin-bottom: 0.6rem;">
-            <strong>UGX ${Number(p.amount).toLocaleString()}</strong> paid on ${formatDateWithDay(p.date)}
-            ${p.receiptImage ? `<a href="${p.receiptImage}" download="Receipt_${tenant.unit}_${p.date}.jpg" target="_blank" class="btn-receipt"><i class="fa-solid fa-receipt"></i> View / Download Receipt</a>` : ''}
+            <strong>UGX ${Number(p.amount).toLocaleString()}</strong> paid on ${formatDateWithDay(p.date)}${p.receiptImage ? `<a href="${p.receiptImage}" download="Receipt_${tenant.unit}_${p.date}.jpg" target="_blank" class="btn-receipt"><i class="fa-solid fa-receipt"></i> View / Download Receipt</a>` : ''}
           </li>
         `).join('')}
       </ul>
@@ -788,6 +918,8 @@
       <div class="card" style="max-width: 600px; margin: 2rem auto;">
         <h2><i class="fa-solid fa-circle-user"></i> Welcome, ${tenant.name}</h2>
         <p style="color: var(--text-muted); margin-top:-0.5rem; margin-bottom:1.5rem;">Unit: ${tenant.unit}</p>
+
+        ${noticesHTML}
 
         <div style="font-size: 1rem; margin-bottom: 0.5rem;">
           <strong>Monthly Rent:</strong> UGX ${Number(tenant.rent).toLocaleString()}
@@ -966,6 +1098,20 @@
       });
       if (currentValue) select.value = currentValue;
     });
+
+    // POPULATE ANNOUNCEMENT TARGET SELECT WITH ALL INDIVIDUAL UNITS
+    const announceTarget = document.getElementById('announcementTargetSelect');
+    if (announceTarget) {
+      const currentVal = announceTarget.value;
+      announceTarget.innerHTML = '<option value="ALL">📢 Broadcast to ALL Units</option>';
+      tenants.forEach(t => {
+        const opt = document.createElement('option');
+        opt.value = t.unit;
+        opt.textContent = `🎯 Unit: ${t.unit} (${t.name})`;
+        announceTarget.appendChild(opt);
+      });
+      if (currentVal) announceTarget.value = currentVal;
+    }
   }
 
   function getDaysUntilDue(dueDateString) {
@@ -1111,9 +1257,10 @@
     });
   }
 
-  // INITIAL TRIGGER FOR CACHED DATA
+  // INITIAL RENDER
   renderTenants();
   populateSelects();
+  renderLandlordAnnouncements();
   updateFinancialSummary();
 </script>
 
