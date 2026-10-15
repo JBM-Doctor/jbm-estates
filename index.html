@@ -167,6 +167,24 @@
       width: 100%;
     }
 
+    .btn-whatsapp-sm {
+      background-color: var(--whatsapp);
+      color: white;
+      text-decoration: none;
+      padding: 0.3rem 0.6rem;
+      font-size: 0.8rem;
+      border-radius: 6px;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-weight: 600;
+    }
+
+    .btn-whatsapp-sm:hover {
+      background-color: #1eb954;
+      color: white;
+    }
+
     .btn-whatsapp-reminder {
       background-color: #0284c7;
       color: white;
@@ -258,7 +276,6 @@
       margin-bottom: 0.8rem;
     }
 
-    /* EXPANDABLE ANNOUNCEMENT ACCORDION STYLES */
     details.announcement-details {
       background-color: #eff6ff;
       border-left: 4px solid #2563eb;
@@ -671,6 +688,7 @@
     
     renderTenants();
     populateSelects();
+    renderLandlordAnnouncements();
     updateFinancialSummary();
 
     if (activeTenantId) {
@@ -681,6 +699,7 @@
     console.warn("Firebase offline. Using local tenant cache.", error);
     renderTenants();
     populateSelects();
+    renderLandlordAnnouncements();
     updateFinancialSummary();
   });
 
@@ -713,6 +732,7 @@
     db.ref('tenants').set(tenants).catch(err => console.warn("Firebase sync error", err));
     renderTenants();
     populateSelects();
+    renderLandlordAnnouncements();
     updateFinancialSummary();
 
     if (activeTenantId) {
@@ -800,7 +820,32 @@
     }
 
     announcements.forEach(a => {
-      const targetText = a.targetUnit === 'ALL' ? 'Broadcast to ALL Units' : `Target: Unit ${a.targetUnit}`;
+      const isBroadcast = a.targetUnit === 'ALL';
+      const targetText = isBroadcast ? 'Broadcast to ALL Units' : `Target: Unit ${a.targetUnit}`;
+      
+      // FIND MATCHED TENANT PHONE FOR TARGETED WHATSAPP BUTTON
+      let targetTenant = null;
+      if (!isBroadcast) {
+        targetTenant = tenants.find(t => t.unit.toLowerCase() === a.targetUnit.toLowerCase());
+      }
+
+      let whatsappBtnHTML = '';
+      if (targetTenant && targetTenant.phone) {
+        const waMsg = `*MANAGEMENT NOTICE - JBM ESTATES LTD*\n` +
+          `*Date:* ${a.date}\n` +
+          `*Unit:* ${targetTenant.unit} (${targetTenant.name})\n` +
+          `*Subject:* ${a.title}\n\n` +
+          `${a.message}\n\n` +
+          `_You can also view this and other notices on your Tenant Portal._`;
+        
+        const encodedWaMsg = encodeURIComponent(waMsg);
+        whatsappBtnHTML = `
+          <a href="https://wa.me/${targetTenant.phone}?text=${encodedWaMsg}" target="_blank" class="btn-whatsapp-sm">
+            <i class="fa-brands fa-whatsapp"></i> Send to ${targetTenant.unit} WhatsApp
+          </a>
+        `;
+      }
+
       const card = document.createElement('div');
       card.className = 'announcement-box';
       card.style.position = 'relative';
@@ -815,7 +860,8 @@
           </div>
           <button onclick="deleteAnnouncement('${a.id}')" class="btn-danger" style="padding:0.2rem 0.5rem; font-size:0.75rem;"><i class="fa-solid fa-trash"></i></button>
         </div>
-        <p style="margin: 0.6rem 0 0 0; font-size: 0.9rem; line-height: 1.4; color: #1e293b; white-space: pre-line;">${a.message}</p>
+        <p style="margin: 0.6rem 0 0.8rem 0; font-size: 0.9rem; line-height: 1.4; color: #1e293b; white-space: pre-line;">${a.message}</p>
+        ${whatsappBtnHTML}
       `;
       list.appendChild(card);
     });
