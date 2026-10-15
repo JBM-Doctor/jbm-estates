@@ -253,9 +253,57 @@
       background-color: #eff6ff;
       border-left: 4px solid #2563eb;
       color: #1e3a8a;
-      padding: 1rem;
+      padding: 0.8rem 1rem;
       border-radius: 8px;
-      margin-bottom: 1.5rem;
+      margin-bottom: 0.8rem;
+    }
+
+    /* EXPANDABLE ANNOUNCEMENT ACCORDION STYLES */
+    details.announcement-details {
+      background-color: #eff6ff;
+      border-left: 4px solid #2563eb;
+      border-radius: 8px;
+      margin-bottom: 0.8rem;
+      padding: 0.6rem 0.9rem;
+    }
+
+    details.announcement-details summary {
+      cursor: pointer;
+      font-weight: 600;
+      color: #1e3a8a;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      list-style: none;
+      font-size: 0.92rem;
+    }
+
+    details.announcement-details summary::-webkit-details-marker {
+      display: none;
+    }
+
+    details.announcement-details summary::after {
+      content: '\f107';
+      font-family: 'Font Awesome 6 Free';
+      font-weight: 900;
+      font-size: 0.85rem;
+      transition: transform 0.2s ease;
+      color: #2563eb;
+      margin-left: 0.5rem;
+    }
+
+    details.announcement-details[open] summary::after {
+      transform: rotate(180deg);
+    }
+
+    details.announcement-details .announcement-body {
+      margin-top: 0.6rem;
+      padding-top: 0.6rem;
+      border-top: 1px dashed #bfdbfe;
+      color: #1e293b;
+      font-size: 0.88rem;
+      line-height: 1.45;
+      white-space: pre-line;
     }
 
     .mtn-box {
@@ -713,14 +761,6 @@
     document.getElementById('nwscMainBill').value = nwsc || '';
   }
 
-  document.getElementById('expensesForm').addEventListener('submit', (e) => {
-    e.preventDefault();
-    const umeme = parseFloat(document.getElementById('umemeMainBill').value) || 0;
-    const nwsc = parseFloat(document.getElementById('nwscMainBill').value) || 0;
-    saveExpenses(umeme, nwsc);
-    alert("Main Utility Expenses Saved!");
-  });
-
   // ANNOUNCEMENT FORM SUBMIT
   document.getElementById('announcementForm').addEventListener('submit', (e) => {
     e.preventDefault();
@@ -775,7 +815,7 @@
           </div>
           <button onclick="deleteAnnouncement('${a.id}')" class="btn-danger" style="padding:0.2rem 0.5rem; font-size:0.75rem;"><i class="fa-solid fa-trash"></i></button>
         </div>
-        <p style="margin: 0.6rem 0 0 0; font-size: 0.9rem; line-height: 1.4; color: #1e293b;">${a.message}</p>
+        <p style="margin: 0.6rem 0 0 0; font-size: 0.9rem; line-height: 1.4; color: #1e293b; white-space: pre-line;">${a.message}</p>
       `;
       list.appendChild(card);
     });
@@ -855,13 +895,17 @@
     let noticesHTML = '';
     if (tenantNotices.length > 0) {
       noticesHTML = `
-        <h3><i class="fa-solid fa-bullhorn" style="color: #2563eb;"></i> Management Notices</h3>
-        ${tenantNotices.map(n => `
-          <div class="announcement-box">
-            <strong style="color: #1e3a8a; font-size: 0.95rem;">${n.title}</strong>
-            <span style="font-size: 0.75rem; color: var(--text-muted); float: right;">${n.date}</span>
-            <p style="margin: 0.4rem 0 0 0; font-size: 0.88rem; line-height: 1.4;">${n.message}</p>
-          </div>
+        <h3><i class="fa-solid fa-bullhorn" style="color: #2563eb;"></i> Management Notices (${tenantNotices.length})</h3>
+        ${tenantNotices.map((n, idx) => `
+          <details class="announcement-details" ${idx === 0 ? 'open' : ''}>
+            <summary>
+              <span><i class="fa-solid fa-circle-info" style="color: #2563eb; margin-right: 6px;"></i> ${n.title}</span>
+              <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: normal; margin-left: auto; margin-right: 6px;">${n.date}</span>
+            </summary>
+            <div class="announcement-body">
+              ${n.message}
+            </div>
+          </details>
         `).join('')}
         <hr style="border:none; border-top:1px solid #e2e8f0; margin: 1.5rem 0;">
       `;
