@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>JBM Estates - Portal</title>
+  <title>JBM Estates - 3D Portal</title>
 
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%230f766e'/><path d='M50 18 L18 45 L28 45 L28 78 L42 78 L42 60 L58 60 L58 78 L72 78 L72 45 L82 45 Z' fill='%23ffffff'/><circle cx='68' cy='32' r='4' fill='%2338bdf8'/></svg>">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%230d9488'/><path d='M50 18 L18 45 L28 45 L28 78 L42 78 L42 60 L58 60 L58 78 L72 78 L72 45 L82 45 Z' fill='%23ffffff'/><circle cx='68' cy='32' r='4' fill='%2338bdf8'/></svg>">
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -17,66 +17,109 @@
 
   <style>
     :root {
-      --primary: #1e293b;
-      --accent: #0f766e;
-      --accent-hover: #115e59;
-      --card-bg: rgba(255, 255, 255, 0.95);
-      --text-main: #0f172a;
-      --text-muted: #64748b;
-      --danger: #ef4444;
+      --bg-deep: #070d19;
+      --bg-surface: #0f172a;
+      --card-3d: linear-gradient(145deg, rgba(23, 37, 64, 0.92), rgba(13, 22, 41, 0.96));
+      --card-3d-elevated: linear-gradient(160deg, rgba(30, 49, 84, 0.95), rgba(15, 25, 46, 0.98));
+      --border-3d: rgba(148, 163, 184, 0.18);
+      --border-glow: rgba(45, 212, 191, 0.35);
+      --primary: #f8fafc;
+      --accent: #14b8a6;
+      --accent-dark: #0f766e;
+      --accent-hover: #2dd4bf;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --danger: #f43f5e;
+      --danger-dark: #be123c;
       --success: #10b981;
+      --success-dark: #047857;
       --whatsapp: #25d366;
-      --nwsc-blue: #0284c7;
-      --mtn-yellow: #ffcc00;
-      --radius: 12px;
-      --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+      --whatsapp-dark: #15803d;
+      --info: #0ea5e9;
+      --info-dark: #0369a1;
+      --mtn-yellow: #facc15;
+      --radius: 16px;
+      --shadow-3d:
+        0 18px 36px -12px rgba(0, 0, 0, 0.65),
+        0 4px 12px -2px rgba(0, 0, 0, 0.45),
+        inset 0 1px 0 0 rgba(255, 255, 255, 0.12);
+      --shadow-3d-hover:
+        0 24px 44px -10px rgba(0, 0, 0, 0.78),
+        0 0 24px -4px rgba(20, 184, 166, 0.22),
+        inset 0 1px 0 0 rgba(255, 255, 255, 0.18);
     }
 
-    * { box-sizing: border-box; transition: all 0.2s ease; }
+    * {
+      box-sizing: border-box;
+      transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1),
+                  box-shadow 0.22s cubic-bezier(0.22, 1, 0.36, 1),
+                  border-color 0.22s ease,
+                  background 0.22s ease,
+                  opacity 0.2s ease;
+    }
 
     body {
       font-family: 'Plus Jakarta Sans', sans-serif;
       margin: 0;
-      background: #f1f5f9;
+      background:
+        radial-gradient(circle at 15% 10%, rgba(20, 184, 166, 0.14), transparent 38%),
+        radial-gradient(circle at 85% 18%, rgba(14, 165, 233, 0.14), transparent 40%),
+        radial-gradient(circle at 50% 95%, rgba(99, 102, 241, 0.10), transparent 45%),
+        var(--bg-deep);
       color: var(--text-main);
       min-height: 100vh;
+      perspective: 1200px;
     }
 
     header {
-      background: var(--primary);
+      background: linear-gradient(180deg, rgba(19, 31, 56, 0.95), rgba(10, 17, 32, 0.98));
+      backdrop-filter: blur(14px);
       color: white;
-      padding: 1.2rem 2rem;
+      padding: 1.15rem 2rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      border-bottom: 1px solid var(--border-3d);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), inset 0 -1px 0 rgba(255, 255, 255, 0.05);
+      position: sticky;
+      top: 0;
+      z-index: 50;
     }
 
     header h1 {
       margin: 0;
-      font-size: 1.4rem;
-      font-weight: 700;
+      font-size: 1.35rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: 0.6rem;
+      text-shadow: 0 2px 10px rgba(20, 184, 166, 0.25);
+    }
+
+    header h1 i {
+      color: var(--accent-hover);
+      filter: drop-shadow(0 0 8px rgba(45, 212, 191, 0.45));
     }
 
     .badge-status {
-      background: rgba(16, 185, 129, 0.2);
-      color: #10b981;
-      padding: 0.3rem 0.8rem;
-      border-radius: 20px;
-      font-size: 0.85rem;
-      border: 1px solid rgba(16, 185, 129, 0.3);
+      background: rgba(16, 185, 129, 0.14);
+      color: #34d399;
+      padding: 0.38rem 0.9rem;
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      border: 1px solid rgba(52, 211, 153, 0.35);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.12);
       display: flex;
       align-items: center;
-      gap: 0.4rem;
+      gap: 0.45rem;
     }
 
     .container {
-      max-width: 1200px;
+      max-width: 1220px;
       margin: 2rem auto;
-      padding: 0 1.5rem;
+      padding: 0 1.5rem 3rem;
     }
 
     .grid {
@@ -87,216 +130,337 @@
 
     @media (max-width: 868px) {
       .grid { grid-template-columns: 1fr; }
+      header { padding: 1rem 1.2rem; }
+      header h1 { font-size: 1.1rem; }
     }
 
     .card {
-      background: var(--card-bg);
-      backdrop-filter: blur(8px);
+      background: var(--card-3d);
+      backdrop-filter: blur(16px);
       padding: 1.8rem;
       border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      border: 1px solid #e2e8f0;
-      margin-bottom: 1.5rem;
+      box-shadow: var(--shadow-3d);
+      border: 1px solid var(--border-3d);
+      margin-bottom: 1.6rem;
+      transform-style: preserve-3d;
+    }
+
+    .card:hover {
+      box-shadow: var(--shadow-3d-hover);
+      border-color: var(--border-glow);
+      transform: translateY(-3px);
     }
 
     h2, h3 {
       margin-top: 0;
       color: var(--primary);
-      font-weight: 600;
+      font-weight: 700;
+      letter-spacing: -0.01em;
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: 0.55rem;
     }
 
-    .form-group { margin-bottom: 1.2rem; }
+    h2 i, h3 i {
+      color: var(--accent-hover);
+    }
+
+    .form-group { margin-bottom: 1.15rem; }
 
     label {
       display: block;
-      margin-bottom: 0.4rem;
+      margin-bottom: 0.45rem;
       font-weight: 600;
-      font-size: 0.9rem;
+      font-size: 0.86rem;
       color: var(--text-muted);
     }
 
     input, select, textarea {
       width: 100%;
-      padding: 0.75rem 1rem;
-      border: 1px solid #cbd5e1;
-      border-radius: 8px;
-      font-size: 0.95rem;
+      padding: 0.78rem 1rem;
+      border: 1px solid rgba(148, 163, 184, 0.22);
+      border-radius: 10px;
+      font-size: 0.94rem;
       outline: none;
-      background: #f8fafc;
+      background: rgba(8, 15, 30, 0.72);
+      color: var(--text-main);
       font-family: inherit;
+      box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.45);
+    }
+
+    input::placeholder, textarea::placeholder {
+      color: #64748b;
     }
 
     input:focus, select:focus, textarea:focus {
-      border-color: var(--accent);
-      background: #ffffff;
-      box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.15);
+      border-color: var(--accent-hover);
+      background: rgba(11, 21, 41, 0.95);
+      box-shadow:
+        inset 0 2px 6px rgba(0, 0, 0, 0.45),
+        0 0 0 3px rgba(20, 184, 166, 0.22),
+        0 8px 20px -6px rgba(20, 184, 166, 0.35);
     }
 
     button, .btn {
-      background-color: var(--accent);
-      color: white;
+      background: linear-gradient(180deg, #14b8a6, #0d9488);
+      color: #ffffff;
       border: none;
-      padding: 0.75rem 1.5rem;
-      border-radius: 8px;
+      padding: 0.78rem 1.45rem;
+      border-radius: 10px;
       cursor: pointer;
-      font-weight: 600;
-      font-size: 0.95rem;
+      font-weight: 700;
+      font-size: 0.92rem;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 0.5rem;
+      box-shadow:
+        0 4px 0 #075952,
+        0 10px 20px -5px rgba(13, 148, 136, 0.45),
+        inset 0 1px 0 rgba(255, 255, 255, 0.28);
     }
 
     button:hover, .btn:hover {
-      background-color: var(--accent-hover);
-      transform: translateY(-1px);
+      background: linear-gradient(180deg, #2dd4bf, #14b8a6);
+      transform: translateY(-2px);
+      box-shadow:
+        0 6px 0 #075952,
+        0 14px 24px -5px rgba(45, 212, 191, 0.5),
+        inset 0 1px 0 rgba(255, 255, 255, 0.35);
     }
 
-    .btn-danger { background-color: var(--danger); }
-    .btn-danger:hover { background-color: #dc2626; }
+    button:active, .btn:active {
+      transform: translateY(2px);
+      box-shadow: 0 1px 0 #075952, 0 4px 10px rgba(0, 0, 0, 0.4);
+    }
 
-    .btn-success { background-color: var(--success); color: white; padding: 0.4rem 0.8rem; font-size: 0.8rem; border-radius: 6px; }
+    .btn-danger {
+      background: linear-gradient(180deg, #fb7185, #e11d48);
+      box-shadow:
+        0 4px 0 #881337,
+        0 10px 18px -5px rgba(225, 29, 72, 0.45),
+        inset 0 1px 0 rgba(255, 255, 255, 0.25);
+    }
+    .btn-danger:hover {
+      background: linear-gradient(180deg, #fda4af, #f43f5e);
+      box-shadow: 0 6px 0 #881337, 0 14px 22px -5px rgba(244, 63, 94, 0.55);
+    }
+    .btn-danger:active {
+      box-shadow: 0 1px 0 #881337;
+    }
 
-    .btn-warning-sm { background-color: #f59e0b; color: #000; padding: 0.4rem 0.8rem; font-size: 0.8rem; border-radius: 6px; }
+    .btn-success {
+      background: linear-gradient(180deg, #34d399, #059669);
+      color: #ffffff;
+      padding: 0.45rem 0.85rem;
+      font-size: 0.8rem;
+      border-radius: 8px;
+      box-shadow: 0 3px 0 #064e3b, 0 6px 14px rgba(16, 185, 129, 0.35);
+    }
+    .btn-success:hover {
+      background: linear-gradient(180deg, #6ee7b7, #10b981);
+      box-shadow: 0 4px 0 #064e3b, 0 10px 18px rgba(16, 185, 129, 0.45);
+    }
 
-    .btn-secondary-sm { background-color: #475569; color: white; padding: 0.35rem 0.7rem; font-size: 0.78rem; border-radius: 6px; }
+    .btn-warning-sm {
+      background: linear-gradient(180deg, #fde047, #eab308);
+      color: #0f172a;
+      padding: 0.45rem 0.85rem;
+      font-size: 0.8rem;
+      border-radius: 8px;
+      box-shadow: 0 3px 0 #854d0e, 0 6px 14px rgba(234, 179, 8, 0.3);
+    }
+
+    .btn-secondary-sm {
+      background: linear-gradient(180deg, #64748b, #475569);
+      color: white;
+      padding: 0.4rem 0.75rem;
+      font-size: 0.78rem;
+      border-radius: 8px;
+      box-shadow: 0 3px 0 #1e293b, 0 6px 12px rgba(15, 23, 42, 0.4);
+    }
 
     .btn-whatsapp {
-      background-color: var(--whatsapp);
-      color: white;
+      background: linear-gradient(180deg, #4ade80, #16a34a);
+      color: #052e16;
       text-decoration: none;
       width: 100%;
+      box-shadow: 0 4px 0 #14532d, 0 10px 20px rgba(37, 211, 102, 0.35);
+    }
+    .btn-whatsapp:hover {
+      background: linear-gradient(180deg, #86efac, #22c55e);
+      box-shadow: 0 6px 0 #14532d, 0 14px 24px rgba(37, 211, 102, 0.45);
     }
 
     .btn-whatsapp-sm {
-      background-color: var(--whatsapp);
-      color: white;
+      background: linear-gradient(180deg, #4ade80, #16a34a);
+      color: #052e16;
       text-decoration: none;
-      padding: 0.3rem 0.6rem;
+      padding: 0.38rem 0.7rem;
       font-size: 0.8rem;
-      border-radius: 6px;
+      border-radius: 8px;
       display: inline-flex;
       align-items: center;
-      gap: 0.3rem;
-      font-weight: 600;
+      gap: 0.35rem;
+      font-weight: 700;
+      box-shadow: 0 3px 0 #14532d, 0 6px 12px rgba(37, 211, 102, 0.3);
     }
-
     .btn-whatsapp-sm:hover {
-      background-color: #1eb954;
-      color: white;
+      background: linear-gradient(180deg, #86efac, #22c55e);
+      color: #052e16;
     }
 
     .btn-whatsapp-reminder {
-      background-color: #0284c7;
+      background: linear-gradient(180deg, #38bdf8, #0284c7);
       color: white;
       text-decoration: none;
       width: 100%;
+      box-shadow: 0 4px 0 #0c4a6e, 0 10px 18px rgba(2, 132, 199, 0.38);
     }
 
     .btn-whatsapp-water {
-      background-color: #0369a1;
+      background: linear-gradient(180deg, #0ea5e9, #0369a1);
       color: white;
       text-decoration: none;
       width: 100%;
+      box-shadow: 0 4px 0 #082f49, 0 10px 18px rgba(3, 105, 161, 0.38);
     }
 
     .btn-doc {
-      background-color: #2563eb;
+      background: linear-gradient(180deg, #60a5fa, #2563eb);
       color: white;
       text-decoration: none;
       width: 100%;
       margin-top: 0.5rem;
+      box-shadow: 0 4px 0 #1e3a8a, 0 10px 20px rgba(37, 99, 235, 0.38);
     }
 
     .btn-receipt {
-      background-color: #0f766e;
+      background: linear-gradient(180deg, #2dd4bf, #0f766e);
       color: white;
       text-decoration: none;
-      padding: 0.3rem 0.6rem;
-      font-size: 0.8rem;
-      border-radius: 6px;
+      padding: 0.32rem 0.65rem;
+      font-size: 0.78rem;
+      border-radius: 7px;
       margin-left: 0.5rem;
+      box-shadow: 0 3px 0 #115e59;
     }
 
     #login-screen {
-      min-height: 100vh;
+      min-height: calc(100vh - 68px);
       display: flex;
       align-items: center;
       justify-content: center;
-      background: linear-gradient(rgba(15, 23, 42, 0.75), rgba(15, 23, 42, 0.85)), 
-                  url('https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=1600&q=80') center/cover no-repeat;
-      padding: 1rem;
+      background:
+        linear-gradient(160deg, rgba(7, 13, 25, 0.78), rgba(15, 23, 42, 0.90)),
+        url('https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=1600&q=80') center/cover no-repeat;
+      padding: 1.5rem;
     }
 
     .login-box {
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(12px);
+      background: var(--card-3d-elevated);
+      backdrop-filter: blur(20px);
       width: 100%;
-      max-width: 420px;
+      max-width: 430px;
       padding: 2.5rem;
-      border-radius: 16px;
-      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+      border-radius: 22px;
+      box-shadow:
+        0 30px 60px -15px rgba(0, 0, 0, 0.8),
+        0 0 35px -8px rgba(20, 184, 166, 0.25),
+        inset 0 1px 0 rgba(255, 255, 255, 0.16);
+      border: 1px solid rgba(148, 163, 184, 0.22);
       text-align: center;
+      transform: translateY(-4px);
+    }
+
+    .login-icon-3d {
+      width: 72px;
+      height: 72px;
+      margin: 0 auto 1rem;
+      border-radius: 20px;
+      background: linear-gradient(145deg, rgba(20, 184, 166, 0.22), rgba(14, 165, 233, 0.14));
+      border: 1px solid rgba(45, 212, 191, 0.35);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      color: var(--accent-hover);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.2);
     }
 
     .tenant-card {
-      border-left: 4px solid var(--accent);
-      margin-bottom: 1.2rem;
-      padding: 1.2rem;
-      background: #ffffff;
-      border-radius: 8px;
-      border: 1px solid #e2e8f0;
+      border-left: 4px solid var(--accent-hover);
+      margin-bottom: 1.25rem;
+      padding: 1.3rem;
+      background: linear-gradient(150deg, rgba(26, 41, 71, 0.88), rgba(14, 23, 42, 0.94));
+      border-radius: 14px;
+      border-top: 1px solid rgba(148, 163, 184, 0.16);
+      border-right: 1px solid rgba(148, 163, 184, 0.16);
+      border-bottom: 1px solid rgba(148, 163, 184, 0.16);
+      box-shadow: 0 12px 24px -8px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.09);
+    }
+
+    .tenant-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 18px 30px -10px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.14);
     }
 
     .tenant-card.vacant-card {
       border-left-color: #64748b;
-      background: #f8fafc;
+      background: linear-gradient(150deg, rgba(22, 31, 50, 0.78), rgba(11, 17, 31, 0.88));
     }
 
     .bill-box {
-      background-color: #fefce8;
-      border: 1px solid #fef08a;
-      color: #713f12;
-      padding: 0.8rem;
-      border-radius: 8px;
-      margin-top: 0.6rem;
+      background: rgba(234, 179, 8, 0.12);
+      border: 1px solid rgba(250, 204, 21, 0.35);
+      color: #fde047;
+      padding: 0.85rem;
+      border-radius: 10px;
+      margin-top: 0.65rem;
       font-size: 0.9rem;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 6px 14px rgba(0, 0, 0, 0.28);
     }
 
     .elec-box {
-      background-color: #f0fdf4;
-      border: 1px solid #bbf7d0;
-      color: #166534;
-      padding: 0.8rem;
-      border-radius: 8px;
-      margin-top: 0.6rem;
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(52, 211, 153, 0.35);
+      color: #6ee7b7;
+      padding: 0.85rem;
+      border-radius: 10px;
+      margin-top: 0.65rem;
       font-size: 0.9rem;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 6px 14px rgba(0, 0, 0, 0.28);
     }
 
     .announcement-box {
-      background-color: #eff6ff;
-      border-left: 4px solid #2563eb;
-      color: #1e3a8a;
-      padding: 0.8rem 1rem;
-      border-radius: 8px;
-      margin-bottom: 0.8rem;
+      background: linear-gradient(145deg, rgba(30, 58, 138, 0.32), rgba(15, 23, 42, 0.82));
+      border-left: 4px solid #38bdf8;
+      border-top: 1px solid rgba(56, 189, 248, 0.22);
+      border-right: 1px solid rgba(56, 189, 248, 0.22);
+      border-bottom: 1px solid rgba(56, 189, 248, 0.22);
+      color: #e0f2fe;
+      padding: 0.9rem 1.05rem;
+      border-radius: 12px;
+      margin-bottom: 0.9rem;
+      box-shadow: 0 10px 20px -8px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
     }
 
     details.announcement-details {
-      background-color: #eff6ff;
-      border-left: 4px solid #2563eb;
-      border-radius: 8px;
-      margin-bottom: 0.8rem;
-      padding: 0.6rem 0.9rem;
+      background: linear-gradient(145deg, rgba(30, 58, 138, 0.30), rgba(15, 23, 42, 0.84));
+      border-left: 4px solid #38bdf8;
+      border-top: 1px solid rgba(56, 189, 248, 0.22);
+      border-right: 1px solid rgba(56, 189, 248, 0.22);
+      border-bottom: 1px solid rgba(56, 189, 248, 0.22);
+      border-radius: 12px;
+      margin-bottom: 0.85rem;
+      padding: 0.7rem 1rem;
+      box-shadow: 0 10px 20px -8px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.09);
     }
 
     details.announcement-details summary {
       cursor: pointer;
       font-weight: 600;
-      color: #1e3a8a;
+      color: #e0f2fe;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -314,7 +478,7 @@
       font-weight: 900;
       font-size: 0.85rem;
       transition: transform 0.2s ease;
-      color: #2563eb;
+      color: #38bdf8;
       margin-left: 0.5rem;
     }
 
@@ -323,49 +487,53 @@
     }
 
     details.announcement-details .announcement-body {
-      margin-top: 0.6rem;
-      padding-top: 0.6rem;
-      border-top: 1px dashed #bfdbfe;
-      color: #1e293b;
+      margin-top: 0.65rem;
+      padding-top: 0.65rem;
+      border-top: 1px dashed rgba(148, 163, 184, 0.25);
+      color: #cbd5e1;
       font-size: 0.88rem;
-      line-height: 1.45;
+      line-height: 1.5;
       white-space: pre-line;
     }
 
     .mtn-box {
-      background-color: #fffbe3;
-      border: 2px dashed #eab308;
-      color: #713f12;
-      padding: 1.2rem;
-      border-radius: 10px;
-      margin-top: 1.2rem;
+      background: linear-gradient(150deg, rgba(250, 204, 21, 0.14), rgba(15, 23, 42, 0.88));
+      border: 2px dashed rgba(250, 204, 21, 0.55);
+      color: #fef08a;
+      padding: 1.25rem;
+      border-radius: 14px;
+      margin-top: 1.25rem;
+      box-shadow: 0 12px 24px -8px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
     }
 
     .bank-box {
-      background-color: #f0f9ff;
-      border: 1px solid #bae6fd;
-      color: #0c4a6e;
+      background: linear-gradient(145deg, rgba(14, 165, 233, 0.18), rgba(15, 23, 42, 0.82));
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      color: #bae6fd;
       padding: 1rem;
-      border-radius: 8px;
-      margin-top: 0.9rem;
+      border-radius: 12px;
+      margin-top: 0.95rem;
       font-size: 0.9rem;
-      line-height: 1.5;
+      line-height: 1.55;
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.1);
     }
 
     .financial-card {
-      background: #ffffff;
-      border-radius: 10px;
-      border: 1px solid #cbd5e1;
-      padding: 1.2rem;
-      margin-bottom: 1.5rem;
+      background: var(--card-3d-elevated);
+      border-radius: 18px;
+      border: 1px solid rgba(45, 212, 191, 0.25);
+      padding: 1.5rem;
+      margin-bottom: 1.6rem;
+      box-shadow: var(--shadow-3d);
     }
 
     .tango-panel {
-      margin-top: 1.2rem;
-      padding: 1rem;
-      border-radius: 10px;
-      background: #f8fafc;
-      border: 1px solid #cbd5e1;
+      margin-top: 1.25rem;
+      padding: 1.05rem 1.2rem;
+      border-radius: 12px;
+      background: rgba(7, 13, 25, 0.68);
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.45);
       display: flex;
       flex-wrap: wrap;
       justify-content: space-between;
@@ -375,123 +543,156 @@
 
     .metric-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
       gap: 1rem;
-      margin-top: 1rem;
+      margin-top: 1.1rem;
     }
 
     .metric-box {
-      background: #f8fafc;
-      padding: 0.8rem;
-      border-radius: 8px;
-      border: 1px solid #e2e8f0;
+      background: linear-gradient(160deg, rgba(30, 46, 78, 0.72), rgba(11, 19, 36, 0.92));
+      padding: 0.95rem;
+      border-radius: 12px;
+      border: 1px solid rgba(148, 163, 184, 0.18);
       text-align: center;
+      box-shadow: 0 10px 18px -6px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    }
+
+    .metric-box:hover {
+      transform: translateY(-2px);
+      border-color: rgba(45, 212, 191, 0.35);
     }
 
     .metric-title {
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       color: var(--text-muted);
-      font-weight: 600;
+      font-weight: 700;
       text-transform: uppercase;
+      letter-spacing: 0.04em;
     }
 
     .metric-value {
-      font-size: 1.1rem;
-      font-weight: 700;
-      margin-top: 0.2rem;
+      font-size: 1.12rem;
+      font-weight: 800;
+      margin-top: 0.3rem;
       color: var(--primary);
     }
 
     .notice-badge {
-      background-color: #fff7ed;
-      color: #c2410c;
-      border: 1px solid #ffedd5;
-      padding: 0.6rem 0.8rem;
-      border-radius: 8px;
-      margin-bottom: 0.8rem;
+      background: rgba(244, 63, 94, 0.16);
+      color: #fda4af;
+      border: 1px solid rgba(251, 113, 133, 0.4);
+      padding: 0.65rem 0.85rem;
+      border-radius: 10px;
+      margin-bottom: 0.85rem;
       font-weight: 600;
       font-size: 0.88rem;
       display: flex;
       align-items: center;
       gap: 0.5rem;
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.3);
     }
 
     .paid-badge {
-      background-color: #d1fae5;
-      color: #065f46;
-      padding: 0.2rem 0.5rem;
-      border-radius: 4px;
+      background: rgba(16, 185, 129, 0.2);
+      color: #6ee7b7;
+      border: 1px solid rgba(52, 211, 153, 0.4);
+      padding: 0.25rem 0.6rem;
+      border-radius: 6px;
       font-size: 0.75rem;
-      font-weight: bold;
+      font-weight: 700;
     }
 
     .pending-badge {
-      background-color: #fef3c7;
-      color: #92400e;
-      padding: 0.25rem 0.6rem;
-      border-radius: 4px;
+      background: rgba(250, 204, 21, 0.18);
+      color: #fde047;
+      padding: 0.28rem 0.65rem;
+      border-radius: 6px;
       font-size: 0.78rem;
-      font-weight: bold;
-      border: 1px solid #fde68a;
+      font-weight: 700;
+      border: 1px solid rgba(250, 204, 21, 0.4);
     }
 
     .occ-badge {
-      padding: 0.22rem 0.6rem;
+      padding: 0.25rem 0.65rem;
       border-radius: 999px;
-      font-size: 0.75rem;
+      font-size: 0.74rem;
       font-weight: 700;
       text-transform: uppercase;
+      letter-spacing: 0.03em;
     }
 
     .occ-occupied {
-      background-color: #dcfce7;
-      color: #166534;
+      background: rgba(16, 185, 129, 0.2);
+      color: #6ee7b7;
+      border: 1px solid rgba(52, 211, 153, 0.38);
     }
 
     .occ-vacant {
-      background-color: #e2e8f0;
-      color: #334155;
+      background: rgba(148, 163, 184, 0.18);
+      color: #cbd5e1;
+      border: 1px solid rgba(148, 163, 184, 0.32);
     }
 
     .history-box {
-      margin-top: 0.8rem;
-      background: #f1f5f9;
-      border-radius: 8px;
-      padding: 0.7rem 0.9rem;
+      margin-top: 0.85rem;
+      background: rgba(7, 13, 25, 0.65);
+      border: 1px solid rgba(148, 163, 184, 0.16);
+      border-radius: 10px;
+      padding: 0.75rem 0.95rem;
       font-size: 0.83rem;
-      color: #334155;
+      color: #cbd5e1;
+      box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.4);
     }
 
     .action-btn-group {
       display: grid;
       grid-template-columns: 1fr;
-      gap: 0.5rem;
-      margin-top: 0.8rem;
+      gap: 0.55rem;
+      margin-top: 0.85rem;
+    }
+
+    .tenant-info-banner {
+      font-size: 1.08rem;
+      margin-bottom: 1.5rem;
+      padding: 0.9rem 1rem;
+      background: rgba(7, 13, 25, 0.72);
+      border-radius: 12px;
+      border-left: 4px solid #38bdf8;
+      border-top: 1px solid rgba(148, 163, 184, 0.15);
+      border-right: 1px solid rgba(148, 163, 184, 0.15);
+      border-bottom: 1px solid rgba(148, 163, 184, 0.15);
+      box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.4);
+    }
+
+    hr {
+      border: none;
+      border-top: 1px solid rgba(148, 163, 184, 0.18);
+      margin: 1.5rem 0;
     }
   </style>
 </head>
 <body>
 
 <header>
-  <h1><i class="fa-solid fa-building-user"></i> JBM Estates App</h1>
+  <h1><i class="fa-solid fa-cubes"></i> JBM Estates 3D App</h1>
   <div class="badge-status" id="connection-status"><i class="fa-solid fa-cloud"></i> Synced</div>
 </header>
 
 <div id="login-screen">
   <div class="login-box">
-    <div style="font-size: 2.5rem; color: var(--accent); margin-bottom: 0.5rem;">
+    <div class="login-icon-3d">
       <i class="fa-solid fa-house-circle-check"></i>
     </div>
-    <h2 style="justify-content: center; margin-bottom: 0.2rem;">JBM ESTATES LTD</h2>
-    <p style="color: var(--text-muted); margin-bottom: 1.5rem; font-size: 0.9rem;">Residential & Commercial Portal</p>
+    <h2 style="justify-content: center; margin-bottom: 0.25rem;">JBM ESTATES LTD</h2>
+    <p style="color: var(--text-muted); margin-bottom: 1.6rem; font-size: 0.9rem;">Residential & Commercial 3D Portal</p>
     
-    <div style="display: flex; gap: 10px; justify-content: center; margin-bottom: 1rem;">
+    <div style="display: flex; gap: 12px; justify-content: center; margin-bottom: 1rem;">
       <button type="button" onclick="showLandlordLogin()" style="flex: 1;"><i class="fa-solid fa-user-shield"></i> Landlord</button>
-      <button type="button" onclick="showTenantLogin()" style="flex: 1; background-color: #0284c7;"><i class="fa-solid fa-user"></i> Tenant</button>
+      <button type="button" onclick="showTenantLogin()" style="flex: 1; background: linear-gradient(180deg, #38bdf8, #0284c7); box-shadow: 0 4px 0 #0c4a6e, 0 10px 20px -5px rgba(2, 132, 199, 0.45), inset 0 1px 0 rgba(255,255,255,0.28);"><i class="fa-solid fa-user"></i> Tenant</button>
     </div>
 
     <div id="tenant-login-form" style="display: none; margin-top: 15px; text-align: left;">
-      <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 1.2rem 0;">
+      <hr>
       <div class="form-group">
         <label><i class="fa-solid fa-door-closed"></i> Unit Name / Number</label>
         <input type="text" id="loginUnit" placeholder="e.g., Apt 1A" />
@@ -500,7 +701,7 @@
         <label><i class="fa-solid fa-key"></i> 4-Digit PIN</label>
         <input type="password" id="loginPin" maxlength="4" placeholder="e.g., 1234" />
       </div>
-      <button type="button" onclick="processTenantLogin()" style="width: 100%; background-color: #0284c7; margin-top: 0.5rem;">
+      <button type="button" onclick="processTenantLogin()" style="width: 100%; background: linear-gradient(180deg, #38bdf8, #0284c7); box-shadow: 0 4px 0 #0c4a6e, 0 10px 20px -5px rgba(2, 132, 199, 0.45), inset 0 1px 0 rgba(255,255,255,0.28); margin-top: 0.5rem;">
         Access My Portal <i class="fa-solid fa-arrow-right"></i>
       </button>
     </div>
@@ -509,7 +710,7 @@
 
 <div class="container" id="landlord-controls" style="display: none;">
   <div style="margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center;">
-    <h2 style="margin:0;"><i class="fa-solid fa-gauge"></i> Landlord Dashboard</h2>
+    <h2 style="margin:0;"><i class="fa-solid fa-gauge"></i> Landlord 3D Dashboard</h2>
     <button onclick="location.reload()" class="btn-danger"><i class="fa-solid fa-right-from-bracket"></i> Log Out</button>
   </div>
 
@@ -525,25 +726,25 @@
     <div class="metric-grid">
       <div class="metric-box">
         <div class="metric-title">Recorded Rent (Month)</div>
-        <div class="metric-value" id="display-collected-rent" style="color: var(--success);">UGX 0</div>
+        <div class="metric-value" id="display-collected-rent" style="color: #34d399;">UGX 0</div>
       </div>
       <div class="metric-box">
         <div class="metric-title">Monthly Running Exp.</div>
-        <div class="metric-value" id="display-running-expenses" style="color: #dc2626;">UGX 0</div>
+        <div class="metric-value" id="display-running-expenses" style="color: #fb7185;">UGX 0</div>
       </div>
       <div class="metric-box">
         <div class="metric-title">Net Monthly Income</div>
-        <div class="metric-value" id="display-net-income" style="color: var(--accent);">UGX 0</div>
+        <div class="metric-value" id="display-net-income" style="color: #2dd4bf;">UGX 0</div>
       </div>
       <div class="metric-box">
         <div class="metric-title">TANGO (10% of Net)</div>
-        <div class="metric-value" id="display-tango-amount" style="color: #0284c7;">UGX 0</div>
+        <div class="metric-value" id="display-tango-amount" style="color: #38bdf8;">UGX 0</div>
       </div>
     </div>
 
     <div class="tango-panel">
       <div>
-        <div style="font-size:0.85rem; font-weight:700; color:var(--primary);">
+        <div style="font-size:0.88rem; font-weight:700; color:var(--primary);">
           <i class="fa-solid fa-hand-holding-dollar"></i> TANGO Monthly Compliance (<span id="tango-month-label">Current Month</span>)
         </div>
         <div style="font-size:0.82rem; color:var(--text-muted); margin-top:0.2rem;">
@@ -563,7 +764,7 @@
         <label><i class="fa-solid fa-receipt"></i> Running Expenses for Selected Month (UGX)</label>
         <input type="number" id="monthlyRunningExpenses" min="0" step="1" placeholder="e.g., 180000 (caretaker, repairs, utilities, etc.)">
       </div>
-      <button type="submit" style="height: 42px;"><i class="fa-solid fa-floppy-disk"></i> Save Month Expenses</button>
+      <button type="submit" style="height: 44px;"><i class="fa-solid fa-floppy-disk"></i> Save Month Expenses</button>
     </form>
   </div>
 
@@ -586,7 +787,7 @@
             <label>Announcement Message</label>
             <textarea id="announcementMessage" rows="3" placeholder="Enter notice details here..." required></textarea>
           </div>
-          <button type="submit" style="width: 100%; background-color: #2563eb;"><i class="fa-solid fa-paper-plane"></i> Publish Notice</button>
+          <button type="submit" style="width: 100%; background: linear-gradient(180deg, #60a5fa, #2563eb); box-shadow: 0 4px 0 #1e3a8a, 0 10px 20px -5px rgba(37, 99, 235, 0.45), inset 0 1px 0 rgba(255,255,255,0.28);"><i class="fa-solid fa-paper-plane"></i> Publish Notice</button>
         </form>
       </div>
 
@@ -651,7 +852,7 @@
             <label><i class="fa-solid fa-camera"></i> Receipt Image (Optional)</label>
             <input type="file" id="receiptImage" accept="image/*">
           </div>
-          <button type="submit" style="width: 100%; background-color: #0284c7;"><i class="fa-solid fa-check"></i> Save Payment</button>
+          <button type="submit" style="width: 100%; background: linear-gradient(180deg, #38bdf8, #0284c7); box-shadow: 0 4px 0 #0c4a6e, 0 10px 20px -5px rgba(2, 132, 199, 0.45), inset 0 1px 0 rgba(255,255,255,0.28);"><i class="fa-solid fa-check"></i> Save Payment</button>
         </form>
       </div>
 
@@ -693,7 +894,7 @@
             <label>Current Reading (kWh)</label>
             <input type="number" id="currElecReading" step="0.1" required>
           </div>
-          <button type="submit" style="width: 100%; background-color: #eab308; color: #000;"><i class="fa-solid fa-calculator"></i> Calculate Electricity Bill</button>
+          <button type="submit" style="width: 100%; background: linear-gradient(180deg, #fde047, #eab308); color: #0f172a; box-shadow: 0 4px 0 #854d0e, 0 10px 20px -5px rgba(234, 179, 8, 0.35), inset 0 1px 0 rgba(255,255,255,0.4);"><i class="fa-solid fa-calculator"></i> Calculate Electricity Bill</button>
         </form>
       </div>
     </div>
@@ -749,7 +950,6 @@
   // LOCAL STORAGE FALLBACK LOAD
   let tenants = JSON.parse(localStorage.getItem('jbm_tenants_cache') || '[]');
   let announcements = JSON.parse(localStorage.getItem('jbm_announcements_cache') || '[]');
-  // monthlyFinance format: { "2026-11": { runningExpenses: 0, tangoCleared: false } }
   let monthlyFinance = JSON.parse(localStorage.getItem('jbm_monthly_finance') || '{}');
 
   function ensureMonthRecord(ym) {
@@ -791,12 +991,12 @@
     const statusElem = document.getElementById('connection-status');
     if (snap.val() === true) {
       statusElem.innerHTML = '<i class="fa-solid fa-cloud"></i> Synced';
-      statusElem.style.color = '#10b981';
-      statusElem.style.borderColor = 'rgba(16, 185, 129, 0.3)';
+      statusElem.style.color = '#34d399';
+      statusElem.style.borderColor = 'rgba(52, 211, 153, 0.35)';
     } else {
       statusElem.innerHTML = '<i class="fa-solid fa-wifi"></i> Offline Mode';
-      statusElem.style.color = '#ef4444';
-      statusElem.style.borderColor = 'rgba(239, 68, 68, 0.3)';
+      statusElem.style.color = '#fb7185';
+      statusElem.style.borderColor = 'rgba(251, 113, 133, 0.35)';
     }
   });
 
@@ -1024,18 +1224,18 @@
       const card = document.createElement('div');
       card.className = 'announcement-box';
       card.style.position = 'relative';
-      card.style.marginBottom = '0.8rem';
+      card.style.marginBottom = '0.9rem';
       card.innerHTML = `
         <div style="display:flex; justify-content:space-between; align-items:start;">
           <div>
-            <strong style="color: #1e3a8a; font-size: 1rem;"><i class="fa-solid fa-bullhorn"></i> ${a.title}</strong>
-            <div style="font-size:0.75rem; color: var(--text-muted); margin-top: 2px;">
-              <span style="background:#dbeafe; padding:2px 6px; border-radius:4px; font-weight:bold; color:#1e40af;">${targetText}</span> • Posted ${a.date}
+            <strong style="color: #7dd3fc; font-size: 1rem;"><i class="fa-solid fa-bullhorn"></i> ${a.title}</strong>
+            <div style="font-size:0.75rem; color: var(--text-muted); margin-top: 3px;">
+              <span style="background:rgba(56,189,248,0.18); padding:2px 7px; border-radius:5px; font-weight:700; color:#bae6fd; border:1px solid rgba(56,189,248,0.3);">${targetText}</span> • Posted ${a.date}
             </div>
           </div>
-          <button onclick="deleteAnnouncement('${a.id}')" class="btn-danger" style="padding:0.2rem 0.5rem; font-size:0.75rem;"><i class="fa-solid fa-trash"></i></button>
+          <button onclick="deleteAnnouncement('${a.id}')" class="btn-danger" style="padding:0.25rem 0.55rem; font-size:0.75rem;"><i class="fa-solid fa-trash"></i></button>
         </div>
-        <p style="margin: 0.6rem 0 0.8rem 0; font-size: 0.9rem; line-height: 1.4; color: #1e293b; white-space: pre-line;">${a.message}</p>
+        <p style="margin: 0.65rem 0 0.85rem 0; font-size: 0.9rem; line-height: 1.45; color: #e2e8f0; white-space: pre-line;">${a.message}</p>
         ${whatsappBtnHTML}
       `;
       list.appendChild(card);
@@ -1119,11 +1319,11 @@
     let noticesHTML = '';
     if (tenantNotices.length > 0) {
       noticesHTML = `
-        <h3><i class="fa-solid fa-bullhorn" style="color: #2563eb;"></i> Management Notices (${tenantNotices.length})</h3>
+        <h3><i class="fa-solid fa-bullhorn" style="color: #38bdf8;"></i> Management Notices (${tenantNotices.length})</h3>
         ${tenantNotices.map((n, idx) => `
           <details class="announcement-details" ${idx === 0 ? 'open' : ''}>
             <summary>
-              <span><i class="fa-solid fa-circle-info" style="color: #2563eb; margin-right: 6px;"></i> ${n.title}</span>
+              <span><i class="fa-solid fa-circle-info" style="color: #38bdf8; margin-right: 6px;"></i> ${n.title}</span>
               <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: normal; margin-left: auto; margin-right: 6px;">${n.date}</span>
             </summary>
             <div class="announcement-body">
@@ -1131,7 +1331,7 @@
             </div>
           </details>
         `).join('')}
-        <hr style="border:none; border-top:1px solid #e2e8f0; margin: 1.5rem 0;">
+        <hr>
       `;
     }
 
@@ -1139,7 +1339,7 @@
     if (tenant.waterBill) {
       const isPaid = tenant.waterBill.status === 'paid';
       waterBillInfo = `
-        <div class="bill-box" style="${isPaid ? 'background-color:#f0fdf4; border-color:#bbf7d0; color:#166534;' : ''}">
+        <div class="bill-box" style="${isPaid ? 'background:rgba(16,185,129,0.12); border-color:rgba(52,211,153,0.35); color:#6ee7b7;' : ''}">
           <div style="display:flex; justify-content:space-between; align-items:center;">
             <strong><i class="fa-solid fa-droplet"></i> Water Bill: UGX ${Math.round(tenant.waterBill.totalCost).toLocaleString()}</strong>
             <span class="${isPaid ? 'paid-badge' : 'notice-badge'}" style="margin:0;">${isPaid ? 'PAID' : 'UNPAID'}</span>
@@ -1153,7 +1353,7 @@
     if (tenant.elecBill) {
       const isPaid = tenant.elecBill.status === 'paid';
       elecBillInfo = `
-        <div class="elec-box" style="${isPaid ? 'background-color:#f0fdf4; border-color:#bbf7d0; color:#166534;' : ''}">
+        <div class="elec-box" style="${isPaid ? 'background:rgba(16,185,129,0.12); border-color:rgba(52,211,153,0.35); color:#6ee7b7;' : ''}">
           <div style="display:flex; justify-content:space-between; align-items:center;">
             <strong><i class="fa-solid fa-bolt"></i> Electricity Submeter: UGX ${Math.round(tenant.elecBill.totalCost).toLocaleString()}</strong>
             <span class="${isPaid ? 'paid-badge' : 'notice-badge'}" style="margin:0;">${isPaid ? 'PAID' : 'UNPAID'}</span>
@@ -1179,7 +1379,7 @@
     const paymentHistoryHTML = (tenant.payments && tenant.payments.length > 0) ? `
       <ul style="padding-left: 1.2rem; color: var(--text-main);">
         ${tenant.payments.map(p => `
-          <li style="margin-bottom: 0.6rem;">
+          <li style="margin-bottom: 0.65rem;">
             <strong>UGX ${Number(p.amount).toLocaleString()}</strong> paid on ${formatDateWithDay(p.date)}
             ${p.receiptImage ? `<a href="${p.receiptImage}" download="Receipt_${tenant.unit}_${p.date}.jpg" target="_blank" class="btn-receipt"><i class="fa-solid fa-receipt"></i> View / Download Receipt</a>` : ''}
           </li>
@@ -1188,46 +1388,46 @@
     ` : '<p style="color: var(--text-muted);">No payments recorded yet.</p>';
 
     portal.innerHTML = `
-      <div class="card" style="max-width: 600px; margin: 2rem auto;">
+      <div class="card card-3d-elevated" style="max-width: 620px; margin: 1.5rem auto;">
         <h2><i class="fa-solid fa-circle-user"></i> Welcome, ${tenant.name}</h2>
-        <p style="color: var(--text-muted); margin-top:-0.5rem; margin-bottom:1.5rem;">Unit: ${tenant.unit}</p>
+        <p style="color: var(--text-muted); margin-top:-0.4rem; margin-bottom:1.5rem;">Unit: ${tenant.unit}</p>
 
         ${noticesHTML}
 
-        <div style="font-size: 1rem; margin-bottom: 0.5rem;">
-          <strong>Monthly Rent:</strong> UGX ${Number(tenant.rent).toLocaleString()}
+        <div style="font-size: 1rem; margin-bottom: 0.65rem;">
+          <strong>Monthly Rent:</strong> <span style="color:#2dd4bf; font-weight:700;">UGX ${Number(tenant.rent).toLocaleString()}</span>
         </div>
-        <div style="font-size: 1.1rem; margin-bottom: 1.5rem; padding: 0.8rem; background-color: #f1f5f9; border-radius: 8px; border-left: 4px solid #0284c7;">
-          <strong>Next Rent Due Date:</strong> <br><span style="color: var(--danger); font-weight:bold;">${formattedDueDate}</span>
+        <div class="tenant-info-banner">
+          <strong>Next Rent Due Date:</strong> <br><span style="color: #fb7185; font-weight:700;">${formattedDueDate}</span>
         </div>
 
         <h3><i class="fa-solid fa-faucet"></i> Water Utilities</h3>
         ${waterBillInfo}
 
-        <h3 style="margin-top: 1.2rem;"><i class="fa-solid fa-bolt"></i> Electricity Submeter</h3>
+        <h3 style="margin-top: 1.3rem;"><i class="fa-solid fa-bolt"></i> Electricity Submeter</h3>
         ${elecBillInfo}
 
         <div class="mtn-box">
-          <h3 style="margin:0 0 0.5rem 0; color:#000;"><i class="fa-solid fa-mobile-screen-button"></i> Payment Options</h3>
-          <p style="font-size:0.88rem; margin:0 0 0.5rem 0;">Pay Rent and Submeter bills using any of the options below:</p>
-          <div style="font-size:0.92rem; font-weight:bold; color:#000; line-height: 1.5;">
-            <strong>OPTION 1: MOMO PAY (Merchant Code)</strong><br>
+          <h3 style="margin:0 0 0.55rem 0; color:#fde047;"><i class="fa-solid fa-mobile-screen-button"></i> Payment Options</h3>
+          <p style="font-size:0.88rem; margin:0 0 0.6rem 0; color:#e2e8f0;">Pay Rent and Submeter bills using any of the options below:</p>
+          <div style="font-size:0.9rem; font-weight:600; color:#f8fafc; line-height: 1.55;">
+            <strong style="color:#fde047;">OPTION 1: MOMO PAY (Merchant Code)</strong><br>
             • Dial <strong>*165*3*CODE#</strong><br>
-            • Merchant Code: <span style="background-color: var(--mtn-yellow); padding:2px 6px; border-radius:4px;">${mtnMomoConfig.merchantCode}</span> (${mtnMomoConfig.merchantName})<br><br>
-            <strong>OPTION 2: DIRECT MOBILE MONEY SEND</strong><br>
-            • Send directly to: <span style="background-color: var(--mtn-yellow); padding:2px 6px; border-radius:4px;">${mtnMomoConfig.momoNumber}</span><br>
+            • Merchant Code: <span style="background-color: var(--mtn-yellow); color:#0f172a; font-weight:800; padding:2px 7px; border-radius:5px;">${mtnMomoConfig.merchantCode}</span> (${mtnMomoConfig.merchantName})<br><br>
+            <strong style="color:#fde047;">OPTION 2: DIRECT MOBILE MONEY SEND</strong><br>
+            • Send directly to: <span style="background-color: var(--mtn-yellow); color:#0f172a; font-weight:800; padding:2px 7px; border-radius:5px;">${mtnMomoConfig.momoNumber}</span><br>
             • Account Name: <strong>${mtnMomoConfig.merchantName}</strong><br><br>
-            <strong>REQUIRED REFERENCE:</strong><br>
+            <strong style="color:#fde047;">REQUIRED REFERENCE:</strong><br>
             • Reason: <strong>Unit Number & Payment Name</strong><br>
             • Example: <em>"${tenant.unit} Water Bill"</em> or <em>"${tenant.unit} Rent"</em>
           </div>
 
           <div class="bank-box">
-            <strong><i class="fa-solid fa-building-columns"></i> OPTION 3: BANK DEPOSIT / TRANSFER</strong><br>
+            <strong style="color:#7dd3fc;"><i class="fa-solid fa-building-columns"></i> OPTION 3: BANK DEPOSIT / TRANSFER</strong><br>
             • No Mobile Money withdrawal charges apply — you can deposit the <strong>exact rent amount</strong>.<br>
             • Please <strong>ask / contact the landlord for bank details</strong> before making your deposit.<br>
-            <div style="margin-top:0.6rem;">
-              <a href="https://wa.me/${mtnMomoConfig.landlordWhatsApp}?text=${bankInquiryMsg}" target="_blank" class="btn btn-doc" style="margin-top:0; font-size:0.85rem; padding:0.55rem 1rem;">
+            <div style="margin-top:0.65rem;">
+              <a href="https://wa.me/${mtnMomoConfig.landlordWhatsApp}?text=${bankInquiryMsg}" target="_blank" class="btn btn-doc" style="margin-top:0; font-size:0.85rem; padding:0.6rem 1rem;">
                 <i class="fa-solid fa-building-columns"></i> Ask Landlord for Bank Details
               </a>
             </div>
@@ -1238,15 +1438,15 @@
               <i class="fa-brands fa-whatsapp"></i> Send Payment Proof to Landlord
             </a>
           </div>
-          <p style="font-size:0.8rem; color:var(--text-muted); margin:0.5rem 0 0 0;"><em>Note: Upon receipt of payment proof, the landlord clears your bill status from UNPAID to PAID.</em></p>
+          <p style="font-size:0.8rem; color:var(--text-muted); margin:0.55rem 0 0 0;"><em>Note: Upon receipt of payment proof, the landlord clears your bill status from UNPAID to PAID.</em></p>
         </div>
 
-        <hr style="border:none; border-top:1px solid #e2e8f0; margin: 1.5rem 0;">
+        <hr>
 
         <h3><i class="fa-solid fa-receipt"></i> Recent Payment Receipts</h3>
         ${paymentHistoryHTML}
 
-        <hr style="border:none; border-top:1px solid #e2e8f0; margin: 1.5rem 0;">
+        <hr>
 
         <h3><i class="fa-solid fa-file-contract"></i> Tenancy Agreement</h3>
         <p style="font-size:0.9rem; color: var(--text-muted);">You can access your tenancy agreement document anytime online:</p>
@@ -1274,7 +1474,6 @@
       const existing = tenants[existingIdx];
       const history = Array.isArray(existing.pastOccupants) ? [...existing.pastOccupants] : [];
 
-      // If replacing an existing active occupant with a different person, archive the previous occupant
       if (
         (existing.occupancyStatus || 'occupied') === 'occupied' &&
         existing.name &&
@@ -1525,7 +1724,7 @@
         const isPaid = t.waterBill.status === 'paid';
         
         waterHTML = `
-          <div class="bill-box" style="${isPaid ? 'background-color:#f0fdf4; border-color:#bbf7d0; color:#166534;' : ''}">
+          <div class="bill-box" style="${isPaid ? 'background:rgba(16,185,129,0.12); border-color:rgba(52,211,153,0.35); color:#6ee7b7;' : ''}">
             <div style="display:flex; justify-content:space-between; align-items:center;">
               <strong>Water: UGX ${Math.round(t.waterBill.totalCost).toLocaleString()} (${t.waterBill.unitsUsed.toFixed(1)} m³)</strong>
               ${isPaid ? '<span class="paid-badge">PAID</span>' : `<button onclick="markBillPaid('${t.id}', 'water')" class="btn-success"><i class="fa-solid fa-check"></i> Mark Paid</button>`}
@@ -1561,7 +1760,7 @@
       if (t.elecBill) {
         const isPaid = t.elecBill.status === 'paid';
         elecHTML = `
-          <div class="elec-box" style="${isPaid ? 'background-color:#f0fdf4; border-color:#bbf7d0; color:#166534;' : ''}">
+          <div class="elec-box" style="${isPaid ? 'background:rgba(16,185,129,0.12); border-color:rgba(52,211,153,0.35); color:#6ee7b7;' : ''}">
             <div style="display:flex; justify-content:space-between; align-items:center;">
               <strong>Electricity: UGX ${Math.round(t.elecBill.totalCost).toLocaleString()} (${t.elecBill.unitsUsed.toFixed(1)} kWh)</strong>
               ${isPaid ? '<span class="paid-badge">PAID</span>' : `<button onclick="markBillPaid('${t.id}', 'elec')" class="btn-success"><i class="fa-solid fa-check"></i> Mark Paid</button>`}
@@ -1632,17 +1831,17 @@
             <h3 style="margin:0;"><i class="fa-solid fa-house"></i> ${t.unit} - ${t.name}</h3>
             <span class="occ-badge ${isVacant ? 'occ-vacant' : 'occ-occupied'}">${isVacant ? 'Vacant' : 'Occupied'}</span>
           </div>
-          <div style="display:flex; gap:0.4rem;">
+          <div style="display:flex; gap:0.45rem;">
             <button onclick="toggleUnitOccupancy('${t.id}')" class="btn-secondary-sm" title="Toggle Occupied / Vacant">
               <i class="fa-solid fa-repeat"></i> ${isVacant ? 'Assign Tenant' : 'Mark Vacant'}
             </button>
-            <button onclick="deleteTenant('${t.id}')" class="btn-danger" style="padding:0.3rem 0.6rem; font-size:0.8rem;"><i class="fa-solid fa-trash"></i></button>
+            <button onclick="deleteTenant('${t.id}')" class="btn-danger" style="padding:0.35rem 0.65rem; font-size:0.8rem;"><i class="fa-solid fa-trash"></i></button>
           </div>
         </div>
-        <div style="margin-top:0.5rem; font-size:0.9rem;"><strong>PIN:</strong> ${t.pin || 'None'}</div>
+        <div style="margin-top:0.55rem; font-size:0.9rem;"><strong>PIN:</strong> ${t.pin || 'None'}</div>
         <div style="font-size:0.9rem;"><strong>WhatsApp:</strong> ${t.phone || 'Not set'}</div>
         <div style="font-size:0.9rem;"><strong>Rent:</strong> UGX ${Number(t.rent || 0).toLocaleString()}</div>
-        <div style="color: var(--danger); font-size:0.9rem;"><strong>Next Due:</strong> ${isVacant ? 'N/A (Vacant)' : formattedDueDate}</div>
+        <div style="color: #fda4af; font-size:0.9rem;"><strong>Next Due:</strong> ${isVacant ? 'N/A (Vacant)' : formattedDueDate}</div>
         ${waterHTML}
         ${elecHTML}
         ${pastHistoryHTML}
