@@ -160,6 +160,10 @@
 
     .btn-success { background-color: var(--success); color: white; padding: 0.4rem 0.8rem; font-size: 0.8rem; border-radius: 6px; }
 
+    .btn-warning-sm { background-color: #f59e0b; color: #000; padding: 0.4rem 0.8rem; font-size: 0.8rem; border-radius: 6px; }
+
+    .btn-secondary-sm { background-color: #475569; color: white; padding: 0.35rem 0.7rem; font-size: 0.78rem; border-radius: 6px; }
+
     .btn-whatsapp {
       background-color: var(--whatsapp);
       color: white;
@@ -247,6 +251,11 @@
       border: 1px solid #e2e8f0;
     }
 
+    .tenant-card.vacant-card {
+      border-left-color: #64748b;
+      background: #f8fafc;
+    }
+
     .bill-box {
       background-color: #fefce8;
       border: 1px solid #fef08a;
@@ -332,12 +341,36 @@
       margin-top: 1.2rem;
     }
 
+    .bank-box {
+      background-color: #f0f9ff;
+      border: 1px solid #bae6fd;
+      color: #0c4a6e;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-top: 0.9rem;
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+
     .financial-card {
       background: #ffffff;
       border-radius: 10px;
       border: 1px solid #cbd5e1;
       padding: 1.2rem;
       margin-bottom: 1.5rem;
+    }
+
+    .tango-panel {
+      margin-top: 1.2rem;
+      padding: 1rem;
+      border-radius: 10px;
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
     }
 
     .metric-grid {
@@ -392,6 +425,43 @@
       font-weight: bold;
     }
 
+    .pending-badge {
+      background-color: #fef3c7;
+      color: #92400e;
+      padding: 0.25rem 0.6rem;
+      border-radius: 4px;
+      font-size: 0.78rem;
+      font-weight: bold;
+      border: 1px solid #fde68a;
+    }
+
+    .occ-badge {
+      padding: 0.22rem 0.6rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .occ-occupied {
+      background-color: #dcfce7;
+      color: #166534;
+    }
+
+    .occ-vacant {
+      background-color: #e2e8f0;
+      color: #334155;
+    }
+
+    .history-box {
+      margin-top: 0.8rem;
+      background: #f1f5f9;
+      border-radius: 8px;
+      padding: 0.7rem 0.9rem;
+      font-size: 0.83rem;
+      color: #334155;
+    }
+
     .action-btn-group {
       display: grid;
       grid-template-columns: 1fr;
@@ -444,37 +514,56 @@
   </div>
 
   <div class="card financial-card">
-    <h2><i class="fa-solid fa-chart-line"></i> Utility Expense & Net Income Tracker</h2>
+    <div style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:1rem;">
+      <h2 style="margin:0;"><i class="fa-solid fa-chart-line"></i> Monthly Net Rent, Expenses & 10% TANGO Tracker</h2>
+      <div style="display:flex; align-items:center; gap:0.5rem;">
+        <label for="selectedFinanceMonth" style="margin:0; white-space:nowrap;">Billing Month:</label>
+        <input type="month" id="selectedFinanceMonth" style="width:auto; padding:0.45rem 0.75rem;">
+      </div>
+    </div>
     
     <div class="metric-grid">
       <div class="metric-box">
-        <div class="metric-title">Total Collected Rent</div>
+        <div class="metric-title">Recorded Rent (Month)</div>
         <div class="metric-value" id="display-collected-rent" style="color: var(--success);">UGX 0</div>
       </div>
       <div class="metric-box">
-        <div class="metric-title">Main Umeme Bill</div>
-        <div class="metric-value" id="display-umeme-bill" style="color: #eab308;">UGX 0</div>
+        <div class="metric-title">Monthly Running Exp.</div>
+        <div class="metric-value" id="display-running-expenses" style="color: #dc2626;">UGX 0</div>
       </div>
       <div class="metric-box">
-        <div class="metric-title">Main NWSC Bill</div>
-        <div class="metric-value" id="display-nwsc-bill" style="color: #0284c7;">UGX 0</div>
-      </div>
-      <div class="metric-box">
-        <div class="metric-title">Net Profit Margin</div>
+        <div class="metric-title">Net Monthly Income</div>
         <div class="metric-value" id="display-net-income" style="color: var(--accent);">UGX 0</div>
+      </div>
+      <div class="metric-box">
+        <div class="metric-title">TANGO (10% of Net)</div>
+        <div class="metric-value" id="display-tango-amount" style="color: #0284c7;">UGX 0</div>
       </div>
     </div>
 
-    <form id="expensesForm" style="margin-top: 1.2rem; display: grid; grid-template-columns: 1fr 1fr auto; gap: 1rem; align-items: end;">
+    <div class="tango-panel">
       <div>
-        <label><i class="fa-solid fa-bolt"></i> Actual Umeme Main Bill (UGX)</label>
-        <input type="number" id="umemeMainBill" placeholder="e.g., 250000">
+        <div style="font-size:0.85rem; font-weight:700; color:var(--primary);">
+          <i class="fa-solid fa-hand-holding-dollar"></i> TANGO Monthly Compliance (<span id="tango-month-label">Current Month</span>)
+        </div>
+        <div style="font-size:0.82rem; color:var(--text-muted); margin-top:0.2rem;">
+          10% of positive Net Monthly Income is allocated to TANGO. Track whether it is pending or cleared for the selected month.
+        </div>
       </div>
+      <div style="display:flex; align-items:center; gap:0.7rem;">
+        <span id="tango-status-badge" class="pending-badge">PENDING</span>
+        <button type="button" id="toggleTangoStatusBtn" onclick="toggleTangoStatus()" class="btn-success">
+          <i class="fa-solid fa-check-circle"></i> Mark TANGO Cleared
+        </button>
+      </div>
+    </div>
+
+    <form id="expensesForm" style="margin-top: 1.2rem; display: grid; grid-template-columns: 1fr auto; gap: 1rem; align-items: end;">
       <div>
-        <label><i class="fa-solid fa-droplet"></i> Actual NWSC Main Bill (UGX)</label>
-        <input type="number" id="nwscMainBill" placeholder="e.g., 120000">
+        <label><i class="fa-solid fa-receipt"></i> Running Expenses for Selected Month (UGX)</label>
+        <input type="number" id="monthlyRunningExpenses" min="0" step="1" placeholder="e.g., 180000 (caretaker, repairs, utilities, etc.)">
       </div>
-      <button type="submit" style="height: 42px;"><i class="fa-solid fa-floppy-disk"></i> Save Bills</button>
+      <button type="submit" style="height: 42px;"><i class="fa-solid fa-floppy-disk"></i> Save Month Expenses</button>
     </form>
   </div>
 
@@ -502,19 +591,26 @@
       </div>
 
       <div class="card">
-        <h2><i class="fa-solid fa-user-plus"></i> Add New Tenant</h2>
+        <h2><i class="fa-solid fa-user-plus"></i> Add / Assign Unit</h2>
         <form id="tenantForm">
           <div class="form-group">
             <label>Unit Name/Number</label>
             <input type="text" id="unitName" placeholder="e.g., Apt 1A" required>
           </div>
           <div class="form-group">
-            <label>Tenant Full Name</label>
+            <label>Occupancy Status</label>
+            <select id="occupancyStatus">
+              <option value="occupied">Occupied</option>
+              <option value="vacant">Vacant</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Tenant Full Name (or "Vacant" if unassigned)</label>
             <input type="text" id="tenantName" placeholder="e.g., Mukasa Ivan" required>
           </div>
           <div class="form-group">
             <label>WhatsApp Contact</label>
-            <input type="text" id="tenantPhone" placeholder="256700000000" required>
+            <input type="text" id="tenantPhone" placeholder="256700000000">
           </div>
           <div class="form-group">
             <label>Monthly Rent Amount (UGX)</label>
@@ -522,13 +618,13 @@
           </div>
           <div class="form-group">
             <label>Initial Next Rent Due Date</label>
-            <input type="date" id="nextDueDate" required>
+            <input type="date" id="nextDueDate">
           </div>
           <div class="form-group">
             <label>Tenant Access PIN (4 Digits)</label>
-            <input type="text" id="tenantPin" maxlength="4" placeholder="e.g., 1234" required />
+            <input type="text" id="tenantPin" maxlength="4" placeholder="e.g., 1234" />
           </div>
-          <button type="submit" style="width: 100%;"><i class="fa-solid fa-plus"></i> Register Unit</button>
+          <button type="submit" style="width: 100%;"><i class="fa-solid fa-plus"></i> Save Unit</button>
         </form>
       </div>
 
@@ -609,7 +705,7 @@
       </div>
 
       <div class="card">
-        <h2><i class="fa-solid fa-city"></i> Property Overview</h2>
+        <h2><i class="fa-solid fa-city"></i> Property Overview & Occupancy</h2>
         <div id="tenantList">Loading property data...</div>
       </div>
     </div>
@@ -641,10 +737,27 @@
 
   let activeTenantId = null;
 
+  function getCurrentYearMonth() {
+    const now = new Date();
+    const y = now.getFullYear();
+    const m = String(now.getMonth() + 1).padStart(2, '0');
+    return `${y}-${m}`;
+  }
+
+  let selectedMonth = getCurrentYearMonth();
+
   // LOCAL STORAGE FALLBACK LOAD
   let tenants = JSON.parse(localStorage.getItem('jbm_tenants_cache') || '[]');
   let announcements = JSON.parse(localStorage.getItem('jbm_announcements_cache') || '[]');
-  let utilityExpenses = JSON.parse(localStorage.getItem('jbm_utility_expenses') || '{"umeme": 0, "nwsc": 0}');
+  // monthlyFinance format: { "2026-11": { runningExpenses: 0, tangoCleared: false } }
+  let monthlyFinance = JSON.parse(localStorage.getItem('jbm_monthly_finance') || '{}');
+
+  function ensureMonthRecord(ym) {
+    if (!monthlyFinance[ym]) {
+      monthlyFinance[ym] = { runningExpenses: 0, tangoCleared: false };
+    }
+    return monthlyFinance[ym];
+  }
 
   function formatDateWithDay(dateString) {
     if (!dateString) return 'Not set';
@@ -656,6 +769,13 @@
       month: 'long',
       day: 'numeric'
     });
+  }
+
+  function formatMonthLabel(ym) {
+    if (!ym || !ym.includes('-')) return ym;
+    const [year, month] = ym.split('-');
+    const d = new Date(Number(year), Number(month) - 1, 1);
+    return d.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
   }
 
   function calculateElectricityCost(units) {
@@ -683,7 +803,11 @@
   // FIREBASE TENANTS LISTENER
   db.ref('tenants').on('value', (snapshot) => {
     const data = snapshot.val();
-    tenants = data ? Object.values(data) : [];
+    tenants = data ? Object.values(data).map(t => ({
+      ...t,
+      occupancyStatus: t.occupancyStatus || 'occupied',
+      pastOccupants: Array.isArray(t.pastOccupants) ? t.pastOccupants : (t.pastOccupants ? Object.values(t.pastOccupants) : [])
+    })) : [];
     localStorage.setItem('jbm_tenants_cache', JSON.stringify(tenants));
     
     renderTenants();
@@ -718,11 +842,12 @@
     renderLandlordAnnouncements();
   });
 
-  db.ref('utilityExpenses').on('value', (snapshot) => {
+  // FIREBASE MONTHLY FINANCE LISTENER
+  db.ref('monthlyFinance').on('value', (snapshot) => {
     const data = snapshot.val();
-    if (data) {
-      utilityExpenses = data;
-      localStorage.setItem('jbm_utility_expenses', JSON.stringify(utilityExpenses));
+    if (data && typeof data === 'object') {
+      monthlyFinance = data;
+      localStorage.setItem('jbm_monthly_finance', JSON.stringify(monthlyFinance));
       updateFinancialSummary();
     }
   });
@@ -751,34 +876,85 @@
     }
   }
 
-  function saveExpenses(umeme, nwsc) {
-    utilityExpenses = { umeme, nwsc };
-    localStorage.setItem('jbm_utility_expenses', JSON.stringify(utilityExpenses));
-    db.ref('utilityExpenses').set(utilityExpenses).catch(err => console.warn("Firebase sync error", err));
+  function saveMonthlyFinance() {
+    localStorage.setItem('jbm_monthly_finance', JSON.stringify(monthlyFinance));
+    db.ref('monthlyFinance').set(monthlyFinance).catch(err => console.warn("Firebase sync error", err));
     updateFinancialSummary();
   }
 
   function updateFinancialSummary() {
-    let totalCollected = 0;
+    const monthInput = document.getElementById('selectedFinanceMonth');
+    if (monthInput && !monthInput.value) {
+      monthInput.value = selectedMonth;
+    }
+    const activeYm = (monthInput && monthInput.value) ? monthInput.value : selectedMonth;
+    selectedMonth = activeYm;
+
+    const record = ensureMonthRecord(activeYm);
+
+    let monthlyCollectedRent = 0;
     tenants.forEach(t => {
       if (t.payments && t.payments.length > 0) {
         t.payments.forEach(p => {
-          totalCollected += Number(p.amount || 0);
+          const pDate = String(p.date || '');
+          if (pDate.startsWith(activeYm)) {
+            monthlyCollectedRent += Number(p.amount || 0);
+          }
         });
       }
     });
 
-    const umeme = Number(utilityExpenses.umeme || 0);
-    const nwsc = Number(utilityExpenses.nwsc || 0);
-    const netIncome = totalCollected - (umeme + nwsc);
+    const runningExp = Number(record.runningExpenses || 0);
+    const netMonthlyIncome = monthlyCollectedRent - runningExp;
+    const tangoAmount = netMonthlyIncome > 0 ? Math.round(netMonthlyIncome * 0.10) : 0;
+    const isTangoCleared = Boolean(record.tangoCleared);
 
-    document.getElementById('display-collected-rent').innerText = `UGX ${totalCollected.toLocaleString()}`;
-    document.getElementById('display-umeme-bill').innerText = `UGX ${umeme.toLocaleString()}`;
-    document.getElementById('display-nwsc-bill').innerText = `UGX ${nwsc.toLocaleString()}`;
-    document.getElementById('display-net-income').innerText = `UGX ${netIncome.toLocaleString()}`;
+    document.getElementById('display-collected-rent').innerText = `UGX ${monthlyCollectedRent.toLocaleString()}`;
+    document.getElementById('display-running-expenses').innerText = `UGX ${runningExp.toLocaleString()}`;
+    document.getElementById('display-net-income').innerText = `UGX ${netMonthlyIncome.toLocaleString()}`;
+    document.getElementById('display-tango-amount').innerText = `UGX ${tangoAmount.toLocaleString()}`;
+    document.getElementById('tango-month-label').innerText = formatMonthLabel(activeYm);
 
-    document.getElementById('umemeMainBill').value = umeme || '';
-    document.getElementById('nwscMainBill').value = nwsc || '';
+    const expInput = document.getElementById('monthlyRunningExpenses');
+    if (expInput && document.activeElement !== expInput) {
+      expInput.value = runningExp || '';
+    }
+
+    const badge = document.getElementById('tango-status-badge');
+    const toggleBtn = document.getElementById('toggleTangoStatusBtn');
+    if (badge && toggleBtn) {
+      if (isTangoCleared) {
+        badge.className = 'paid-badge';
+        badge.innerHTML = '<i class="fa-solid fa-check"></i> CLEARED';
+        toggleBtn.className = 'btn-warning-sm';
+        toggleBtn.innerHTML = '<i class="fa-solid fa-rotate-left"></i> Mark TANGO Pending';
+      } else {
+        badge.className = 'pending-badge';
+        badge.innerHTML = '<i class="fa-solid fa-clock"></i> PENDING';
+        toggleBtn.className = 'btn-success';
+        toggleBtn.innerHTML = '<i class="fa-solid fa-check-circle"></i> Mark TANGO Cleared';
+      }
+    }
+  }
+
+  document.getElementById('selectedFinanceMonth').addEventListener('change', (e) => {
+    selectedMonth = e.target.value || getCurrentYearMonth();
+    updateFinancialSummary();
+  });
+
+  document.getElementById('expensesForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const expVal = parseFloat(document.getElementById('monthlyRunningExpenses').value) || 0;
+    const rec = ensureMonthRecord(selectedMonth);
+    rec.runningExpenses = expVal;
+    saveMonthlyFinance();
+    alert(`Running expenses saved for ${formatMonthLabel(selectedMonth)}!`);
+  });
+
+  function toggleTangoStatus() {
+    const rec = ensureMonthRecord(selectedMonth);
+    rec.tangoCleared = !rec.tangoCleared;
+    saveMonthlyFinance();
   }
 
   // ANNOUNCEMENT FORM SUBMIT
@@ -823,7 +999,6 @@
       const isBroadcast = a.targetUnit === 'ALL';
       const targetText = isBroadcast ? 'Broadcast to ALL Units' : `Target: Unit ${a.targetUnit}`;
       
-      // FIND MATCHED TENANT PHONE FOR TARGETED WHATSAPP BUTTON
       let targetTenant = null;
       if (!isBroadcast) {
         targetTenant = tenants.find(t => t.unit.toLowerCase() === a.targetUnit.toLowerCase());
@@ -897,7 +1072,11 @@
       return;
     }
 
-    const matchedTenant = tenants.find(t => t.unit.toLowerCase() === unitName.toLowerCase() && t.pin === enteredPin);
+    const matchedTenant = tenants.find(
+      t => t.unit.toLowerCase() === unitName.toLowerCase() &&
+      String(t.pin || '').trim() === enteredPin &&
+      (t.occupancyStatus || 'occupied') === 'occupied'
+    );
 
     if (matchedTenant) {
       activeTenantId = matchedTenant.id;
@@ -905,7 +1084,7 @@
       document.getElementById('landlord-controls').style.display = 'none';
       renderSingleTenantView(matchedTenant);
     } else {
-      alert("Incorrect Unit Name or PIN. Please check and try again.");
+      alert("Incorrect Unit Name or PIN (or unit is currently marked vacant). Please check and try again.");
     }
   }
 
@@ -935,7 +1114,6 @@
 
     const formattedDueDate = formatDateWithDay(tenant.nextDueDate);
 
-    // FILTER ANNOUNCEMENTS FOR THIS SPECIFIC TENANT (BROADCAST OR TARGETED UNIT)
     const tenantNotices = announcements.filter(a => a.targetUnit === 'ALL' || a.targetUnit.toLowerCase() === tenant.unit.toLowerCase());
 
     let noticesHTML = '';
@@ -994,11 +1172,16 @@
     
     const encodedProofMsg = encodeURIComponent(proofMessage);
 
+    const bankInquiryMsg = encodeURIComponent(
+      `Hello Landlord, I am ${tenant.name} from Unit ${tenant.unit}. Kindly share the bank account details so I can deposit the exact rent/bill amount without Mobile Money withdrawal charges.`
+    );
+
     const paymentHistoryHTML = (tenant.payments && tenant.payments.length > 0) ? `
       <ul style="padding-left: 1.2rem; color: var(--text-main);">
         ${tenant.payments.map(p => `
           <li style="margin-bottom: 0.6rem;">
-            <strong>UGX ${Number(p.amount).toLocaleString()}</strong> paid on ${formatDateWithDay(p.date)}${p.receiptImage ? `<a href="${p.receiptImage}" download="Receipt_${tenant.unit}_${p.date}.jpg" target="_blank" class="btn-receipt"><i class="fa-solid fa-receipt"></i> View / Download Receipt</a>` : ''}
+            <strong>UGX ${Number(p.amount).toLocaleString()}</strong> paid on ${formatDateWithDay(p.date)}
+            ${p.receiptImage ? `<a href="${p.receiptImage}" download="Receipt_${tenant.unit}_${p.date}.jpg" target="_blank" class="btn-receipt"><i class="fa-solid fa-receipt"></i> View / Download Receipt</a>` : ''}
           </li>
         `).join('')}
       </ul>
@@ -1025,8 +1208,8 @@
         ${elecBillInfo}
 
         <div class="mtn-box">
-          <h3 style="margin:0 0 0.5rem 0; color:#000;"><i class="fa-solid fa-mobile-screen-button"></i> Pay via MTN Mobile Money</h3>
-          <p style="font-size:0.88rem; margin:0 0 0.5rem 0;">Pay all Rent and Water Submeter bills directly to the Landlord using options below:</p>
+          <h3 style="margin:0 0 0.5rem 0; color:#000;"><i class="fa-solid fa-mobile-screen-button"></i> Payment Options</h3>
+          <p style="font-size:0.88rem; margin:0 0 0.5rem 0;">Pay Rent and Submeter bills using any of the options below:</p>
           <div style="font-size:0.92rem; font-weight:bold; color:#000; line-height: 1.5;">
             <strong>OPTION 1: MOMO PAY (Merchant Code)</strong><br>
             • Dial <strong>*165*3*CODE#</strong><br>
@@ -1038,6 +1221,18 @@
             • Reason: <strong>Unit Number & Payment Name</strong><br>
             • Example: <em>"${tenant.unit} Water Bill"</em> or <em>"${tenant.unit} Rent"</em>
           </div>
+
+          <div class="bank-box">
+            <strong><i class="fa-solid fa-building-columns"></i> OPTION 3: BANK DEPOSIT / TRANSFER</strong><br>
+            • No Mobile Money withdrawal charges apply — you can deposit the <strong>exact rent amount</strong>.<br>
+            • Please <strong>ask / contact the landlord for bank details</strong> before making your deposit.<br>
+            <div style="margin-top:0.6rem;">
+              <a href="https://wa.me/${mtnMomoConfig.landlordWhatsApp}?text=${bankInquiryMsg}" target="_blank" class="btn btn-doc" style="margin-top:0; font-size:0.85rem; padding:0.55rem 1rem;">
+                <i class="fa-solid fa-building-columns"></i> Ask Landlord for Bank Details
+              </a>
+            </div>
+          </div>
+
           <div style="margin-top: 1rem;">
             <a href="https://wa.me/${mtnMomoConfig.landlordWhatsApp}?text=${encodedProofMsg}" target="_blank" class="btn btn-whatsapp" style="font-size:0.9rem;">
               <i class="fa-brands fa-whatsapp"></i> Send Payment Proof to Landlord
@@ -1066,23 +1261,115 @@
 
   document.getElementById('tenantForm').addEventListener('submit', (e) => {
     e.preventDefault();
+    const unitVal = document.getElementById('unitName').value.trim();
+    const occStatus = document.getElementById('occupancyStatus').value;
+    const nameVal = document.getElementById('tenantName').value.trim();
     const cleanPhone = document.getElementById('tenantPhone').value.replace(/[^0-9]/g, '');
-    const newTenant = {
-      id: Date.now().toString(),
-      unit: document.getElementById('unitName').value,
-      name: document.getElementById('tenantName').value,
-      phone: cleanPhone,
-      rent: parseFloat(document.getElementById('rentAmount').value),
-      nextDueDate: document.getElementById('nextDueDate').value,
-      pin: document.getElementById('tenantPin').value,
-      waterBill: null,
-      elecBill: null,
-      payments: []
-    };
-    tenants.push(newTenant);
+    const rentVal = parseFloat(document.getElementById('rentAmount').value);
+    const dueVal = document.getElementById('nextDueDate').value;
+    const pinVal = document.getElementById('tenantPin').value.trim();
+
+    const existingIdx = tenants.findIndex(t => t.unit.toLowerCase() === unitVal.toLowerCase());
+    if (existingIdx !== -1) {
+      const existing = tenants[existingIdx];
+      const history = Array.isArray(existing.pastOccupants) ? [...existing.pastOccupants] : [];
+
+      // If replacing an existing active occupant with a different person, archive the previous occupant
+      if (
+        (existing.occupancyStatus || 'occupied') === 'occupied' &&
+        existing.name &&
+        existing.name.toLowerCase() !== nameVal.toLowerCase() &&
+        existing.name.toLowerCase() !== 'vacant'
+      ) {
+        history.unshift({
+          name: existing.name,
+          phone: existing.phone || '',
+          rent: existing.rent || '',
+          archivedDate: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+        });
+      }
+
+      tenants[existingIdx] = {
+        ...existing,
+        unit: unitVal,
+        occupancyStatus: occStatus,
+        name: occStatus === 'vacant' ? (nameVal || 'Vacant') : nameVal,
+        phone: occStatus === 'vacant' ? '' : cleanPhone,
+        rent: rentVal,
+        nextDueDate: occStatus === 'vacant' ? '' : dueVal,
+        pin: occStatus === 'vacant' ? '' : pinVal,
+        pastOccupants: history
+      };
+      alert(`Unit ${unitVal} updated!`);
+    } else {
+      const newTenant = {
+        id: Date.now().toString(),
+        unit: unitVal,
+        occupancyStatus: occStatus,
+        name: occStatus === 'vacant' ? (nameVal || 'Vacant') : nameVal,
+        phone: occStatus === 'vacant' ? '' : cleanPhone,
+        rent: rentVal,
+        nextDueDate: occStatus === 'vacant' ? '' : dueVal,
+        pin: occStatus === 'vacant' ? '' : pinVal,
+        waterBill: null,
+        elecBill: null,
+        payments: [],
+        pastOccupants: []
+      };
+      tenants.push(newTenant);
+      alert(`Unit ${unitVal} registered!`);
+    }
+
     saveTenants();
     e.target.reset();
+    document.getElementById('occupancyStatus').value = 'occupied';
   });
+
+  function toggleUnitOccupancy(id) {
+    const idx = tenants.findIndex(t => t.id === id);
+    if (idx === -1) return;
+    const current = tenants[idx];
+    const currentStatus = current.occupancyStatus || 'occupied';
+
+    if (currentStatus === 'occupied') {
+      if (!confirm(`Mark Unit ${current.unit} as VACANT and archive ${current.name} into past occupant history? (Payment & meter records on the unit are kept)`)) {
+        return;
+      }
+      const history = Array.isArray(current.pastOccupants) ? [...current.pastOccupants] : [];
+      if (current.name && current.name.toLowerCase() !== 'vacant') {
+        history.unshift({
+          name: current.name,
+          phone: current.phone || '',
+          rent: current.rent || '',
+          archivedDate: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+        });
+      }
+      tenants[idx] = {
+        ...current,
+        occupancyStatus: 'vacant',
+        name: 'Vacant',
+        phone: '',
+        pin: '',
+        nextDueDate: '',
+        pastOccupants: history
+      };
+    } else {
+      const newName = prompt(`Enter new tenant name for Unit ${current.unit}:`);
+      if (!newName || !newName.trim()) return;
+      const newPhone = prompt("Enter new tenant WhatsApp number (e.g., 256700000000):") || '';
+      const newPin = prompt("Enter 4-digit PIN for new tenant:") || '';
+      const newDue = prompt("Enter next rent due date (YYYY-MM-DD):") || '';
+      tenants[idx] = {
+        ...current,
+        occupancyStatus: 'occupied',
+        name: newName.trim(),
+        phone: newPhone.replace(/[^0-9]/g, ''),
+        pin: newPin.trim(),
+        nextDueDate: newDue.trim()
+      };
+    }
+    saveTenants();
+  }
 
   document.getElementById('paymentForm').addEventListener('submit', (e) => {
     e.preventDefault();
@@ -1169,7 +1456,7 @@
   });
 
   function deleteTenant(id) {
-    if (confirm("Are you sure you want to remove this unit/tenant?")) {
+    if (confirm("Are you sure you want to delete this unit record permanently?")) {
       tenants = tenants.filter(t => t.id !== id);
       saveTenants();
     }
@@ -1181,15 +1468,15 @@
       const currentValue = select.value;
       select.innerHTML = '';
       tenants.forEach(t => {
+        const occ = (t.occupancyStatus || 'occupied') === 'vacant' ? ' [VACANT]' : '';
         const option = document.createElement('option');
         option.value = t.id;
-        option.textContent = `${t.unit} - ${t.name}`;
+        option.textContent = `${t.unit} - ${t.name}${occ}`;
         select.appendChild(option);
       });
       if (currentValue) select.value = currentValue;
     });
 
-    // POPULATE ANNOUNCEMENT TARGET SELECT WITH ALL INDIVIDUAL UNITS
     const announceTarget = document.getElementById('announcementTargetSelect');
     if (announceTarget) {
       const currentVal = announceTarget.value;
@@ -1227,16 +1514,15 @@
     }
 
     tenants.forEach(t => {
+      const isVacant = (t.occupancyStatus || 'occupied') === 'vacant';
       const card = document.createElement('div');
-      card.className = 'tenant-card';
+      card.className = `tenant-card ${isVacant ? 'vacant-card' : ''}`;
       
       let waterHTML = '<p style="font-size:0.85rem; color: var(--text-muted); margin:0.4rem 0;"><em>No water reading logged.</em></p>';
-      let waterUnpaid = 0;
       let waterReminderBtn = '';
 
       if (t.waterBill) {
         const isPaid = t.waterBill.status === 'paid';
-        if (!isPaid) waterUnpaid = t.waterBill.totalCost;
         
         waterHTML = `
           <div class="bill-box" style="${isPaid ? 'background-color:#f0fdf4; border-color:#bbf7d0; color:#166534;' : ''}">
@@ -1247,7 +1533,7 @@
           </div>
         `;
 
-        if (!isPaid && t.phone) {
+        if (!isPaid && t.phone && !isVacant) {
           const waterReminderMsg = `Dear ${t.name} (${t.unit}),\n\n` +
             `Water Bill Notice from JBM ESTATES LTD:\n` +
             `• Previous Reading: ${t.waterBill.prev} m³\n` +
@@ -1272,10 +1558,8 @@
       }
 
       let elecHTML = '<p style="font-size:0.85rem; color: var(--text-muted); margin:0.4rem 0;"><em>No electricity reading logged.</em></p>';
-      let elecUnpaid = 0;
       if (t.elecBill) {
         const isPaid = t.elecBill.status === 'paid';
-        if (!isPaid) elecUnpaid = t.elecBill.totalCost;
         elecHTML = `
           <div class="elec-box" style="${isPaid ? 'background-color:#f0fdf4; border-color:#bbf7d0; color:#166534;' : ''}">
             <div style="display:flex; justify-content:space-between; align-items:center;">
@@ -1291,7 +1575,7 @@
       let alertBadge = '';
       let dueTimeFrameText = '';
 
-      if (daysLeft !== null) {
+      if (daysLeft !== null && !isVacant) {
         if (daysLeft < 0) {
           dueTimeFrameText = `is overdue by ${Math.abs(daysLeft)} day(s)`;
         } else if (daysLeft === 0) {
@@ -1313,7 +1597,7 @@
       const encodedReminderMsg = encodeURIComponent(rentReminderMsg);
 
       let actionButtons = '';
-      if (t.phone) {
+      if (t.phone && !isVacant) {
         actionButtons = `
           <div class="action-btn-group">
             <a href="https://wa.me/${t.phone}?text=${encodedReminderMsg}" target="_blank" class="btn btn-whatsapp-reminder">
@@ -1324,23 +1608,44 @@
         `;
       }
 
-      if (daysLeft !== null && daysLeft <= 6) {
+      if (daysLeft !== null && daysLeft <= 6 && !isVacant) {
         const statusText = daysLeft < 0 ? `Overdue by ${Math.abs(daysLeft)} days` : (daysLeft === 0 ? `Due Today` : `Due in ${daysLeft} days`);
         alertBadge = `<div class="notice-badge"><i class="fa-solid fa-triangle-exclamation"></i> Notice: Rent ${statusText}</div>`;
       }
 
+      const pastHistoryList = Array.isArray(t.pastOccupants) ? t.pastOccupants : [];
+      const pastHistoryHTML = pastHistoryList.length > 0 ? `
+        <div class="history-box">
+          <strong><i class="fa-solid fa-clock-rotate-left"></i> Past Occupants History:</strong>
+          <ul style="margin:0.35rem 0 0 0; padding-left:1.1rem;">
+            ${pastHistoryList.map(h => `
+              <li><strong>${h.name}</strong>${h.phone ? ` (${h.phone})` : ''} — Left/Archived: ${h.archivedDate || 'N/A'}</li>
+            `).join('')}
+          </ul>
+        </div>
+      ` : '';
+
       card.innerHTML = `
         ${alertBadge}
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-          <h3 style="margin:0;"><i class="fa-solid fa-house"></i> ${t.unit} - ${t.name}</h3>
-          <button onclick="deleteTenant('${t.id}')" class="btn-danger" style="padding:0.3rem 0.6rem; font-size:0.8rem;"><i class="fa-solid fa-trash"></i></button>
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:0.5rem; flex-wrap:wrap;">
+          <div style="display:flex; align-items:center; gap:0.6rem; flex-wrap:wrap;">
+            <h3 style="margin:0;"><i class="fa-solid fa-house"></i> ${t.unit} - ${t.name}</h3>
+            <span class="occ-badge ${isVacant ? 'occ-vacant' : 'occ-occupied'}">${isVacant ? 'Vacant' : 'Occupied'}</span>
+          </div>
+          <div style="display:flex; gap:0.4rem;">
+            <button onclick="toggleUnitOccupancy('${t.id}')" class="btn-secondary-sm" title="Toggle Occupied / Vacant">
+              <i class="fa-solid fa-repeat"></i> ${isVacant ? 'Assign Tenant' : 'Mark Vacant'}
+            </button>
+            <button onclick="deleteTenant('${t.id}')" class="btn-danger" style="padding:0.3rem 0.6rem; font-size:0.8rem;"><i class="fa-solid fa-trash"></i></button>
+          </div>
         </div>
         <div style="margin-top:0.5rem; font-size:0.9rem;"><strong>PIN:</strong> ${t.pin || 'None'}</div>
         <div style="font-size:0.9rem;"><strong>WhatsApp:</strong> ${t.phone || 'Not set'}</div>
-        <div style="font-size:0.9rem;"><strong>Rent:</strong> UGX ${Number(t.rent).toLocaleString()}</div>
-        <div style="color: var(--danger); font-size:0.9rem;"><strong>Next Due:</strong> ${formattedDueDate}</div>
+        <div style="font-size:0.9rem;"><strong>Rent:</strong> UGX ${Number(t.rent || 0).toLocaleString()}</div>
+        <div style="color: var(--danger); font-size:0.9rem;"><strong>Next Due:</strong> ${isVacant ? 'N/A (Vacant)' : formattedDueDate}</div>
         ${waterHTML}
         ${elecHTML}
+        ${pastHistoryHTML}
         ${actionButtons}
       `;
       list.appendChild(card);
