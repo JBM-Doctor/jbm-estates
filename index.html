@@ -79,6 +79,8 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      flex-wrap: wrap;
+      gap: 0.75rem;
       border-bottom: 1px solid var(--border-3d);
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), inset 0 -1px 0 rgba(255, 255, 255, 0.05);
       position: sticky;
@@ -102,6 +104,13 @@
       filter: drop-shadow(0 0 8px rgba(45, 212, 191, 0.45));
     }
 
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      flex-wrap: wrap;
+    }
+
     .badge-status {
       background: rgba(16, 185, 129, 0.14);
       color: #34d399;
@@ -116,16 +125,27 @@
       gap: 0.45rem;
     }
 
+    .btn-push-toggle {
+      background: linear-gradient(180deg, rgba(56, 189, 248, 0.22), rgba(2, 132, 199, 0.22));
+      color: #bae6fd;
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      padding: 0.38rem 0.8rem;
+      font-size: 0.78rem;
+      border-radius: 999px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
     .container {
       max-width: 1220px;
-      margin: 2rem auto;
+      margin: 1.75rem auto;
       padding: 0 1.5rem 3rem;
     }
 
     .grid {
       display: grid;
-      grid-template-columns: 1fr 1.5fr;
-      gap: 2rem;
+      grid-template-columns: 1fr 1.35fr;
+      gap: 1.75rem;
+      align-items: start;
     }
 
     @media (max-width: 868px) {
@@ -137,18 +157,75 @@
     .card {
       background: var(--card-3d);
       backdrop-filter: blur(16px);
-      padding: 1.8rem;
+      padding: 1.4rem 1.6rem;
       border-radius: var(--radius);
       box-shadow: var(--shadow-3d);
       border: 1px solid var(--border-3d);
-      margin-bottom: 1.6rem;
+      margin-bottom: 1.35rem;
       transform-style: preserve-3d;
     }
 
     .card:hover {
       box-shadow: var(--shadow-3d-hover);
       border-color: var(--border-glow);
-      transform: translateY(-3px);
+      transform: translateY(-2px);
+    }
+
+    /* Collapsible section wrapper */
+    details.section-collapse > summary {
+      cursor: pointer;
+      list-style: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.75rem;
+      user-select: none;
+    }
+
+    details.section-collapse > summary::-webkit-details-marker {
+      display: none;
+    }
+
+    details.section-collapse > summary .section-title {
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+      font-size: 1.12rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin: 0;
+    }
+
+    details.section-collapse > summary .section-title i {
+      color: var(--accent-hover);
+    }
+
+    details.section-collapse > summary .collapse-right {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    details.section-collapse > summary::after {
+      content: '\f107';
+      font-family: 'Font Awesome 6 Free';
+      font-weight: 900;
+      font-size: 0.9rem;
+      color: var(--accent-hover);
+      transition: transform 0.22s ease;
+    }
+
+    details.section-collapse[open] > summary::after {
+      transform: rotate(180deg);
+    }
+
+    details.section-collapse .collapse-content {
+      margin-top: 1.15rem;
+      padding-top: 1.05rem;
+      border-top: 1px solid rgba(148, 163, 184, 0.16);
     }
 
     h2, h3 {
@@ -165,22 +242,22 @@
       color: var(--accent-hover);
     }
 
-    .form-group { margin-bottom: 1.15rem; }
+    .form-group { margin-bottom: 1.05rem; }
 
     label {
       display: block;
-      margin-bottom: 0.45rem;
+      margin-bottom: 0.4rem;
       font-weight: 600;
-      font-size: 0.86rem;
+      font-size: 0.84rem;
       color: var(--text-muted);
     }
 
     input, select, textarea {
       width: 100%;
-      padding: 0.78rem 1rem;
+      padding: 0.74rem 0.95rem;
       border: 1px solid rgba(148, 163, 184, 0.22);
       border-radius: 10px;
-      font-size: 0.94rem;
+      font-size: 0.92rem;
       outline: none;
       background: rgba(8, 15, 30, 0.72);
       color: var(--text-main);
@@ -205,11 +282,11 @@
       background: linear-gradient(180deg, #14b8a6, #0d9488);
       color: #ffffff;
       border: none;
-      padding: 0.78rem 1.45rem;
+      padding: 0.74rem 1.35rem;
       border-radius: 10px;
       cursor: pointer;
       font-weight: 700;
-      font-size: 0.92rem;
+      font-size: 0.9rem;
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -245,9 +322,7 @@
       background: linear-gradient(180deg, #fda4af, #f43f5e);
       box-shadow: 0 6px 0 #881337, 0 14px 22px -5px rgba(244, 63, 94, 0.55);
     }
-    .btn-danger:active {
-      box-shadow: 0 1px 0 #881337;
-    }
+    .btn-danger:active { box-shadow: 0 1px 0 #881337; }
 
     .btn-success {
       background: linear-gradient(180deg, #34d399, #059669);
@@ -289,6 +364,7 @@
     }
     .btn-whatsapp:hover {
       background: linear-gradient(180deg, #86efac, #22c55e);
+      color: #052e16;
       box-shadow: 0 6px 0 #14532d, 0 14px 24px rgba(37, 211, 102, 0.45);
     }
 
@@ -388,21 +464,69 @@
       box-shadow: 0 12px 24px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.2);
     }
 
+    /* Priority Timeline & Payment Rows */
+    .timeline-item {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.85rem 1rem;
+      border-radius: 12px;
+      margin-bottom: 0.7rem;
+      background: rgba(8, 15, 30, 0.72);
+      border: 1px solid rgba(148, 163, 184, 0.18);
+      box-shadow: 0 8px 18px -8px rgba(0, 0, 0, 0.5);
+    }
+
+    .timeline-item.breach-row {
+      border-left: 4px solid #f43f5e;
+      border-color: rgba(244, 63, 94, 0.45);
+      background: linear-gradient(145deg, rgba(190, 18, 60, 0.22), rgba(15, 23, 42, 0.88));
+    }
+
+    .timeline-item.warning-row {
+      border-left: 4px solid #facc15;
+      border-color: rgba(250, 204, 21, 0.4);
+      background: linear-gradient(145deg, rgba(161, 98, 7, 0.18), rgba(15, 23, 42, 0.88));
+    }
+
+    .timeline-item.paid-row {
+      border-left: 4px solid #10b981;
+    }
+
+    .breach-alert-banner {
+      background: linear-gradient(145deg, rgba(225, 29, 72, 0.28), rgba(127, 29, 29, 0.35));
+      border: 1px solid rgba(251, 113, 133, 0.65);
+      border-left: 5px solid #f43f5e;
+      color: #ffe4e6;
+      padding: 0.9rem 1.05rem;
+      border-radius: 12px;
+      margin-bottom: 1rem;
+      box-shadow: 0 12px 24px -8px rgba(225, 29, 72, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    }
+
+    .warning-alert-banner {
+      background: linear-gradient(145deg, rgba(234, 179, 8, 0.20), rgba(113, 63, 18, 0.30));
+      border: 1px solid rgba(250, 204, 21, 0.5);
+      border-left: 5px solid #facc15;
+      color: #fef9c3;
+      padding: 0.85rem 1rem;
+      border-radius: 12px;
+      margin-bottom: 1rem;
+      box-shadow: 0 10px 20px -8px rgba(0, 0, 0, 0.45);
+    }
+
     .tenant-card {
       border-left: 4px solid var(--accent-hover);
-      margin-bottom: 1.25rem;
-      padding: 1.3rem;
+      margin-bottom: 1.15rem;
+      padding: 1.2rem;
       background: linear-gradient(150deg, rgba(26, 41, 71, 0.88), rgba(14, 23, 42, 0.94));
       border-radius: 14px;
       border-top: 1px solid rgba(148, 163, 184, 0.16);
       border-right: 1px solid rgba(148, 163, 184, 0.16);
       border-bottom: 1px solid rgba(148, 163, 184, 0.16);
       box-shadow: 0 12px 24px -8px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.09);
-    }
-
-    .tenant-card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 18px 30px -10px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.14);
     }
 
     .tenant-card.vacant-card {
@@ -418,7 +542,6 @@
       border-radius: 10px;
       margin-top: 0.65rem;
       font-size: 0.9rem;
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 6px 14px rgba(0, 0, 0, 0.28);
     }
 
     .elec-box {
@@ -429,7 +552,6 @@
       border-radius: 10px;
       margin-top: 0.65rem;
       font-size: 0.9rem;
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 6px 14px rgba(0, 0, 0, 0.28);
     }
 
     .announcement-box {
@@ -439,22 +561,20 @@
       border-right: 1px solid rgba(56, 189, 248, 0.22);
       border-bottom: 1px solid rgba(56, 189, 248, 0.22);
       color: #e0f2fe;
-      padding: 0.9rem 1.05rem;
+      padding: 0.8rem 1rem;
       border-radius: 12px;
-      margin-bottom: 0.9rem;
-      box-shadow: 0 10px 20px -8px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      margin-bottom: 0.8rem;
     }
 
     details.announcement-details {
-      background: linear-gradient(145deg, rgba(30, 58, 138, 0.30), rgba(15, 23, 42, 0.84));
+      background: linear-gradient(145deg, rgba(30, 58, 138, 0.28), rgba(15, 23, 42, 0.84));
       border-left: 4px solid #38bdf8;
       border-top: 1px solid rgba(56, 189, 248, 0.22);
       border-right: 1px solid rgba(56, 189, 248, 0.22);
       border-bottom: 1px solid rgba(56, 189, 248, 0.22);
       border-radius: 12px;
-      margin-bottom: 0.85rem;
-      padding: 0.7rem 1rem;
-      box-shadow: 0 10px 20px -8px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.09);
+      margin-bottom: 0.75rem;
+      padding: 0.65rem 0.95rem;
     }
 
     details.announcement-details summary {
@@ -465,30 +585,26 @@
       justify-content: space-between;
       align-items: center;
       list-style: none;
-      font-size: 0.92rem;
+      font-size: 0.9rem;
     }
 
-    details.announcement-details summary::-webkit-details-marker {
-      display: none;
-    }
+    details.announcement-details summary::-webkit-details-marker { display: none; }
 
     details.announcement-details summary::after {
       content: '\f107';
       font-family: 'Font Awesome 6 Free';
       font-weight: 900;
-      font-size: 0.85rem;
+      font-size: 0.82rem;
       transition: transform 0.2s ease;
       color: #38bdf8;
       margin-left: 0.5rem;
     }
 
-    details.announcement-details[open] summary::after {
-      transform: rotate(180deg);
-    }
+    details.announcement-details[open] summary::after { transform: rotate(180deg); }
 
     details.announcement-details .announcement-body {
-      margin-top: 0.65rem;
-      padding-top: 0.65rem;
+      margin-top: 0.6rem;
+      padding-top: 0.6rem;
       border-top: 1px dashed rgba(148, 163, 184, 0.25);
       color: #cbd5e1;
       font-size: 0.88rem;
@@ -500,40 +616,28 @@
       background: linear-gradient(150deg, rgba(250, 204, 21, 0.14), rgba(15, 23, 42, 0.88));
       border: 2px dashed rgba(250, 204, 21, 0.55);
       color: #fef08a;
-      padding: 1.25rem;
+      padding: 1.15rem;
       border-radius: 14px;
-      margin-top: 1.25rem;
-      box-shadow: 0 12px 24px -8px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      margin-top: 0.5rem;
     }
 
     .bank-box {
       background: linear-gradient(145deg, rgba(14, 165, 233, 0.18), rgba(15, 23, 42, 0.82));
       border: 1px solid rgba(56, 189, 248, 0.4);
       color: #bae6fd;
-      padding: 1rem;
+      padding: 0.95rem;
       border-radius: 12px;
-      margin-top: 0.95rem;
-      font-size: 0.9rem;
-      line-height: 1.55;
-      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.1);
-    }
-
-    .financial-card {
-      background: var(--card-3d-elevated);
-      border-radius: 18px;
-      border: 1px solid rgba(45, 212, 191, 0.25);
-      padding: 1.5rem;
-      margin-bottom: 1.6rem;
-      box-shadow: var(--shadow-3d);
+      margin-top: 0.9rem;
+      font-size: 0.88rem;
+      line-height: 1.5;
     }
 
     .tango-panel {
-      margin-top: 1.25rem;
-      padding: 1.05rem 1.2rem;
+      margin-top: 1.15rem;
+      padding: 1rem 1.15rem;
       border-radius: 12px;
       background: rgba(7, 13, 25, 0.68);
       border: 1px solid rgba(148, 163, 184, 0.2);
-      box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.45);
       display: flex;
       flex-wrap: wrap;
       justify-content: space-between;
@@ -543,23 +647,17 @@
 
     .metric-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
-      gap: 1rem;
-      margin-top: 1.1rem;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 0.9rem;
+      margin-top: 0.8rem;
     }
 
     .metric-box {
       background: linear-gradient(160deg, rgba(30, 46, 78, 0.72), rgba(11, 19, 36, 0.92));
-      padding: 0.95rem;
+      padding: 0.85rem;
       border-radius: 12px;
       border: 1px solid rgba(148, 163, 184, 0.18);
       text-align: center;
-      box-shadow: 0 10px 18px -6px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.12);
-    }
-
-    .metric-box:hover {
-      transform: translateY(-2px);
-      border-color: rgba(45, 212, 191, 0.35);
     }
 
     .metric-title {
@@ -567,29 +665,26 @@
       color: var(--text-muted);
       font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.04em;
     }
 
     .metric-value {
-      font-size: 1.12rem;
+      font-size: 1.08rem;
       font-weight: 800;
-      margin-top: 0.3rem;
+      margin-top: 0.25rem;
       color: var(--primary);
     }
 
     .notice-badge {
-      background: rgba(244, 63, 94, 0.16);
+      background: rgba(244, 63, 94, 0.18);
       color: #fda4af;
-      border: 1px solid rgba(251, 113, 133, 0.4);
-      padding: 0.65rem 0.85rem;
-      border-radius: 10px;
-      margin-bottom: 0.85rem;
-      font-weight: 600;
-      font-size: 0.88rem;
-      display: flex;
+      border: 1px solid rgba(251, 113, 133, 0.45);
+      padding: 0.25rem 0.6rem;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.75rem;
+      display: inline-flex;
       align-items: center;
-      gap: 0.5rem;
-      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.3);
+      gap: 0.35rem;
     }
 
     .paid-badge {
@@ -613,12 +708,11 @@
     }
 
     .occ-badge {
-      padding: 0.25rem 0.65rem;
+      padding: 0.22rem 0.62rem;
       border-radius: 999px;
-      font-size: 0.74rem;
+      font-size: 0.72rem;
       font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.03em;
     }
 
     .occ-occupied {
@@ -634,26 +728,25 @@
     }
 
     .history-box {
-      margin-top: 0.85rem;
+      margin-top: 0.8rem;
       background: rgba(7, 13, 25, 0.65);
       border: 1px solid rgba(148, 163, 184, 0.16);
       border-radius: 10px;
-      padding: 0.75rem 0.95rem;
-      font-size: 0.83rem;
+      padding: 0.7rem 0.9rem;
+      font-size: 0.82rem;
       color: #cbd5e1;
-      box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.4);
     }
 
     .action-btn-group {
       display: grid;
       grid-template-columns: 1fr;
-      gap: 0.55rem;
-      margin-top: 0.85rem;
+      gap: 0.5rem;
+      margin-top: 0.8rem;
     }
 
     .tenant-info-banner {
-      font-size: 1.08rem;
-      margin-bottom: 1.5rem;
+      font-size: 1.05rem;
+      margin-bottom: 1rem;
       padding: 0.9rem 1rem;
       background: rgba(7, 13, 25, 0.72);
       border-radius: 12px;
@@ -661,13 +754,12 @@
       border-top: 1px solid rgba(148, 163, 184, 0.15);
       border-right: 1px solid rgba(148, 163, 184, 0.15);
       border-bottom: 1px solid rgba(148, 163, 184, 0.15);
-      box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.4);
     }
 
     hr {
       border: none;
       border-top: 1px solid rgba(148, 163, 184, 0.18);
-      margin: 1.5rem 0;
+      margin: 1.25rem 0;
     }
   </style>
 </head>
@@ -675,7 +767,12 @@
 
 <header>
   <h1><i class="fa-solid fa-cubes"></i> JBM Estates 3D App</h1>
-  <div class="badge-status" id="connection-status"><i class="fa-solid fa-cloud"></i> Synced</div>
+  <div class="header-actions">
+    <button type="button" class="btn-push-toggle" onclick="requestPushPermission(true)" id="pushBtn">
+      <i class="fa-solid fa-bell"></i> Push Alerts
+    </button>
+    <div class="badge-status" id="connection-status"><i class="fa-solid fa-cloud"></i> Synced</div>
+  </div>
 </header>
 
 <div id="login-screen">
@@ -708,206 +805,281 @@
   </div>
 </div>
 
+<!-- LANDLORD PORTAL REORDERED BY PRIORITY + MINIMIZED BY DEFAULT -->
 <div class="container" id="landlord-controls" style="display: none;">
-  <div style="margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center;">
+  <div style="margin-bottom: 1.3rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
     <h2 style="margin:0;"><i class="fa-solid fa-gauge"></i> Landlord 3D Dashboard</h2>
-    <button onclick="location.reload()" class="btn-danger"><i class="fa-solid fa-right-from-bracket"></i> Log Out</button>
+    <div style="display:flex; align-items:center; gap:0.6rem; flex-wrap:wrap;">
+      <label for="selectedFinanceMonth" style="margin:0; white-space:nowrap;">Month:</label>
+      <input type="month" id="selectedFinanceMonth" style="width:auto; padding:0.42rem 0.7rem;">
+      <button onclick="location.reload()" class="btn-danger"><i class="fa-solid fa-right-from-bracket"></i> Log Out</button>
+    </div>
   </div>
 
-  <div class="card financial-card">
-    <div style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:1rem;">
-      <h2 style="margin:0;"><i class="fa-solid fa-chart-line"></i> Monthly Net Rent, Expenses & 10% TANGO Tracker</h2>
-      <div style="display:flex; align-items:center; gap:0.5rem;">
-        <label for="selectedFinanceMonth" style="margin:0; white-space:nowrap;">Billing Month:</label>
-        <input type="month" id="selectedFinanceMonth" style="width:auto; padding:0.45rem 0.75rem;">
+  <!-- PRIORITY 1: DUE DATE TIMELINE & PAYMENT STATUS (OPEN BY DEFAULT) -->
+  <div class="card">
+    <details class="section-collapse" open>
+      <summary>
+        <span class="section-title"><i class="fa-solid fa-calendar-check"></i> Priority: Due Date Timeline & Rent Payment Status</span>
+        <span class="collapse-right" id="timeline-summary-tag">Next Due & Paid Status</span>
+      </summary>
+      <div class="collapse-content">
+        <div id="landlordDueTimelineList">Loading due date timeline...</div>
       </div>
-    </div>
-    
-    <div class="metric-grid">
-      <div class="metric-box">
-        <div class="metric-title">Recorded Rent (Month)</div>
-        <div class="metric-value" id="display-collected-rent" style="color: #34d399;">UGX 0</div>
-      </div>
-      <div class="metric-box">
-        <div class="metric-title">Monthly Running Exp.</div>
-        <div class="metric-value" id="display-running-expenses" style="color: #fb7185;">UGX 0</div>
-      </div>
-      <div class="metric-box">
-        <div class="metric-title">Net Monthly Income</div>
-        <div class="metric-value" id="display-net-income" style="color: #2dd4bf;">UGX 0</div>
-      </div>
-      <div class="metric-box">
-        <div class="metric-title">TANGO (10% of Net)</div>
-        <div class="metric-value" id="display-tango-amount" style="color: #38bdf8;">UGX 0</div>
-      </div>
-    </div>
+    </details>
+  </div>
 
-    <div class="tango-panel">
-      <div>
-        <div style="font-size:0.88rem; font-weight:700; color:var(--primary);">
-          <i class="fa-solid fa-hand-holding-dollar"></i> TANGO Monthly Compliance (<span id="tango-month-label">Current Month</span>)
+  <!-- PRIORITY 2: MONTHLY NET RENT, RUNNING EXPENSES & 10% TANGO (MINIMIZED BY DEFAULT) -->
+  <div class="card">
+    <details class="section-collapse">
+      <summary>
+        <span class="section-title"><i class="fa-solid fa-chart-line"></i> Monthly Net Rent, Expenses & 10% TANGO</span>
+        <span class="collapse-right" id="tango-header-tag">Tap to expand</span>
+      </summary>
+      <div class="collapse-content">
+        <div class="metric-grid">
+          <div class="metric-box">
+            <div class="metric-title">Recorded Rent (Month)</div>
+            <div class="metric-value" id="display-collected-rent" style="color: #34d399;">UGX 0</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-title">Monthly Running Exp.</div>
+            <div class="metric-value" id="display-running-expenses" style="color: #fb7185;">UGX 0</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-title">Net Monthly Income</div>
+            <div class="metric-value" id="display-net-income" style="color: #2dd4bf;">UGX 0</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-title">TANGO (10% of Net)</div>
+            <div class="metric-value" id="display-tango-amount" style="color: #38bdf8;">UGX 0</div>
+          </div>
         </div>
-        <div style="font-size:0.82rem; color:var(--text-muted); margin-top:0.2rem;">
-          10% of positive Net Monthly Income is allocated to TANGO. Track whether it is pending or cleared for the selected month.
-        </div>
-      </div>
-      <div style="display:flex; align-items:center; gap:0.7rem;">
-        <span id="tango-status-badge" class="pending-badge">PENDING</span>
-        <button type="button" id="toggleTangoStatusBtn" onclick="toggleTangoStatus()" class="btn-success">
-          <i class="fa-solid fa-check-circle"></i> Mark TANGO Cleared
-        </button>
-      </div>
-    </div>
 
-    <form id="expensesForm" style="margin-top: 1.2rem; display: grid; grid-template-columns: 1fr auto; gap: 1rem; align-items: end;">
-      <div>
-        <label><i class="fa-solid fa-receipt"></i> Running Expenses for Selected Month (UGX)</label>
-        <input type="number" id="monthlyRunningExpenses" min="0" step="1" placeholder="e.g., 180000 (caretaker, repairs, utilities, etc.)">
+        <div class="tango-panel">
+          <div>
+            <div style="font-size:0.88rem; font-weight:700; color:var(--primary);">
+              <i class="fa-solid fa-hand-holding-dollar"></i> TANGO Monthly Compliance (<span id="tango-month-label">Current Month</span>)
+            </div>
+            <div style="font-size:0.82rem; color:var(--text-muted); margin-top:0.2rem;">
+              10% of positive Net Monthly Income is allocated to TANGO. Track whether it is pending or cleared for the selected month.
+            </div>
+          </div>
+          <div style="display:flex; align-items:center; gap:0.7rem;">
+            <span id="tango-status-badge" class="pending-badge">PENDING</span>
+            <button type="button" id="toggleTangoStatusBtn" onclick="toggleTangoStatus()" class="btn-success">
+              <i class="fa-solid fa-check-circle"></i> Mark TANGO Cleared
+            </button>
+          </div>
+        </div>
+
+        <form id="expensesForm" style="margin-top: 1.15rem; display: grid; grid-template-columns: 1fr auto; gap: 1rem; align-items: end;">
+          <div>
+            <label><i class="fa-solid fa-receipt"></i> Running Expenses for Selected Month (UGX)</label>
+            <input type="number" id="monthlyRunningExpenses" min="0" step="1" placeholder="e.g., 180000 (caretaker, repairs, utilities, etc.)">
+          </div>
+          <button type="submit" style="height: 42px;"><i class="fa-solid fa-floppy-disk"></i> Save Month Expenses</button>
+        </form>
       </div>
-      <button type="submit" style="height: 44px;"><i class="fa-solid fa-floppy-disk"></i> Save Month Expenses</button>
-    </form>
+    </details>
   </div>
 
   <div class="grid">
     <div>
+      <!-- RECORD PAYMENT (MINIMIZED BY DEFAULT) -->
       <div class="card">
-        <h2><i class="fa-solid fa-bullhorn"></i> Post Tenant Announcement</h2>
-        <form id="announcementForm">
-          <div class="form-group">
-            <label>Target Audience</label>
-            <select id="announcementTargetSelect" required>
-              <option value="ALL"> Broadcast to ALL Units</option>
-            </select>
+        <details class="section-collapse">
+          <summary>
+            <span class="section-title"><i class="fa-solid fa-money-bill-wave"></i> Record Payment</span>
+            <span class="collapse-right">Tap to open</span>
+          </summary>
+          <div class="collapse-content">
+            <form id="paymentForm">
+              <div class="form-group">
+                <label>Select Unit</label>
+                <select id="paymentTenantSelect" class="unitSelect" required></select>
+              </div>
+              <div class="form-group">
+                <label>Amount Paid (UGX)</label>
+                <input type="number" id="paidAmount" placeholder="850000" required>
+              </div>
+              <div class="form-group">
+                <label>Payment Date</label>
+                <input type="date" id="paymentDate" required>
+              </div>
+              <div class="form-group">
+                <label>Set Next Rent Due Date</label>
+                <input type="date" id="updatedNextDueDate" required>
+              </div>
+              <div class="form-group">
+                <label><i class="fa-solid fa-camera"></i> Receipt Image (Optional)</label>
+                <input type="file" id="receiptImage" accept="image/*">
+              </div>
+              <button type="submit" style="width: 100%; background: linear-gradient(180deg, #38bdf8, #0284c7); box-shadow: 0 4px 0 #0c4a6e, 0 10px 20px -5px rgba(2, 132, 199, 0.45), inset 0 1px 0 rgba(255,255,255,0.28);"><i class="fa-solid fa-check"></i> Save Payment</button>
+            </form>
           </div>
-          <div class="form-group">
-            <label>Announcement Title</label>
-            <input type="text" id="announcementTitle" placeholder="e.g., Scheduled Maintenance / Water Notice" required>
-          </div>
-          <div class="form-group">
-            <label>Announcement Message</label>
-            <textarea id="announcementMessage" rows="3" placeholder="Enter notice details here..." required></textarea>
-          </div>
-          <button type="submit" style="width: 100%; background: linear-gradient(180deg, #60a5fa, #2563eb); box-shadow: 0 4px 0 #1e3a8a, 0 10px 20px -5px rgba(37, 99, 235, 0.45), inset 0 1px 0 rgba(255,255,255,0.28);"><i class="fa-solid fa-paper-plane"></i> Publish Notice</button>
-        </form>
+        </details>
       </div>
 
+      <!-- POST ANNOUNCEMENT (MINIMIZED BY DEFAULT) -->
       <div class="card">
-        <h2><i class="fa-solid fa-user-plus"></i> Add / Assign Unit</h2>
-        <form id="tenantForm">
-          <div class="form-group">
-            <label>Unit Name/Number</label>
-            <input type="text" id="unitName" placeholder="e.g., Apt 1A" required>
+        <details class="section-collapse">
+          <summary>
+            <span class="section-title"><i class="fa-solid fa-bullhorn"></i> Post Tenant Announcement</span>
+            <span class="collapse-right">Tap to open</span>
+          </summary>
+          <div class="collapse-content">
+            <form id="announcementForm">
+              <div class="form-group">
+                <label>Target Audience</label>
+                <select id="announcementTargetSelect" required>
+                  <option value="ALL"> Broadcast to ALL Units</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Announcement Title</label>
+                <input type="text" id="announcementTitle" placeholder="e.g., Scheduled Maintenance / Water Notice" required>
+              </div>
+              <div class="form-group">
+                <label>Announcement Message</label>
+                <textarea id="announcementMessage" rows="3" placeholder="Enter notice details here..." required></textarea>
+              </div>
+              <button type="submit" style="width: 100%; background: linear-gradient(180deg, #60a5fa, #2563eb); box-shadow: 0 4px 0 #1e3a8a, 0 10px 20px -5px rgba(37, 99, 235, 0.45), inset 0 1px 0 rgba(255,255,255,0.28);"><i class="fa-solid fa-paper-plane"></i> Publish Notice</button>
+            </form>
           </div>
-          <div class="form-group">
-            <label>Occupancy Status</label>
-            <select id="occupancyStatus">
-              <option value="occupied">Occupied</option>
-              <option value="vacant">Vacant</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>Tenant Full Name (or "Vacant" if unassigned)</label>
-            <input type="text" id="tenantName" placeholder="e.g., Mukasa Ivan" required>
-          </div>
-          <div class="form-group">
-            <label>WhatsApp Contact</label>
-            <input type="text" id="tenantPhone" placeholder="256700000000">
-          </div>
-          <div class="form-group">
-            <label>Monthly Rent Amount (UGX)</label>
-            <input type="number" id="rentAmount" placeholder="850000" required>
-          </div>
-          <div class="form-group">
-            <label>Initial Next Rent Due Date</label>
-            <input type="date" id="nextDueDate">
-          </div>
-          <div class="form-group">
-            <label>Tenant Access PIN (4 Digits)</label>
-            <input type="text" id="tenantPin" maxlength="4" placeholder="e.g., 1234" />
-          </div>
-          <button type="submit" style="width: 100%;"><i class="fa-solid fa-plus"></i> Save Unit</button>
-        </form>
+        </details>
       </div>
 
+      <!-- ADD / ASSIGN UNIT (MINIMIZED BY DEFAULT) -->
       <div class="card">
-        <h2><i class="fa-solid fa-money-bill-wave"></i> Record Payment</h2>
-        <form id="paymentForm">
-          <div class="form-group">
-            <label>Select Unit</label>
-            <select id="paymentTenantSelect" class="unitSelect" required></select>
+        <details class="section-collapse">
+          <summary>
+            <span class="section-title"><i class="fa-solid fa-user-plus"></i> Add / Assign Unit</span>
+            <span class="collapse-right">Tap to open</span>
+          </summary>
+          <div class="collapse-content">
+            <form id="tenantForm">
+              <div class="form-group">
+                <label>Unit Name/Number</label>
+                <input type="text" id="unitName" placeholder="e.g., Apt 1A" required>
+              </div>
+              <div class="form-group">
+                <label>Occupancy Status</label>
+                <select id="occupancyStatus">
+                  <option value="occupied">Occupied</option>
+                  <option value="vacant">Vacant</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Tenant Full Name (or "Vacant" if unassigned)</label>
+                <input type="text" id="tenantName" placeholder="e.g., Mukasa Ivan" required>
+              </div>
+              <div class="form-group">
+                <label>WhatsApp Contact</label>
+                <input type="text" id="tenantPhone" placeholder="256700000000">
+              </div>
+              <div class="form-group">
+                <label>Monthly Rent Amount (UGX)</label>
+                <input type="number" id="rentAmount" placeholder="850000" required>
+              </div>
+              <div class="form-group">
+                <label>Initial Next Rent Due Date</label>
+                <input type="date" id="nextDueDate">
+              </div>
+              <div class="form-group">
+                <label>Tenant Access PIN (4 Digits)</label>
+                <input type="text" id="tenantPin" maxlength="4" placeholder="e.g., 1234" />
+              </div>
+              <button type="submit" style="width: 100%;"><i class="fa-solid fa-plus"></i> Save Unit</button>
+            </form>
           </div>
-          <div class="form-group">
-            <label>Amount Paid (UGX)</label>
-            <input type="number" id="paidAmount" placeholder="850000" required>
-          </div>
-          <div class="form-group">
-            <label>Payment Date</label>
-            <input type="date" id="paymentDate" required>
-          </div>
-          <div class="form-group">
-            <label>Set Next Rent Due Date</label>
-            <input type="date" id="updatedNextDueDate" required>
-          </div>
-          <div class="form-group">
-            <label><i class="fa-solid fa-camera"></i> Receipt Image (Optional)</label>
-            <input type="file" id="receiptImage" accept="image/*">
-          </div>
-          <button type="submit" style="width: 100%; background: linear-gradient(180deg, #38bdf8, #0284c7); box-shadow: 0 4px 0 #0c4a6e, 0 10px 20px -5px rgba(2, 132, 199, 0.45), inset 0 1px 0 rgba(255,255,255,0.28);"><i class="fa-solid fa-check"></i> Save Payment</button>
-        </form>
+        </details>
       </div>
 
+      <!-- LOG SUBMETER WATER (MINIMIZED BY DEFAULT) -->
       <div class="card">
-        <h2><i class="fa-solid fa-faucet-drip"></i> Log Submeter Water</h2>
-        <form id="waterForm">
-          <div class="form-group">
-            <label>Select Unit</label>
-            <select id="waterTenantSelect" class="unitSelect" required></select>
+        <details class="section-collapse">
+          <summary>
+            <span class="section-title"><i class="fa-solid fa-faucet-drip"></i> Log Submeter Water</span>
+            <span class="collapse-right">Tap to open</span>
+          </summary>
+          <div class="collapse-content">
+            <form id="waterForm">
+              <div class="form-group">
+                <label>Select Unit</label>
+                <select id="waterTenantSelect" class="unitSelect" required></select>
+              </div>
+              <div class="form-group">
+                <label>Previous Reading (m³)</label>
+                <input type="number" id="prevReading" step="0.1" required>
+              </div>
+              <div class="form-group">
+                <label>Current Reading (m³)</label>
+                <input type="number" id="currReading" step="0.1" required>
+              </div>
+              <div class="form-group">
+                <label>Rate per Unit (UGX)</label>
+                <input type="number" id="waterRate" step="1" value="6000" required>
+              </div>
+              <button type="submit" style="width: 100%;"><i class="fa-solid fa-calculator"></i> Calculate Water Bill</button>
+            </form>
           </div>
-          <div class="form-group">
-            <label>Previous Reading (m³)</label>
-            <input type="number" id="prevReading" step="0.1" required>
-          </div>
-          <div class="form-group">
-            <label>Current Reading (m³)</label>
-            <input type="number" id="currReading" step="0.1" required>
-          </div>
-          <div class="form-group">
-            <label>Rate per Unit (UGX)</label>
-            <input type="number" id="waterRate" step="1" value="6000" required>
-          </div>
-          <button type="submit" style="width: 100%;"><i class="fa-solid fa-calculator"></i> Calculate Water Bill</button>
-        </form>
+        </details>
       </div>
 
+      <!-- LOG ELECTRICITY SUBMETER (MINIMIZED BY DEFAULT) -->
       <div class="card">
-        <h2><i class="fa-solid fa-bolt"></i> Log Electricity Submeter</h2>
-        <form id="elecForm">
-          <div class="form-group">
-            <label>Select Unit</label>
-            <select id="elecTenantSelect" class="unitSelect" required></select>
+        <details class="section-collapse">
+          <summary>
+            <span class="section-title"><i class="fa-solid fa-bolt"></i> Log Electricity Submeter</span>
+            <span class="collapse-right">Tap to open</span>
+          </summary>
+          <div class="collapse-content">
+            <form id="elecForm">
+              <div class="form-group">
+                <label>Select Unit</label>
+                <select id="elecTenantSelect" class="unitSelect" required></select>
+              </div>
+              <div class="form-group">
+                <label>Previous Reading (kWh)</label>
+                <input type="number" id="prevElecReading" step="0.1" required>
+              </div>
+              <div class="form-group">
+                <label>Current Reading (kWh)</label>
+                <input type="number" id="currElecReading" step="0.1" required>
+              </div>
+              <button type="submit" style="width: 100%; background: linear-gradient(180deg, #fde047, #eab308); color: #0f172a; box-shadow: 0 4px 0 #854d0e, 0 10px 20px -5px rgba(234, 179, 8, 0.35), inset 0 1px 0 rgba(255,255,255,0.4);"><i class="fa-solid fa-calculator"></i> Calculate Electricity Bill</button>
+            </form>
           </div>
-          <div class="form-group">
-            <label>Previous Reading (kWh)</label>
-            <input type="number" id="prevElecReading" step="0.1" required>
-          </div>
-          <div class="form-group">
-            <label>Current Reading (kWh)</label>
-            <input type="number" id="currElecReading" step="0.1" required>
-          </div>
-          <button type="submit" style="width: 100%; background: linear-gradient(180deg, #fde047, #eab308); color: #0f172a; box-shadow: 0 4px 0 #854d0e, 0 10px 20px -5px rgba(234, 179, 8, 0.35), inset 0 1px 0 rgba(255,255,255,0.4);"><i class="fa-solid fa-calculator"></i> Calculate Electricity Bill</button>
-        </form>
+        </details>
       </div>
     </div>
 
     <div>
+      <!-- ACTIVE ANNOUNCEMENTS (MINIMIZED BY DEFAULT) -->
       <div class="card">
-        <h2><i class="fa-solid fa-scroll"></i> Active Announcements</h2>
-        <div id="activeAnnouncementsList">Loading announcements...</div>
+        <details class="section-collapse">
+          <summary>
+            <span class="section-title"><i class="fa-solid fa-scroll"></i> Active Announcements</span>
+            <span class="collapse-right" id="landlord-notices-count">Tap to view</span>
+          </summary>
+          <div class="collapse-content">
+            <div id="activeAnnouncementsList">Loading announcements...</div>
+          </div>
+        </details>
       </div>
 
+      <!-- PROPERTY OVERVIEW & OCCUPANCY (MINIMIZED BY DEFAULT) -->
       <div class="card">
-        <h2><i class="fa-solid fa-city"></i> Property Overview & Occupancy</h2>
-        <div id="tenantList">Loading property data...</div>
+        <details class="section-collapse">
+          <summary>
+            <span class="section-title"><i class="fa-solid fa-city"></i> Property Overview & Occupancy</span>
+            <span class="collapse-right" id="landlord-units-count">Tap to view</span>
+          </summary>
+          <div class="collapse-content">
+            <div id="tenantList">Loading property data...</div>
+          </div>
+        </details>
       </div>
     </div>
   </div>
@@ -951,6 +1123,61 @@
   let tenants = JSON.parse(localStorage.getItem('jbm_tenants_cache') || '[]');
   let announcements = JSON.parse(localStorage.getItem('jbm_announcements_cache') || '[]');
   let monthlyFinance = JSON.parse(localStorage.getItem('jbm_monthly_finance') || '{}');
+  let notifiedAlertKeys = JSON.parse(localStorage.getItem('jbm_notified_alerts') || '{}');
+
+  function updatePushButtonUI() {
+    const btn = document.getElementById('pushBtn');
+    if (!btn) return;
+    if (!('Notification' in window)) {
+      btn.innerHTML = '<i class="fa-solid fa-bell-slash"></i> Push N/A';
+      return;
+    }
+    if (Notification.permission === 'granted') {
+      btn.innerHTML = '<i class="fa-solid fa-bell"></i> Push ON';
+      btn.style.borderColor = 'rgba(52, 211, 153, 0.5)';
+      btn.style.color = '#6ee7b7';
+    } else if (Notification.permission === 'denied') {
+      btn.innerHTML = '<i class="fa-solid fa-bell-slash"></i> Push Blocked';
+    } else {
+      btn.innerHTML = '<i class="fa-solid fa-bell"></i> Enable Push';
+    }
+  }
+
+  async function requestPushPermission(showFeedback = false) {
+    if (!('Notification' in window)) {
+      if (showFeedback) alert("Push notifications are not supported in this browser.");
+      return false;
+    }
+    if (Notification.permission === 'granted') {
+      updatePushButtonUI();
+      if (showFeedback) alert("Push notifications are already enabled for rent due & breach alerts.");
+      return true;
+    }
+    const perm = await Notification.requestPermission();
+    updatePushButtonUI();
+    if (showFeedback) {
+      alert(perm === 'granted' ? "Push notifications enabled!" : "Push notification permission was not granted.");
+    }
+    return perm === 'granted';
+  }
+
+  function sendPushAlert(uniqueKey, title, body) {
+    if (!('Notification' in window) || Notification.permission !== 'granted') return;
+    const todayStr = new Date().toISOString().slice(0, 10);
+    const fullKey = `${todayStr}_${uniqueKey}`;
+    if (notifiedAlertKeys[fullKey]) return;
+
+    try {
+      new Notification(title, {
+        body: body,
+        icon: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%230d9488'/><path d='M50 18 L18 45 L28 45 L28 78 L42 78 L42 60 L58 60 L58 78 L72 78 L72 45 L82 45 Z' fill='%23ffffff'/></svg>"
+      });
+      notifiedAlertKeys[fullKey] = true;
+      localStorage.setItem('jbm_notified_alerts', JSON.stringify(notifiedAlertKeys));
+    } catch (e) {
+      console.warn("Notification trigger error:", e);
+    }
+  }
 
   function ensureMonthRecord(ym) {
     if (!monthlyFinance[ym]) {
@@ -986,6 +1213,11 @@
     return 20000 + (extraUnits * 2000);
   }
 
+  function hasRentPaidForMonth(tenant, ym) {
+    if (!tenant.payments || !Array.isArray(tenant.payments) || tenant.payments.length === 0) return false;
+    return tenant.payments.some(p => String(p.date || '').startsWith(ym) && Number(p.amount || 0) > 0);
+  }
+
   // FIREBASE STATUS LISTENER
   db.ref('.info/connected').on('value', (snap) => {
     const statusElem = document.getElementById('connection-status');
@@ -1010,21 +1242,14 @@
     })) : [];
     localStorage.setItem('jbm_tenants_cache', JSON.stringify(tenants));
     
-    renderTenants();
-    populateSelects();
-    renderLandlordAnnouncements();
-    updateFinancialSummary();
-
+    renderAllLandlordViews();
     if (activeTenantId) {
       const updatedTenant = tenants.find(t => t.id === activeTenantId);
       if (updatedTenant) renderSingleTenantView(updatedTenant);
     }
   }, (error) => {
     console.warn("Firebase offline. Using local tenant cache.", error);
-    renderTenants();
-    populateSelects();
-    renderLandlordAnnouncements();
-    updateFinancialSummary();
+    renderAllLandlordViews();
   });
 
   // FIREBASE ANNOUNCEMENTS LISTENER
@@ -1052,13 +1277,18 @@
     }
   });
 
-  function saveTenants() {
-    localStorage.setItem('jbm_tenants_cache', JSON.stringify(tenants));
-    db.ref('tenants').set(tenants).catch(err => console.warn("Firebase sync error", err));
+  function renderAllLandlordViews() {
+    renderLandlordDueTimeline();
     renderTenants();
     populateSelects();
     renderLandlordAnnouncements();
     updateFinancialSummary();
+  }
+
+  function saveTenants() {
+    localStorage.setItem('jbm_tenants_cache', JSON.stringify(tenants));
+    db.ref('tenants').set(tenants).catch(err => console.warn("Firebase sync error", err));
+    renderAllLandlordViews();
 
     if (activeTenantId) {
       const updatedTenant = tenants.find(t => t.id === activeTenantId);
@@ -1080,6 +1310,109 @@
     localStorage.setItem('jbm_monthly_finance', JSON.stringify(monthlyFinance));
     db.ref('monthlyFinance').set(monthlyFinance).catch(err => console.warn("Firebase sync error", err));
     updateFinancialSummary();
+  }
+
+  function renderLandlordDueTimeline() {
+    const container = document.getElementById('landlordDueTimelineList');
+    const tag = document.getElementById('timeline-summary-tag');
+    if (!container) return;
+
+    const occupiedUnits = tenants.filter(t => (t.occupancyStatus || 'occupied') !== 'vacant');
+    if (occupiedUnits.length === 0) {
+      container.innerHTML = '<p style="color: var(--text-muted); margin:0;">No occupied units in timeline yet.</p>';
+      if (tag) tag.textContent = '0 Occupied Units';
+      return;
+    }
+
+    const sorted = [...occupiedUnits].sort((a, b) => {
+      const dA = getDaysUntilDue(a.nextDueDate);
+      const dB = getDaysUntilDue(b.nextDueDate);
+      if (dA === null && dB === null) return 0;
+      if (dA === null) return 1;
+      if (dB === null) return -1;
+      return dA - dB;
+    });
+
+    let breachCount = 0;
+    let dueSoonCount = 0;
+
+    const rowsHTML = sorted.map(t => {
+      const daysLeft = getDaysUntilDue(t.nextDueDate);
+      const isPaidThisMonth = hasRentPaidForMonth(t, selectedMonth);
+      const formattedDue = formatDateWithDay(t.nextDueDate);
+      const rentVal = Number(t.rent || 0).toLocaleString();
+
+      let rowClass = '';
+      let statusBadge = '';
+
+      if (isPaidThisMonth && (daysLeft === null || daysLeft > 0)) {
+        rowClass = 'paid-row';
+        statusBadge = '<span class="paid-badge"><i class="fa-solid fa-check"></i> PAID (Month)</span>';
+      } else if (daysLeft !== null && daysLeft < 0) {
+        breachCount++;
+        rowClass = 'breach-row';
+        statusBadge = `<span class="notice-badge"><i class="fa-solid fa-circle-exclamation"></i> BREACH: ${Math.abs(daysLeft)}d Past Due</span>`;
+        sendPushAlert(
+          `landlord_breach_${t.id}_${t.nextDueDate}`,
+          `BREACH ALERT: Unit ${t.unit} Rent Past Due`,
+          `${t.name} (${t.unit}) is ${Math.abs(daysLeft)} day(s) past due for UGX ${rentVal}.`
+        );
+      } else if (daysLeft !== null && daysLeft === 0) {
+        dueSoonCount++;
+        rowClass = 'warning-row';
+        statusBadge = `<span class="pending-badge"><i class="fa-solid fa-bell"></i> DUE TODAY</span>`;
+        sendPushAlert(
+          `landlord_today_${t.id}_${t.nextDueDate}`,
+          `Rent Due Today: Unit ${t.unit}`,
+          `${t.name} (${t.unit}) rent of UGX ${rentVal} is due today.`
+        );
+      } else if (daysLeft !== null && daysLeft <= 6) {
+        dueSoonCount++;
+        rowClass = 'warning-row';
+        statusBadge = `<span class="pending-badge"><i class="fa-solid fa-hourglass-half"></i> Due in ${daysLeft}d</span>`;
+        sendPushAlert(
+          `landlord_soon_${t.id}_${t.nextDueDate}`,
+          `Upcoming Rent Due: Unit ${t.unit}`,
+          `${t.name} (${t.unit}) rent of UGX ${rentVal} is due in ${daysLeft} day(s) on ${formattedDue}.`
+        );
+      } else if (isPaidThisMonth) {
+        rowClass = 'paid-row';
+        statusBadge = '<span class="paid-badge"><i class="fa-solid fa-check"></i> PAID</span>';
+      } else {
+        statusBadge = '<span class="pending-badge">PENDING / UPCOMING</span>';
+      }
+
+      const dueTimeFrameText = daysLeft === null
+        ? 'as scheduled'
+        : (daysLeft < 0 ? `is overdue by ${Math.abs(daysLeft)} day(s) (agreement breach)` : (daysLeft === 0 ? `is due today (${formattedDue})` : `is due in ${daysLeft} day(s) on ${formattedDue}`));
+
+      const quickReminderMsg = encodeURIComponent(
+        `Dear ${t.name},\n\nFriendly rent reminder from JBM ESTATES LTD for Unit ${t.unit}.\n\nRent Payment of UGX ${rentVal} ${dueTimeFrameText}.\n\nPayment Details:\n• MoMo Pay Code: ${mtnMomoConfig.merchantCode} (*165*3*CODE#)\n• Direct Mobile Money: ${mtnMomoConfig.momoNumber} (${mtnMomoConfig.merchantName})\n• Reason/Ref: ${t.unit} Rent\n\nThank you!`
+      );
+
+      return `
+        <div class="timeline-item ${rowClass}">
+          <div>
+            <div style="font-weight:700; font-size:0.95rem; color:var(--primary);">
+              <i class="fa-solid fa-door-open" style="color:var(--accent-hover);"></i> ${t.unit} — ${t.name}
+            </div>
+            <div style="font-size:0.82rem; color:var(--text-muted); margin-top:0.2rem;">
+              Amount: <strong style="color:#2dd4bf;">UGX ${rentVal}</strong> • Next Due: <strong>${formattedDue}</strong>
+            </div>
+          </div>
+          <div style="display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap;">
+            ${statusBadge}
+            ${t.phone ? `<a href="https://wa.me/${t.phone}?text=${quickReminderMsg}" target="_blank" class="btn-whatsapp-sm"><i class="fa-brands fa-whatsapp"></i> Remind</a>` : ''}
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    if (tag) {
+      tag.textContent = `${breachCount} Breach • ${dueSoonCount} Due Soon`;
+    }
+
+    container.innerHTML = rowsHTML;
   }
 
   function updateFinancialSummary() {
@@ -1115,6 +1448,11 @@
     document.getElementById('display-tango-amount').innerText = `UGX ${tangoAmount.toLocaleString()}`;
     document.getElementById('tango-month-label').innerText = formatMonthLabel(activeYm);
 
+    const headerTag = document.getElementById('tango-header-tag');
+    if (headerTag) {
+      headerTag.textContent = `Net: UGX ${netMonthlyIncome.toLocaleString()} • TANGO: ${isTangoCleared ? 'Cleared' : 'Pending'}`;
+    }
+
     const expInput = document.getElementById('monthlyRunningExpenses');
     if (expInput && document.activeElement !== expInput) {
       expInput.value = runningExp || '';
@@ -1135,6 +1473,8 @@
         toggleBtn.innerHTML = '<i class="fa-solid fa-check-circle"></i> Mark TANGO Cleared';
       }
     }
+
+    renderLandlordDueTimeline();
   }
 
   document.getElementById('selectedFinanceMonth').addEventListener('change', (e) => {
@@ -1187,6 +1527,8 @@
 
   function renderLandlordAnnouncements() {
     const list = document.getElementById('activeAnnouncementsList');
+    const countTag = document.getElementById('landlord-notices-count');
+    if (countTag) countTag.textContent = `${announcements.length} Notice(s)`;
     if (!list) return;
 
     list.innerHTML = '';
@@ -1223,12 +1565,10 @@
 
       const card = document.createElement('div');
       card.className = 'announcement-box';
-      card.style.position = 'relative';
-      card.style.marginBottom = '0.9rem';
       card.innerHTML = `
         <div style="display:flex; justify-content:space-between; align-items:start;">
           <div>
-            <strong style="color: #7dd3fc; font-size: 1rem;"><i class="fa-solid fa-bullhorn"></i> ${a.title}</strong>
+            <strong style="color: #7dd3fc; font-size: 0.98rem;"><i class="fa-solid fa-bullhorn"></i> ${a.title}</strong>
             <div style="font-size:0.75rem; color: var(--text-muted); margin-top: 3px;">
               <span style="background:rgba(56,189,248,0.18); padding:2px 7px; border-radius:5px; font-weight:700; color:#bae6fd; border:1px solid rgba(56,189,248,0.3);">${targetText}</span> • Posted ${a.date}
             </div>
@@ -1248,12 +1588,10 @@
 
     if (enteredPassword === landlordPassword) {
       activeTenantId = null;
+      requestPushPermission(false);
       document.getElementById('login-screen').style.display = 'none';
       document.getElementById('landlord-controls').style.display = 'block';
-      renderTenants();
-      populateSelects();
-      renderLandlordAnnouncements();
-      updateFinancialSummary();
+      renderAllLandlordViews();
     } else if (enteredPassword !== null) {
       alert("Incorrect Landlord Password! Access Denied.");
     }
@@ -1280,6 +1618,7 @@
 
     if (matchedTenant) {
       activeTenantId = matchedTenant.id;
+      requestPushPermission(false);
       document.getElementById('login-screen').style.display = 'none';
       document.getElementById('landlord-controls').style.display = 'none';
       renderSingleTenantView(matchedTenant);
@@ -1301,6 +1640,7 @@
     }
   }
 
+  // TENANT PORTAL REORDERED BY PRIORITY + MINIMIZED SECTIONS
   function renderSingleTenantView(tenant) {
     let portal = document.getElementById('tenant-portal-view');
     if (!portal) {
@@ -1313,27 +1653,64 @@
     portal.style.display = 'block';
 
     const formattedDueDate = formatDateWithDay(tenant.nextDueDate);
+    const daysLeft = getDaysUntilDue(tenant.nextDueDate);
+    const rentFormatted = Number(tenant.rent || 0).toLocaleString();
+
+    let dueAlertBanner = '';
+    if (daysLeft !== null) {
+      if (daysLeft < 0) {
+        dueAlertBanner = `
+          <div class="breach-alert-banner">
+            <strong><i class="fa-solid fa-triangle-exclamation"></i> BREACH ALERT — RENT PAST DUE (${Math.abs(daysLeft)} Day(s) Overdue):</strong><br>
+            Your rent of <strong>UGX ${rentFormatted}</strong> was due on <strong>${formattedDueDate}</strong>. Paying beyond the due date is a <strong>breach of your tenancy agreement</strong>. Please pay immediately and submit proof.
+          </div>
+        `;
+        sendPushAlert(
+          `tenant_breach_${tenant.id}_${tenant.nextDueDate}`,
+          `BREACH ALERT: Rent Past Due (${Math.abs(daysLeft)}d Overdue)`,
+          `Unit ${tenant.unit} rent of UGX ${rentFormatted} due ${formattedDueDate} is overdue — breach of agreement.`
+        );
+      } else if (daysLeft === 0) {
+        dueAlertBanner = `
+          <div class="breach-alert-banner">
+            <strong><i class="fa-solid fa-bell"></i> RENT DUE TODAY:</strong><br>
+            Your rent of <strong>UGX ${rentFormatted}</strong> is due today (<strong>${formattedDueDate}</strong>). Avoid paying past due to remain compliant with your tenancy agreement.
+          </div>
+        `;
+        sendPushAlert(
+          `tenant_today_${tenant.id}_${tenant.nextDueDate}`,
+          `Rent Due Today: UGX ${rentFormatted}`,
+          `Unit ${tenant.unit} rent is due today (${formattedDueDate}).`
+        );
+      } else if (daysLeft <= 6) {
+        dueAlertBanner = `
+          <div class="warning-alert-banner">
+            <strong><i class="fa-solid fa-hourglass-half"></i> UPCOMING DUE DATE WARNING (${daysLeft} Day(s) Left):</strong><br>
+            Your rent of <strong>UGX ${rentFormatted}</strong> is due on <strong>${formattedDueDate}</strong>. Please prepare payment before the due date to avoid agreement breach.
+          </div>
+        `;
+        sendPushAlert(
+          `tenant_soon_${tenant.id}_${tenant.nextDueDate}`,
+          `Rent Due in ${daysLeft} Day(s)`,
+          `Unit ${tenant.unit} rent of UGX ${rentFormatted} is due on ${formattedDueDate}.`
+        );
+      }
+    }
 
     const tenantNotices = announcements.filter(a => a.targetUnit === 'ALL' || a.targetUnit.toLowerCase() === tenant.unit.toLowerCase());
 
-    let noticesHTML = '';
-    if (tenantNotices.length > 0) {
-      noticesHTML = `
-        <h3><i class="fa-solid fa-bullhorn" style="color: #38bdf8;"></i> Management Notices (${tenantNotices.length})</h3>
-        ${tenantNotices.map((n, idx) => `
-          <details class="announcement-details" ${idx === 0 ? 'open' : ''}>
+    // Announcements collapsed by default for a clean, spacious view
+    const noticesBodyHTML = tenantNotices.length > 0
+      ? tenantNotices.map(n => `
+          <details class="announcement-details">
             <summary>
               <span><i class="fa-solid fa-circle-info" style="color: #38bdf8; margin-right: 6px;"></i> ${n.title}</span>
               <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: normal; margin-left: auto; margin-right: 6px;">${n.date}</span>
             </summary>
-            <div class="announcement-body">
-              ${n.message}
-            </div>
+            <div class="announcement-body">${n.message}</div>
           </details>
-        `).join('')}
-        <hr>
-      `;
-    }
+        `).join('')
+      : '<p style="color: var(--text-muted); margin:0;">No active management notices.</p>';
 
     let waterBillInfo = '<p style="color: var(--text-muted);">No active water bill recorded.</p>';
     if (tenant.waterBill) {
@@ -1369,7 +1746,6 @@
       `• Payment Description: Rent / Water / Electricity\n` +
       `• Paid Amount: UGX [ENTER AMOUNT]\n\n` +
       `Please find attached my payment screenshot / Mobile Money SMS confirmation. Kindly verify and update my portal status. Thank you!`;
-    
     const encodedProofMsg = encodeURIComponent(proofMessage);
 
     const bankInquiryMsg = encodeURIComponent(
@@ -1377,7 +1753,7 @@
     );
 
     const paymentHistoryHTML = (tenant.payments && tenant.payments.length > 0) ? `
-      <ul style="padding-left: 1.2rem; color: var(--text-main);">
+      <ul style="padding-left: 1.2rem; color: var(--text-main); margin:0;">
         ${tenant.payments.map(p => `
           <li style="margin-bottom: 0.65rem;">
             <strong>UGX ${Number(p.amount).toLocaleString()}</strong> paid on ${formatDateWithDay(p.date)}
@@ -1385,76 +1761,125 @@
           </li>
         `).join('')}
       </ul>
-    ` : '<p style="color: var(--text-muted);">No payments recorded yet.</p>';
+    ` : '<p style="color: var(--text-muted); margin:0;">No payments recorded yet.</p>';
 
     portal.innerHTML = `
-      <div class="card card-3d-elevated" style="max-width: 620px; margin: 1.5rem auto;">
-        <h2><i class="fa-solid fa-circle-user"></i> Welcome, ${tenant.name}</h2>
-        <p style="color: var(--text-muted); margin-top:-0.4rem; margin-bottom:1.5rem;">Unit: ${tenant.unit}</p>
+      <div style="max-width: 640px; margin: 1rem auto;">
+        <!-- 1. DUE DATE & PRIORITY OVERVIEW (OPEN) -->
+        <div class="card">
+          <h2 style="margin-bottom:0.25rem;"><i class="fa-solid fa-circle-user"></i> ${tenant.name} — ${tenant.unit}</h2>
+          <p style="color: var(--text-muted); margin-top:0; margin-bottom:1rem; font-size:0.86rem;">Monthly Rent: <strong style="color:#2dd4bf;">UGX ${rentFormatted}</strong></p>
 
-        ${noticesHTML}
+          ${dueAlertBanner}
 
-        <div style="font-size: 1rem; margin-bottom: 0.65rem;">
-          <strong>Monthly Rent:</strong> <span style="color:#2dd4bf; font-weight:700;">UGX ${Number(tenant.rent).toLocaleString()}</span>
-        </div>
-        <div class="tenant-info-banner">
-          <strong>Next Rent Due Date:</strong> <br><span style="color: #fb7185; font-weight:700;">${formattedDueDate}</span>
-        </div>
-
-        <h3><i class="fa-solid fa-faucet"></i> Water Utilities</h3>
-        ${waterBillInfo}
-
-        <h3 style="margin-top: 1.3rem;"><i class="fa-solid fa-bolt"></i> Electricity Submeter</h3>
-        ${elecBillInfo}
-
-        <div class="mtn-box">
-          <h3 style="margin:0 0 0.55rem 0; color:#fde047;"><i class="fa-solid fa-mobile-screen-button"></i> Payment Options</h3>
-          <p style="font-size:0.88rem; margin:0 0 0.6rem 0; color:#e2e8f0;">Pay Rent and Submeter bills using any of the options below:</p>
-          <div style="font-size:0.9rem; font-weight:600; color:#f8fafc; line-height: 1.55;">
-            <strong style="color:#fde047;">OPTION 1: MOMO PAY (Merchant Code)</strong><br>
-            • Dial <strong>*165*3*CODE#</strong><br>
-            • Merchant Code: <span style="background-color: var(--mtn-yellow); color:#0f172a; font-weight:800; padding:2px 7px; border-radius:5px;">${mtnMomoConfig.merchantCode}</span> (${mtnMomoConfig.merchantName})<br><br>
-            <strong style="color:#fde047;">OPTION 2: DIRECT MOBILE MONEY SEND</strong><br>
-            • Send directly to: <span style="background-color: var(--mtn-yellow); color:#0f172a; font-weight:800; padding:2px 7px; border-radius:5px;">${mtnMomoConfig.momoNumber}</span><br>
-            • Account Name: <strong>${mtnMomoConfig.merchantName}</strong><br><br>
-            <strong style="color:#fde047;">REQUIRED REFERENCE:</strong><br>
-            • Reason: <strong>Unit Number & Payment Name</strong><br>
-            • Example: <em>"${tenant.unit} Water Bill"</em> or <em>"${tenant.unit} Rent"</em>
+          <div class="tenant-info-banner" style="margin-bottom:0;">
+            <strong>Next Rent Due Date:</strong><br>
+            <span style="color: ${daysLeft !== null && daysLeft < 0 ? '#fb7185' : '#38bdf8'}; font-weight:800;">${formattedDueDate}</span>
           </div>
+        </div>
 
-          <div class="bank-box">
-            <strong style="color:#7dd3fc;"><i class="fa-solid fa-building-columns"></i> OPTION 3: BANK DEPOSIT / TRANSFER</strong><br>
-            • No Mobile Money withdrawal charges apply — you can deposit the <strong>exact rent amount</strong>.<br>
-            • Please <strong>ask / contact the landlord for bank details</strong> before making your deposit.<br>
-            <div style="margin-top:0.65rem;">
-              <a href="https://wa.me/${mtnMomoConfig.landlordWhatsApp}?text=${bankInquiryMsg}" target="_blank" class="btn btn-doc" style="margin-top:0; font-size:0.85rem; padding:0.6rem 1rem;">
-                <i class="fa-solid fa-building-columns"></i> Ask Landlord for Bank Details
+        <!-- 2. ANNOUNCEMENTS (MINIMIZED BY DEFAULT) -->
+        <div class="card">
+          <details class="section-collapse">
+            <summary>
+              <span class="section-title"><i class="fa-solid fa-bullhorn"></i> Management Announcements</span>
+              <span class="collapse-right">${tenantNotices.length} notice(s) • Tap</span>
+            </summary>
+            <div class="collapse-content">
+              ${noticesBodyHTML}
+            </div>
+          </details>
+        </div>
+
+        <!-- 3. HOW & WHERE TO PAY (MINIMIZED BY DEFAULT) -->
+        <div class="card">
+          <details class="section-collapse">
+            <summary>
+              <span class="section-title"><i class="fa-solid fa-mobile-screen-button"></i> Where & How to Pay</span>
+              <span class="collapse-right">MoMo & Bank • Tap</span>
+            </summary>
+            <div class="collapse-content">
+              <div class="mtn-box">
+                <div style="font-size:0.9rem; font-weight:600; color:#f8fafc; line-height: 1.55;">
+                  <strong style="color:#fde047;">OPTION 1: MOMO PAY (Merchant Code)</strong><br>
+                  • Dial <strong>*165*3*CODE#</strong><br>
+                  • Merchant Code: <span style="background-color: var(--mtn-yellow); color:#0f172a; font-weight:800; padding:2px 7px; border-radius:5px;">${mtnMomoConfig.merchantCode}</span> (${mtnMomoConfig.merchantName})<br><br>
+                  <strong style="color:#fde047;">OPTION 2: DIRECT MOBILE MONEY SEND</strong><br>
+                  • Send directly to: <span style="background-color: var(--mtn-yellow); color:#0f172a; font-weight:800; padding:2px 7px; border-radius:5px;">${mtnMomoConfig.momoNumber}</span><br>
+                  • Account Name: <strong>${mtnMomoConfig.merchantName}</strong><br><br>
+                  <strong style="color:#fde047;">REQUIRED REFERENCE:</strong><br>
+                  • Reason: <strong>Unit Number & Payment Name</strong><br>
+                  • Example: <em>"${tenant.unit} Water Bill"</em> or <em>"${tenant.unit} Rent"</em>
+                </div>
+
+                <div class="bank-box">
+                  <strong style="color:#7dd3fc;"><i class="fa-solid fa-building-columns"></i> OPTION 3: BANK DEPOSIT / TRANSFER</strong><br>
+                  • No Mobile Money withdrawal charges apply — you can deposit the <strong>exact rent amount</strong>.<br>
+                  • Please <strong>ask / contact the landlord for bank details</strong> before making your deposit.<br>
+                  <div style="margin-top:0.65rem;">
+                    <a href="https://wa.me/${mtnMomoConfig.landlordWhatsApp}?text=${bankInquiryMsg}" target="_blank" class="btn btn-doc" style="margin-top:0; font-size:0.85rem; padding:0.6rem 1rem;">
+                      <i class="fa-solid fa-building-columns"></i> Ask Landlord for Bank Details
+                    </a>
+                  </div>
+                </div>
+
+                <div style="margin-top: 1rem;">
+                  <a href="https://wa.me/${mtnMomoConfig.landlordWhatsApp}?text=${encodedProofMsg}" target="_blank" class="btn btn-whatsapp" style="font-size:0.9rem;">
+                    <i class="fa-brands fa-whatsapp"></i> Send Payment Proof to Landlord
+                  </a>
+                </div>
+                <p style="font-size:0.8rem; color:var(--text-muted); margin:0.55rem 0 0 0;"><em>Note: Upon receipt of payment proof, the landlord clears your bill status from UNPAID to PAID.</em></p>
+              </div>
+            </div>
+          </details>
+        </div>
+
+        <!-- 4. WATER & ELECTRICITY BILLS (MINIMIZED BY DEFAULT) -->
+        <div class="card">
+          <details class="section-collapse">
+            <summary>
+              <span class="section-title"><i class="fa-solid fa-faucet-drip"></i> Water & Electricity Submeters</span>
+              <span class="collapse-right">Tap to view</span>
+            </summary>
+            <div class="collapse-content">
+              <h3><i class="fa-solid fa-faucet"></i> Water Utilities</h3>
+              ${waterBillInfo}
+              <h3 style="margin-top: 1.2rem;"><i class="fa-solid fa-bolt"></i> Electricity Submeter</h3>
+              ${elecBillInfo}
+            </div>
+          </details>
+        </div>
+
+        <!-- 5. PAYMENT RECEIPTS (MINIMIZED BY DEFAULT) -->
+        <div class="card">
+          <details class="section-collapse">
+            <summary>
+              <span class="section-title"><i class="fa-solid fa-receipt"></i> Recent Payment Receipts</span>
+              <span class="collapse-right">${(tenant.payments || []).length} record(s)</span>
+            </summary>
+            <div class="collapse-content">
+              ${paymentHistoryHTML}
+            </div>
+          </details>
+        </div>
+
+        <!-- 6. TENANCY AGREEMENT (MINIMIZED BY DEFAULT) -->
+        <div class="card">
+          <details class="section-collapse">
+            <summary>
+              <span class="section-title"><i class="fa-solid fa-file-contract"></i> Tenancy Agreement</span>
+              <span class="collapse-right">PDF Link</span>
+            </summary>
+            <div class="collapse-content">
+              <p style="font-size:0.88rem; color: var(--text-muted); margin-top:0;">Review your agreement terms (including due dates and breach clauses):</p>
+              <a href="https://drive.google.com/file/d/1NMxRtoEkgpmq3QPcf-WsmscepoploKbH/view?usp=sharing" target="_blank" class="btn btn-doc">
+                <i class="fa-solid fa-arrow-up-right-from-square"></i> Open Tenancy Agreement PDF
               </a>
             </div>
-          </div>
-
-          <div style="margin-top: 1rem;">
-            <a href="https://wa.me/${mtnMomoConfig.landlordWhatsApp}?text=${encodedProofMsg}" target="_blank" class="btn btn-whatsapp" style="font-size:0.9rem;">
-              <i class="fa-brands fa-whatsapp"></i> Send Payment Proof to Landlord
-            </a>
-          </div>
-          <p style="font-size:0.8rem; color:var(--text-muted); margin:0.55rem 0 0 0;"><em>Note: Upon receipt of payment proof, the landlord clears your bill status from UNPAID to PAID.</em></p>
+          </details>
         </div>
 
-        <hr>
-
-        <h3><i class="fa-solid fa-receipt"></i> Recent Payment Receipts</h3>
-        ${paymentHistoryHTML}
-
-        <hr>
-
-        <h3><i class="fa-solid fa-file-contract"></i> Tenancy Agreement</h3>
-        <p style="font-size:0.9rem; color: var(--text-muted);">You can access your tenancy agreement document anytime online:</p>
-        <a href="https://drive.google.com/file/d/1NMxRtoEkgpmq3QPcf-WsmscepoploKbH/view?usp=sharing" target="_blank" class="btn btn-doc">
-          <i class="fa-solid fa-arrow-up-right-from-square"></i> Open Tenancy Agreement PDF
-        </a>
-
-        <button onclick="location.reload()" style="margin-top: 2rem; width:100%;" class="btn-danger"><i class="fa-solid fa-right-from-bracket"></i> Log Out</button>
+        <button onclick="location.reload()" style="margin-top: 0.5rem; width:100%;" class="btn-danger"><i class="fa-solid fa-right-from-bracket"></i> Log Out</button>
       </div>
     `;
   }
@@ -1703,6 +2128,8 @@
 
   function renderTenants() {
     const list = document.getElementById('tenantList');
+    const unitsCountTag = document.getElementById('landlord-units-count');
+    if (unitsCountTag) unitsCountTag.textContent = `${tenants.length} Unit(s) • Tap`;
     if (!list) return;
 
     list.innerHTML = '';
@@ -1776,7 +2203,7 @@
 
       if (daysLeft !== null && !isVacant) {
         if (daysLeft < 0) {
-          dueTimeFrameText = `is overdue by ${Math.abs(daysLeft)} day(s)`;
+          dueTimeFrameText = `is overdue by ${Math.abs(daysLeft)} day(s) (breach of agreement)`;
         } else if (daysLeft === 0) {
           dueTimeFrameText = `is due today (${formattedDueDate})`;
         } else {
@@ -1808,8 +2235,8 @@
       }
 
       if (daysLeft !== null && daysLeft <= 6 && !isVacant) {
-        const statusText = daysLeft < 0 ? `Overdue by ${Math.abs(daysLeft)} days` : (daysLeft === 0 ? `Due Today` : `Due in ${daysLeft} days`);
-        alertBadge = `<div class="notice-badge"><i class="fa-solid fa-triangle-exclamation"></i> Notice: Rent ${statusText}</div>`;
+        const statusText = daysLeft < 0 ? `BREACH: Overdue by ${Math.abs(daysLeft)} days` : (daysLeft === 0 ? `Due Today` : `Due in ${daysLeft} days`);
+        alertBadge = `<div class="notice-badge" style="margin-bottom:0.75rem;"><i class="fa-solid fa-triangle-exclamation"></i> ${statusText}</div>`;
       }
 
       const pastHistoryList = Array.isArray(t.pastOccupants) ? t.pastOccupants : [];
@@ -1852,10 +2279,8 @@
   }
 
   // INITIAL RENDER
-  renderTenants();
-  populateSelects();
-  renderLandlordAnnouncements();
-  updateFinancialSummary();
+  updatePushButtonUI();
+  renderAllLandlordViews();
 </script>
 
 </body>
